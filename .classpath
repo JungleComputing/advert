@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="external/commons-beanutils-1.8.0.jar"/>
+	<classpathentry kind="lib" path="external/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="external/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="external/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="external/json-lib-2.2.3-jdk15.jar"/>
+	<classpathentry kind="lib" path="external/slf4j-api-1.5.3.jar"/>
+	<classpathentry kind="lib" path="external/slf4j-log4j12-1.5.3.jar"/>
+	<classpathentry kind="lib" path="external/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="external/log4j-1.2.13.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

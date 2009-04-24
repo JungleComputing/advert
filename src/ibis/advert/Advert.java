@@ -13,6 +13,7 @@ package ibis.advert;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -26,22 +27,45 @@ public class Advert {
 	
 	final static Logger logger = LoggerFactory.getLogger(Advert.class);
 	
-	private static final String DEFAULT_SERVER     = "bbn230.appspot.com";
-	private static final String DEFAULT_PUB_SERVER = "";
-	
 	private Communications comm = null;
-	
-	public Advert(String server, String user, String passwd) 
-	  throws AuthenticationException, IOException {
-		if (server == null) {
-			if (user == null || passwd == null) {
-				server = DEFAULT_PUB_SERVER;
-			}
-			else {
-				server = DEFAULT_SERVER;
-			}
-		}
 
+	/**
+	 * Constructor for a new Advert client, which connects to a public (i.e. a
+	 * server without authentication) Advert server. Note that connecting to a 
+	 * public server does not guarantee the server being alive/existing. The 
+	 * client will notice this once any of the functions below are called. This
+	 * approach saves startup time.
+	 * 
+	 * @param server
+	 * 		Location of Advert server to connect to.
+	 */
+	public Advert(String server) { 
+		comm = new Communications(server);
+		logger.info("Communications class created.");
+	}
+	
+	/**
+	 * Constructor for a new Advert client, which connects to a private (i.e. a
+	 * server with authentication) Advert server.
+	 * 
+	 * @param server
+	 * 		Location of Advert server to connect to.
+	 * @param user
+	 * 		Username to be authenticated with.
+	 * @param passwd
+	 * 		Corresponding password.
+	 * @throws AuthenticationException 
+	 * 		Authentication to Advert server failed.
+	 * @throws IOException
+	 * 		I/O to Advert server failed.
+	 * @throws ProtocolException 
+	 * 		Wrong protocol applied.
+	 * @throws MalformedURLException
+	 * 		URL was malformed. 
+	 */
+	public Advert(String server, String user, String passwd)
+			throws MalformedURLException, ProtocolException, IOException,
+			AuthenticationException {
 		comm = new Communications(server, user, passwd);
 		logger.info("Communications class created.");
 	}
@@ -66,7 +90,10 @@ public class Advert {
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
 		if (path == null) {
-			throw new NullPointerException("Path can't be null.");
+			throw new NullPointerException("Path cannot be null.");
+		}
+		if (path.endsWith("/")) {
+			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
 		JSONArray  jsonarr = new JSONArray();
@@ -116,6 +143,9 @@ public class Advert {
 		if (path == null) {
 			throw new NullPointerException("Path can't be null.");
 		}
+		if (path.endsWith("/")) {
+			throw new IlligalPathException("Path cannot be a directory.");
+		}
 		
 		logger.info("Calling httpSend() /del...");
 		comm.httpSend("/del", path);
@@ -136,6 +166,9 @@ public class Advert {
 	  RequestTooLargeException,Exception {
 		if (path == null) {
 			throw new NullPointerException("Path can't be null.");
+		}
+		if (path.endsWith("/")) {
+			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
 		logger.info("Calling httpSend() /get...");
@@ -159,6 +192,9 @@ public class Advert {
 	  RequestTooLargeException, Exception {
 		if (path == null) {
 			throw new NullPointerException("Path can't be null.");
+		}
+		if (path.endsWith("/")) {
+			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
 		MetaData   metadata = new MetaData();
@@ -218,6 +254,20 @@ public class Advert {
 		
 		jsonarr = JSONArray.fromObject(result);
 		
-		return (String[]) jsonarr.toArray(new String[0]);
+		try {
+			return (String[]) jsonarr.toArray(new String[0]);
+		}
+		catch (ArrayStoreException ase) {
+			logger.warn("Converting JSONArray to String[] failed.");
+			String[] ret = new String[jsonarr.size()];
+			
+			for (int i = 0; i < jsonarr.size(); i++) {
+				if (jsonarr.getString(i) != null) {
+					ret[i] = jsonarr.getString(i);
+				}
+			}
+			
+			return ret;
+		}
 	}
 }

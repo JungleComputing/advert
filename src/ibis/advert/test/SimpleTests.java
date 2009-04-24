@@ -71,11 +71,12 @@ public class SimpleTests {
 		JSONArray json = new JSONArray();
 		JSONArray jsonarr = new JSONArray();
 		
-		json.add("chanan");
-		json.add("tapan");
-		json.add("Amar");
-		json.add("Santosh");
+//		json.add("chanan");
+//		json.add("tapan");
+//		json.add("Amar");
+//		json.add("Santosh");
 		json.add("deepak");
+		json.add(null);
 		
 		String s = json.toString();
 		
@@ -85,10 +86,15 @@ public class SimpleTests {
 
 		logger.debug(jsonarr.toString());
 		
-		roseindia = (String[]) jsonarr.toArray(new String[0]);
-		
-		for (int i = 0; i < roseindia.length; i++) {
-			logger.debug("S[] {}", roseindia[i]);
+		if (jsonarr.toArray() == null) {
+			logger.info("JSONArray == null");
+		}
+		else {
+			roseindia = (String[]) jsonarr.toArray(new String[0]);
+			
+			for (int i = 0; i < roseindia.length; i++) {
+				logger.debug("S[] {}", roseindia[i]);
+			}
 		}
 	}
 
@@ -982,8 +988,8 @@ public class SimpleTests {
 		uri = server.concat("func/");
 //		testFunc(uri);
 		
-		testLogger();
+//		testLogger();
 		
-//		testJSON();
+		testJSON();
 	}
 }

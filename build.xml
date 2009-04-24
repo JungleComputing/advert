@@ -1,5 +1,5 @@
 <project name="IbisAdvertClient" default="build" basedir=".">
-	<description>Build file for Advert Service Client Adaptor.</description>
+	<description>Build file for the Ibis Advert Client library.</description>
 
 	<property name="src" location="src" />
 	<property name="tmp" location="tmp" />
