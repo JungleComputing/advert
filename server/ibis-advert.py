@@ -19,6 +19,7 @@ import cgi
 import datetime
 import logging
 
+from sets import Set
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -42,17 +43,17 @@ class MetaData(db.Model):
 
 #Authentication
 def auth(self): 
-  if not users.get_current_user():
-    self.error(403)
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write('Not Authenticated')
-    return -1
-
-  if not users.is_current_user_admin():
-    self.error(403)
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write('No Administrator')
-    return -1
+#  if not users.get_current_user():
+#    self.error(403)
+#    self.response.headers['Content-Type'] = 'text/plain'
+#    self.response.out.write('Not Authenticated')
+#    return -1
+#
+#  if not users.is_current_user_admin():
+#    self.error(403)
+#    self.response.headers['Content-Type'] = 'text/plain'
+#    self.response.out.write('No Administrator')
+#    return -1
 
   return 0
 
@@ -66,6 +67,9 @@ def store(json):
   advert.object = json[2] #extract (base64) object from message
 
   advert.put() #store object in database
+  
+  if json[1] is null: #check if metadata is given
+    return
 
   for k in json[1].keys():
     metadata        = MetaData(parent=advert)
@@ -214,6 +218,8 @@ class FindMetaData(webapp.RequestHandler):
     body = self.request.body
     json = simplejson.loads(body)
     
+    logging.info(body)
+    
     query = db.GqlQuery("SELECT * FROM MetaData")
     
     paths = Set()
@@ -222,11 +228,10 @@ class FindMetaData(webapp.RequestHandler):
       paths.add(bin.path)
       
     paths  = list(paths)
-    self.response.out.write(paths)
     
     for path in paths[:]:
       for k in json.keys():
-        query = db.GqlQuery("SELECT * FROM MetaData WHERE path = :1 AND keystr = :2 AND val = :3", path, k, json[k])
+        query = db.GqlQuery("SELECT * FROM MetaData WHERE path = :1 AND keystr = :2 AND value = :3", path, k, json[k])
         if query.count() < 1:
           paths.remove(path)
           break

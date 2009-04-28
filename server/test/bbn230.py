@@ -67,6 +67,9 @@ def store(json):
   advert.object = json[2] #extract (base64) object from message
 
   advert.put() #store object in database
+  
+  if json[1] is null: #check if metadata is given
+    return
 
   for k in json[1].keys():
     metadata        = MetaData(parent=advert)
