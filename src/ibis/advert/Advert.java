@@ -90,9 +90,11 @@ public class Advert {
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
 		if (path == null) {
-			throw new NullPointerException("Path cannot be null.");
+			logger.warn("Throwing NullPointerException");
+			throw new NullPointerException("Path can't be null.");
 		}
 		if (path.endsWith("/")) {
+			logger.warn("Throwing IlligalPathException");
 			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
@@ -141,9 +143,11 @@ public class Advert {
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
 		if (path == null) {
+			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}
 		if (path.endsWith("/")) {
+			logger.warn("Throwing IlligalPathException");
 			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
@@ -165,9 +169,11 @@ public class Advert {
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException,Exception {
 		if (path == null) {
+			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}
 		if (path.endsWith("/")) {
+			logger.warn("Throwing IlligalPathException");
 			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
@@ -191,9 +197,11 @@ public class Advert {
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
 		if (path == null) {
+			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}
 		if (path.endsWith("/")) {
+			logger.warn("Throwing IlligalPathException");
 			throw new IlligalPathException("Path cannot be a directory.");
 		}
 		
@@ -233,6 +241,11 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
+		if (metaData == null) {
+			logger.warn("Throwing NullPointerException");
+			throw new NullPointerException("MetaData can't be null.");
+		}
+		
 		JSONObject metadata = new JSONObject();
 		JSONArray  jsonarr  = new JSONArray();
 		
