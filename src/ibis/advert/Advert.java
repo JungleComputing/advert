@@ -89,6 +89,7 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
+		System.out.println("###Done. NULL Checks.");
 		if (path == null) {
 			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
@@ -97,21 +98,28 @@ public class Advert {
 			logger.warn("Throwing IlligalPathException");
 			throw new IlligalPathException("Path cannot be a directory.");
 		}
+		System.out.println("###Done. Creating JSON objects.");
 		
 		JSONArray  jsonarr = new JSONArray();
 		JSONObject jsonobj = new JSONObject();
+		System.out.println("###Done. Initializing JSON objects.");
 		
-		Iterator<String> itr  = metaData.getAllKeys().iterator();
+		if (metaData == null) {
+			jsonobj = null;
+		}
+		else {
+			Iterator<String> itr  = metaData.getAllKeys().iterator();
+		
+			while (itr.hasNext()) {
+				String key   = itr.next();
+				String value = metaData.get(key);
 	
-		while (itr.hasNext()) {
-			String key   = itr.next();
-			String value = metaData.get(key);
-
-			if (key == null) {
-				continue; //key can't be null (value can)
+				if (key == null) {
+					continue; //key can't be null (value can)
+				}
+				
+				jsonobj.put(key, value);
 			}
-			
-			jsonobj.put(key, value);
 		}
 		
 		String base64 = new sun.misc.BASE64Encoder().encode(object);
@@ -119,6 +127,7 @@ public class Advert {
 		jsonarr.add(path);
 		jsonarr.add(jsonobj);
 		jsonarr.add(base64);
+		System.out.println("###Done. Calling advertService.");
 		
 		logger.info("Calling httpSend() /add...");
 		comm.httpSend("/add", jsonarr.toString());
