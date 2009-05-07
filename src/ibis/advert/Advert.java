@@ -89,7 +89,6 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
-		System.out.println("###Done. NULL Checks.");
 		if (path == null) {
 			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
@@ -98,16 +97,13 @@ public class Advert {
 			logger.warn("Throwing IlligalPathException");
 			throw new IlligalPathException("Path cannot be a directory.");
 		}
-		System.out.println("###Done. Creating JSON objects.");
 		
 		JSONArray  jsonarr = new JSONArray();
-		JSONObject jsonobj = new JSONObject();
-		System.out.println("###Done. Initializing JSON objects.");
+		JSONObject jsonobj = null;
 		
-		if (metaData == null) {
-			jsonobj = null;
-		}
-		else {
+		if (metaData != null) {
+			jsonobj = new JSONObject();
+			
 			Iterator<String> itr  = metaData.getAllKeys().iterator();
 		
 			while (itr.hasNext()) {
@@ -122,12 +118,14 @@ public class Advert {
 			}
 		}
 		
-		String base64 = new sun.misc.BASE64Encoder().encode(object);
+		String base64 = null;
+		if (object != null) {
+			base64 = new sun.misc.BASE64Encoder().encode(object);
+		}
 		
 		jsonarr.add(path);
 		jsonarr.add(jsonobj);
 		jsonarr.add(base64);
-		System.out.println("###Done. Calling advertService.");
 		
 		logger.info("Calling httpSend() /add...");
 		comm.httpSend("/add", jsonarr.toString());
