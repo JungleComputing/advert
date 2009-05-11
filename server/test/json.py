@@ -19,7 +19,30 @@ class MainPage(webapp.RequestHandler):
     
 class Null(webapp.RequestHandler):
   def get(self):
-    json = simplejson.loads("[\"James\", \"Jack's\", null]")
+    
+     json = simplejson.loads("[\"foo\", \"bar\", \"fubar\"]")
+     
+     self.response.out.write(json)
+     
+     self.response.out.write(json[2])
+     
+     try:
+       json[2].keys()
+     except:
+       self.response.out.write("JSON, could not load object")
+       
+     #json[2].keys()
+    
+#    try:
+#      json = simplejson.loads("fhdiajhfiosdjiaofjsdiaofjioah")
+#    except:
+#      self.response.out.write("JSON ERROR\n")
+#      
+#    json = simplejson.loads("[\"James\", \"Jack's\", null]")
+#    
+#    self.response.out.write(json[2].keys())  
+#    
+#    self.response.out.write("done.\n")
     
 #    foo = Foo()
 #    foo.data = json[0]
@@ -33,15 +56,15 @@ class Null(webapp.RequestHandler):
 #    foo.data = json[2]
 #    foo.put()
 
-    query = db.GqlQuery("SELECT * FROM Foo")
-    
-    foos = []
-    
-    for q in query:
-      foos.append(q.data)
-    
+#    query = db.GqlQuery("SELECT * FROM Foo")
+#    
+#    foos = []
+#    
+#    for q in query:
+#      foos.append(q.data)
+#    
 #    self.response.out.write(foos)
-    self.response.out.write(simplejson.dumps(foos))
+#    self.response.out.write(simplejson.dumps(foos))
 
 class Download(webapp.RequestHandler):
   def post(self):
