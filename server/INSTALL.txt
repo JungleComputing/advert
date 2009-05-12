@@ -1,0 +1,30 @@
+Ibis Advert server source release installation
+
+    Before you try to install the Advert server, an app-engine account is
+    needed (including an appspot.com domain and a google account). This can
+    be accquired at http://appeninge.google.com/.
+
+    The Advert server software requires at least Python runtime environment 
+    version 2.5.2. With an older version of Python, some parts will not 
+    compile. In addition, the Google webapp Framework, Django's simplejson and
+    google.appengine.* packages are required. All are offered by the current
+    version of the Google App Engine.
+    
+Upload
+
+    To upload the application to the Google App Eninge, the Google App Engine 
+    SDK (for Python) is required. This can be downloaded at 
+    http://code.google.com/appengine/downloads.html.
+
+    After installation the Advert service can be run locally by running:
+    	$ dev_appserver.py /home/username/advert_server/
+    Or it can be uploaded by running:
+    	$ appcfg.py /home/username/advert_server/
+    where "/home/username/advert_server/" is the location of the Advert server
+    source.
+    
+    More information on the SDK can be found at 
+    http://code.google.com/appengine/docs/python/tools/.
+
+API
+    The Advert Service API documentation can be found at doc/API.pdf.
