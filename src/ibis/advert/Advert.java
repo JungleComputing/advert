@@ -40,6 +40,7 @@ public class Advert {
 	 * 		Location of Advert server to connect to.
 	 */
 	public Advert(String server) { 
+		logger.debug("Connecting to public server at: {}", server);
 		comm = new Communications(server);
 		logger.info("Communications class created.");
 	}
@@ -66,6 +67,9 @@ public class Advert {
 	public Advert(String server, String user, String passwd)
 			throws MalformedURLException, ProtocolException, IOException,
 			AuthenticationException {
+		logger.debug("Connecting to private server at: {}", server);
+		logger.debug("User/Pass found: {}/{}", user, (passwd != null && passwd
+				.length() > 0) ? passwd.charAt(passwd.length() - 1) : "null");
 		comm = new Communications(server, user, passwd);
 		logger.info("Communications class created.");
 	}

@@ -68,7 +68,7 @@ def store(json):
 
   advert.put() #store object in database
   
-  if json[1] is null: #check if metadata is given
+  if json[1] is None: #check if metadata is given
     return
 
   for k in json[1].keys():
@@ -124,7 +124,25 @@ class AddObject(webapp.RequestHandler):
     
     response = 201 #standard response
     body = self.request.body
-    json = simplejson.loads(body)
+    
+    try: #try to load serialized form of JSON
+      json = simplejson.loads(body)
+    except:
+      self.error(400)
+      self.response.out.write("Failed to load JSON: unreadable content")
+      return
+      
+    if len(json) is not 3: #check JSON length (must be 3)
+      self.error(400)
+      self.response.out.write("Failed to load JSON: object not properly structured")
+      return
+    
+    if json[1] is not None:
+      try:
+        json[1].keys() #check if second array entry is a JSON object
+      except:
+        self.error(400)
+        self.response.out.write("Failed to load JSON: object not properly structured")
     
     query = db.GqlQuery("SELECT * FROM Advert WHERE path = :1", json[0])
     if query.count() > 0: #this entry already exists; overwrite
@@ -216,9 +234,25 @@ class FindMetaData(webapp.RequestHandler):
     if auth(self) < 0: return
     
     body = self.request.body
-    json = simplejson.loads(body)
     
-    logging.info(body)
+    try: #try to load serialized form of JSON
+      json = simplejson.loads(body)
+    except:
+      self.error(400)
+      self.response.out.write("Failed to load JSON: unreadable content")
+      return      
+    
+    if json is None: #no object will match metadata which is 'null'
+      self.error(404)
+      self.response.headers['Content-Type'] = 'text/plain'
+      self.response.out.write('Not Found')
+      return      
+      
+    try: #check if second array entry is a JSON object
+      json[1].keys() 
+    except:
+      self.error(400)
+      self.response.out.write("Failed to load JSON: object not properly structured")
     
     query = db.GqlQuery("SELECT * FROM MetaData")
     

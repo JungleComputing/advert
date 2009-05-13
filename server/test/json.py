@@ -19,17 +19,28 @@ class MainPage(webapp.RequestHandler):
     
 class Null(webapp.RequestHandler):
   def get(self):
+ 
+    json = simplejson.loads("[\"foo\", \"bar\", null]")
+     
+    if json[0] is None:
+      self.response.out.write("Found 1") 
     
-     json = simplejson.loads("[\"foo\", \"bar\", \"fubar\"]")
-     
-     self.response.out.write(json)
-     
-     self.response.out.write(json[2])
-     
-     try:
-       json[2].keys()
-     except:
-       self.response.out.write("JSON, could not load object")
+    if json[1] is None:
+       self.response.out.write("Found 2")
+    
+    if json[2] is None:
+       self.response.out.write("Found 3")
+       
+#     json = simplejson.loads("[\"foo\", \"bar\", \"fubar\"]")
+#     
+#     self.response.out.write(json)
+#     
+#     self.response.out.write(json[2])
+#     
+#     try:
+#       json[2].keys()
+#     except:
+#       self.response.out.write("JSON, could not load object")
        
      #json[2].keys()
     

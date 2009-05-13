@@ -68,7 +68,7 @@ def store(json):
 
   advert.put() #store object in database
   
-  if json[1] is null: #check if metadata is given
+  if json[1] is None: #check if metadata is given
     return
 
   for k in json[1].keys():
@@ -137,7 +137,7 @@ class AddObject(webapp.RequestHandler):
       self.response.out.write("Failed to load JSON: object not properly structured")
       return
     
-    if json[1] is not null:
+    if json[1] is not None:
       try:
         json[1].keys() #check if second array entry is a JSON object
       except:
@@ -242,7 +242,7 @@ class FindMetaData(webapp.RequestHandler):
       self.response.out.write("Failed to load JSON: unreadable content")
       return      
     
-    if json is null: #no object will match metadata which is 'null'
+    if json is None: #no object will match metadata which is 'null'
       self.error(404)
       self.response.headers['Content-Type'] = 'text/plain'
       self.response.out.write('Not Found')
