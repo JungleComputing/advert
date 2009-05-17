@@ -1,5 +1,12 @@
 \documentclass[10pt]{article}
 
+\usepackage{url}
+\usepackage{fancyvrb}
+
+\DefineVerbatimEnvironment
+  {code}{Verbatim}
+  {fontsize=\small, frame=single, numbers=left}
+
 \begin{document}
 
 \title{Google App Engine Advert Server Programmer's Manual}
@@ -12,420 +19,289 @@
 \maketitle
 
 \section{Introduction}
+\label{introduction}
 This manual explains how to program applications using the Advert server running
 on the Google App Engine. For information on how to install the server, please
 see the \texttt{INSTALL.txt}, located in the \texttt{server} directory.
 
-In this manual, we will focus on concepts and methods rather than
-details like exact parameters of methods. For this type of
-information, see the Javadoc for Ibis. This is available in the
-\texttt{javadoc} directory of the distribution, and on the website.
-
-This manual is split up into several different sections. First, we will
-explain the different parts of the IPL, the interface to the Ibis
-communication library. Second, we explain how to compile applications
-which use the IPL. Last, we will give some examples 
-to show how to use Ibis in practice.
-
-\section{IPL Overview}
-
-%-- ipl picture, implementations, upcalls, identifiers, instances
-
-\begin{figure}[t] \centering
-\includegraphics[width=0.9\textwidth]{../images/ibis-design.eps}
-\caption{Ibis design overview} \label{design}
-\end{figure}
-
-This section will give a high level overview of the different parts of
-the IPL.  For an overview of the design of Ibis, see
-Figure~\ref{design}. The Ibis communication library is build up around
-the \emph{Ibis Portability Layer (IPL)}. This layer offers applications
-a grid aware communication library, independent of the actual network
-used. Ibis dynamically selects a suitable implementation at run-time.
-The Ibis communication library ships with several different TCP based
-implementations, but implementations based on native platforms such as
-MPI and Myrinet are also possible.
-
-Using the IPL, we implemented several different programming models, such
-as the divide-and-conquer Satin model, and the Group Method
-Invocation (GMI) model. A discussion of these models lies outside the
-scope of this manual. For more information on the programming models,
-see the Ibis website. As an alternative to using an intermediate
-programming model, applications can also be written directly on top of
-the IPL. This manual is mostly intended for programmers using
-the IPL in an application and for programming model writers.
-
-A central concept in the IPL is the \emph{Ibis instance}. In general,
-one Ibis instance is created on each machine participating in a
-particular distributed application. Each of these instances has a unique
-\emph{Ibis Identifier}, used throughout the library to denote this
-instance.
-
-Another often-used concept is the \emph{upcall}: a method that gets invoked
-upon an event such as the arrival of a message. Upcalls can be used
-instead of downcalls (explicit receipt, polling) in a number of cases.
-These cases include receiving messages, getting notifications of new
-connections, and updates on new Ibis instances joining a computation.
-
-\subsection{Send and Receive Ports}
-
-%-- send port, receive port, connections, porttypes
-
-\begin{figure}[t] \centering
-\includegraphics[width=0.9\textwidth]{../images/communication_patterns.eps}
-\caption{\label{ports}Ibis send and receive port configurations: one to one (a), one to many (b), many to one (c), and many to many (d)}
-\end{figure}
-
-The IPL is based on uni-directional connection-oriented pipes. In the
-model, \emph{send ports} are connected to \emph{receive ports}. See
-Figure~\ref{ports} for some examples. Connecting a single send port to a
-single receive port leads to a simple one-to-one connection. However, it is
-also possible to connect a send port to multiple receive ports for a
-one-to-many multicast, or multiple send ports to a single receive port
-for many-to-one client server type communication. Even connecting
-multiple send ports to multiple receive ports is possible.
-% although this
-%many-to-many communication model is currently not supported by the
-%standard TCP based implementation of Ibis.
-
-\begin{figure} \centering
-\includegraphics[width=0.5\textwidth]{../images/port_types.eps}
-\caption{\label{port_types}Types must match when connecting} 
-\end{figure}
-
-Ports in Ibis are typed (see Figure~\ref{port_types}). Types are
-determined by the communication pattern (one-to-one, one-to-many,
-many-to-one, many-to-many), the type of data that can be send,
-reliability, and other aspects. Send ports can only be connected to receive
-ports of the same type. This allows for some sanity checks on the
-application, and allows Ibis to select the most appropriate
-implementation of the communication channel.
-
-The port type is determined by a set of capabilities as listed in  
-Section~\ref{portcapabilities}.
-Note that even the configuration of the receive port as  
-specified in the RECEIVE\_XXX capabilities is part of the port type,  
-and therefore must be specified in the capabilities of the send port.
-
-\subsection{Messages and Serialization}
-
-%--messages, serialization, bytecode rewriting
-
-Once a connection is established between send and receive ports, data
-can be sent. Send and receive ports in Ibis communicate using
-messages. A so called \emph{write message} is created at the send port,
-and can be filled with all primitive data types of Java such as bytes, integers
-and strings, as well as more complex data structures in the form of
-Java \texttt{Objects}. Also, arrays of primitive types and objects can be
-sent. When the user is done writing data to a message, a \texttt{finish}
-method must be called to denote that the message has been completed.
-
-Once data is written to a write message at the send port, this message
-will arrive at the receive port as a \emph{read message}. There, the
-data can be read again using methods equivalent to the ones in the write
-message. Data must be read from the read message in the same order as it
-was written in the write message.
-
-In Ibis, the size of a message is unlimited. However, at any point in
-time, only a single message can be active at a port. This allows Ibis to
-start sending data to the receiver as soon as it is written in the
-message. So, while data is still being written to a message at the
-sender, it may already be read at the receiver. This streaming behavior
-makes communication in Ibis much more efficient.
-
-Serialization is the translation of data objects into bytes suitable for
-sending across a network. Ibis is capable of several different versions
-of serialization, depending on the needs of the user. These versions
-differ in the types of data they support. Some only support sending
-bytes, some only primitive types, and some also allow sending objects.
-To be able send an Object, this object must implement the
-\texttt{java.io.Serializable} interface. See the documentation of Java
-for more information on serialization.
-
-Two different object serialization versions are available in Ibis. One is
-the standard Java object serialization, the other a high-performance
-implementation of object serialization. For this high-performance
-\emph{Ibis Serialization} implementation to work, an extra step is needed
-when compiling the application, where some extra code is generated to
-efficiently send objects. See Section~\ref{compiling} for
-more information.
-
-\subsection{Pools and the Registry}
-
-%-- pools, registry, join, leave, died, election, location
-
-Each Ibis instance is a member of a \emph{Pool}. The Ibis
-\emph{Registry} keeps track of all the members of the pool, and notifies
-all Ibises whenever a new Ibis instance joins this pool, leaves the
-pool, or even when a Ibis dies unexpectedly. Applications can use the
-registry mechanism to get notified of any changes to the pool.
-
-The Ibis registry also supports \emph{elections}, which can be used to
-select Ibis instances which are special such as servers.  Each election
-has a unique name in the form of a String, and will elect a winner from
-the candidates for this election. However, elections results are not determined 
-by majority vote:
-usually the first candidate is elected as the winner. It is also
-possible to request the outcome of an election without being a
-candidate. When the winner of an election leaves the pool, or dies, a
-new winner is automatically selected if any new candidate enters the
-election.
-
-The registry has a few other features useful for coordinating
-distributed computations. One is a \emph{signal} system, where the
-registry can send simple strings to Ibises. This can be used to signal
-special events, such as the application terminating. Another feature is
-the \emph{sequencer}. The sequencer can be used to get unique sequence
-numbers in a distributed fashion. Each call to this method, at
-whatever Ibis instance, will yield the next number in the sequence. A
-central coordination point is used to implement this reliably.
-
-The normal implementation of the Registry is a central registry service.
-This allows for a reliable system, with a good consistency model.
-Elections are guaranteed to yield the same winner at each Ibis, and any
-changes to the membership list of the pool are reported in the same
-order at each Ibis. In this model, joins and leaves are guaranteed to be
-totally ordered. This implementation does rely on a central server
-for coordination. This may lead to inefficiencies, and is also a single
-point of failure. So, as an alternative, other, less strict, consistency
-models are also offered. When these are used, Ibis is able to select an
-alternative implementation of the registry, for instance one based on
-Peer-to-Peer techniques.
-
-\subsection{Capabilities}
-
-To facilitate the selection of the best implementation for all the
-functionality required of Ibis from a user, Ibis uses a
-\emph{capability} based selection mechanism. For each Ibis instance and
-each port type, the user can specify which capabilities are needed. Each
-capability enables a certain part of the API. For instance, sending
-objects in a message is only possible if the "object serialization"
-capability is enabled in the port type. Likewise, elections can only be
-done if either the "unreliable election" or the "strict election"
-capability is enabled. The difference between the two being the
-consistency model of the elections. 
-
-Two different types of capabilities are present in Ibis. Some are global
-capapabilities of an Ibis instance, and some are capabilities of port
-types. Since different port types can be used in a single application, a
-user can specify different requirements for different ports.
-
-\subsubsection{Global Ibis Capabilities}
-
-This is a list of the capabilities for an Ibis. These capabilities are
-defined in the \texttt{IbisCapabilities} class of the IPL. Also see the
-Javadoc.  
-
-\begin{description}
-
-\item[SIGNALS]
-Enables the signal sending and receiving functionality of the registry.
-
-\item[MEMBERSHIP\_UNRELIABLE] 
-Enables the membership information functionality of the registry. The
-registry can notify the user whenever a new Ibis joins the pool or a
-Ibis leaves the pool, or dies. This is not reliable though, and some
-changes to the pool may not be reported. Also, the order in which
-changes are reported is not fixed.
-
-\item[MEMBERSHIP\_TOTALLY\_ORDERED]
-As above, but with a better consistency model. Each and every change to
-the pool will be reliably reported, and the order of these changes is
-fixed for the entire pool. All Ibises get the changes in the same,
-globally unique, order.
-
-\item[ELECTIONS\_UNRELIABLE] Enables unreliable elections. With
-unreliable elections it is possible that some election results are not
-available, and if the same election is done at two different Ibises, the
-result may be different at one instance from the result at another instance.
-
-\item[ELECTIONS\_STRICT]
-Indicates elections are supported, and they adhere to the following 
-consistency model: Each election has a single, unique winner at any
-given point in time, and all Ibis instances in a pool get all updates
-to the election result, and in the same order.
-
-\item[CLOSED\_WORLD] The Ibises in the pool are determined at the start
-of the run. After these Ibises have joined, any further requests to join
-the pool will be denied. This capability also enables the usages of the
-\texttt{getPoolSize()} and \texttt{waitUntilPoolClosed()} methods in the
-\texttt{Registry} class. 
-
-This capability requires the number of Ibises
-in the pool to be known in advance. This can be set using a property
-(see Section~\ref{properties}).
-
-\item[MALLEABLE]
-Requests malleability support from Ibis. Some implementations of Ibis
-(such as an Ibis based on MPI), may not support Ibises joining the pool
-after it has initially been created.
-
-\end{description}
-
-\subsubsection{Port Type Capabilities}
-\label{portcapabilities}
-
-This is a list of capabilities for port types. These capabilities are
-defined in the \texttt{PortType} class of the IPL.  For each port
-type, a single capability for the allowed connection types (one-to-one,
-multicast, etc) must be selected, as well as a type of
-serialization (bytes only, primitive types, objects, etc). 
-
-\begin{description}
-\item[CONNECTION\_ONE\_TO\_ONE]
-One-to-one (unicast) communication is supported.
-
-\item[CONNECTION\_ONE\_TO\_MANY]
-one-to-many (multicast) communication is supported
-(in Ibis terms: a send port
-may connect to multiple receive ports).
-
-\item[CONNECTION\_MANY\_TO\_ONE]
-many-to-one communication is supported (in Ibis terms: multiple
-send ports may connect to a single receive port).
-
-\item[CONNECTION\_MANY\_TO\_MANY]
-many-to-one communication is supported (in Ibis terms: multiple
-send ports may connect to multiple receive ports).
-
-\item[CONNECTION\_DOWNCALLS]
-connection downcalls are supported. This means that the user can
-invoke methods to see which connections were lost or created.
-
-\item[CONNECTION\_UPCALLS]
-connection upcalls are supported. This means that an upcall handler can
-be installed that is invoked whenever a new connection arrives or a
-connection is lost.
-
-\item[CONNECTION\_TIMEOUT]
-Enabled the usage of timeouts in connection attempts.
-
-\item[RECEIVE\_EXPLICIT]
-Explicit receive is supported. A message can be received by directly
-requesting the reception of a message from the receive port.
-
-\item[RECEIVE\_TIMEOUT]
-Explicit receive with a timeout is supported.
-
-\item[RECEIVE\_POLL]
-Non-blocking version of explicit receipt is supported.
-
-\item[RECEIVE\_AUTO\_UPCALLS]
-Upcalls are supported and polling for them is not required.
-This means that when the user creates a receive port with an upcall
-handler installed, when a message arrives at that receive port, 
-this upcall handler is invoked automatically.
-
-\item[RECEIVE\_POLL\_UPCALLS]
-Upcalls are supported but polling for them is required. So, a user must
-call the \texttt{poll} method in the receive port to reliably receive
-messages, but these messages will be delivered using an upcall.
-
-\item[COMMUNICATION\_FIFO]
-Messages from a send port are delivered to the receive ports it is
-connected to in the order in which they were sent.
-
-\item[COMMUNICATION\_NUMBERED]
-All messages originating from any send port of a specific port type have
-a sequence number. This allows the application to do its own sequencing.
-
-\item[COMMUNICATION\_RELIABLE] 
-Reliable communication is supported, that is, a reliable communication
-protocol is used.  When not specified, an Ibis implementation may be
-chosen that does not explicitly support reliable communication.
-
-\item[SERIALIZATION\_BYTE]
-Only the methods \texttt{readByte()}, \texttt{writeByte()}, \\
-\texttt{readArray(byte[])} and \texttt{writeArray(byte[])} are
-supported in read and write messages.
-
-\item[SERIALIZATION\_DATA]
-Only \texttt{read()}, \texttt{write()}, 
-\texttt{readArray()} and \\
- \texttt{writeArray()} of primitive types are
-supported in read an write messages.
-
-\item[SERIALIZATION\_OBJECT]
-Some sort of object serialization is supported.
-This requires user-defined
-\texttt{writeObject()}/\texttt{readObject()} methods to be symmetrical,
-that is,
-each write in \texttt{writeObject()} must have a corresponding read
-in \texttt{readObject()} (and vice versa).
-
-\item[SERIALIZATION\_OBJECT\_SUN]
-Sun serialization is supported through \\
-\texttt{java.io.ObjectOutputStream} and
-\texttt{java.io.ObjectInputStream}. 
-Sun serialization is very good for debugging your
-application, as errors are more verbose than Ibis seerialization.
-
-\item[SERIALIZATION\_OBJECT\_IBIS]
-Ibis serialization is supported. This is more efficient than sun
-serialization, but may have some limitations. For instance, versioning
-of objects is not supported.
-
-\end{description}
-
-\subsection{Properties}
-\label{properties}
-
-Properties are used in Ibis for setting configuration options at
-run-time. Where to find the Ibis Implementations, for example, or the name
-of the pool the Ibis must join. Properties can be passed to an Ibis when it is
-created, but Ibis can also add properties specified on the command line
-by default. See the user's guide for more information on the various
-properties of Ibis and their usage.
-
-\section{Compiling applications}
-\label{compiling}
-
-%-- add ipl.jar to classpath, rewrite using iplc, example ant build file.
-
-Applications that use Ibis can be compiled as any normal Java
-application. The file \texttt{ipl-2.1.jar} needs to be added to the
-classpath when compiling (and running) an Ibis application. For the
-serialization of Ibis to function correctly, one additional step is
-required after compiling: the code for writing and reading objects must
-be generated. The \emph{Ibis compiler} application is available for
-this purpose. It can be run by using the \texttt{iplc}
-script in the \texttt{bin} directory of the distribution. The Ibis
-compiler needs to be passed the class files of the application, either
-as a directory containing classes, or as a jar file.
-
-Ibisc can also be called from
-\texttt{ant}\footnote{\url{http://ant.apache.org}}, the make-like build
-system for Java. An example of a build file which calls the Ibis
-compiler is available in the \texttt{examples} directory of the
-distribution. The relevant piece of the script is this:
-
-\begin{quote}
-\begin{verbatim}
-<java classname="ibis.compile.Ibisc"
-      taskname="Ibisc"
-      failonerror="true"
-      fork="true">
-          <arg line="ipl-examples-2.1.jar" />
-          <classpath refid="default.classpath" />
-</java>
-\end{verbatim}
-\end{quote}
-
-It runs the Ibis compiler on the jar file that has just been created
-from the compiled classes of the application. It sets the classpath to
-the \texttt{lib} directory of the Ibis distribution.
-
-\section{Tutorial}
-
-%-- include tutorial.tex
-\input tutorial
+In this manual, we will focus mainly on the protocol used between the Advert
+Library and the Advert server, as run on the Google App Engine. Also, we mostly
+refer to Java as the language of the client-side. This manual is split up into
+several different sections. First, we will explain how connections are made
+between a client and the Advert server (Section \ref{http-java}). Second, we will
+discuss how authentication is done, between a client and the Google App Engine
+(Section \ref{auth}). Third we will discuss the various different functions
+provided by the Advert server, and how they are addressed (Section
+\ref{protocol}). Fourth we will take a look at the administration panel of the
+Google App Engine (Section \ref{admin-panel}). Last we will take a look at an
+example of a client implementation, by looking at the \emph{Ibis Advert library}
+(Section \ref{advert-lib}).
+
+\section{Connecting to the Google App Engine}
+\label{http-java}
+This section will give a general idea of how connections are established
+between a Java client and the Google App Engine. As of yet, the Google App
+Engine only supports HTTP(S) connections over port 80. This means that all our
+requests and responses must be encoded to fit in an HTTP request/response. We
+will come to encoding data into HTTP requests in Section \ref{protocol}, when
+we discuss our protocol.
+
+Connecting to the Google App Engine is fairly simple, making use of the
+\texttt{java.net} package. Useful classes are the \texttt{URL} and the
+\texttt{HttpURLConnection} classes, which are the most-used classes for making
+HTTP connections through Java. For more information on how to connect to an
+HTTP server using Java, see
+\url{http://java.sun.com/docs/books/tutorial/networking/urls/index.html}.
+
+Note that sometimes it is required to make HTTPS connections over SSL
+(e.g. authentication). Before making an HTTPS connection, some system
+properties might need to be set up. This can be done by using code shown in
+Figure \ref{ssl-setup}.
+
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\begin{code}
+System.setProperty("java.protocol.handler.pkgs",
+                        "com.sun.net.ssl.internal.www.protocol");
+Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+\end{code}
+\caption{Setting up SSL.\label{ssl-setup}}
+\end{center}
+\end{figure*}
+
+\section{Authenticating to the Google App Engine}
+\label{auth}
+This section describes how authentication to the Google App Engine is done. If
+you are using a public sever, no authentication is needed and you can proceed
+reading Section \ref{protocol}.
+
+Authenticating with the Google App Engine is done through Google's
+\emph{ClientLogin}
+(\url{http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html}).
+This is an API to programmatically log into a user's Google account. After
+collecting login information from the user, call ClientLogin to request access to
+the user's account. Once the login information has been successfully
+authenticated, Google returns a token, which your application will reference each
+time it requests access to the user's account, such as to get or post data. The
+token remains valid for a set length of time, defined by whichever Google service
+you're working with. To authenticate with the Google App Engine in specific,
+please follow the steps as described below.
+
+First step is to perform an HTTP POST request to the Google ClientLogin page at
+\texttt{https://www.google.com/accounts/ClientLogin}. In this request we POST
+some parameters which are necessary for authentication (see Figure
+\ref{clientlogin-req}). The first two fields are self-explanatory. The third
+field refers to the App Engine. The final field is the source application
+requesting authentication. 
+
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\begin{code}
+Email=jondoe@gmail.com
+Passwd=north23AZ
+service=ah
+source=IBIS Advert
+\end{code}
+\caption{Authentication Data for ClientLogin.\label{clientlogin-req}}
+\end{center}
+\end{figure*}
+
+After the request is made, Google issues an HTTP response. This can either be
+an \texttt{HTTP/1.0 403 Access Forbidden} response, which means the wrong
+credentials were provided. In addition, a CAPTCHA\footnote{A CAPTCHA or Captcha
+is a type of challenge-response test used in computing to ensure that the
+response is not generated by a computer.} challenge could be initiated. If so,
+we recommend to wait a sufficient amount of time, before retrying.
+
+On the other hand, when the authentication was succesful, Google should respond
+with an \texttt{HTTP/1.0 200 OK} response. After which three tokens are passed
+in the message body (see Figure \ref{clientlogin-resp}). Currently, only the
+\texttt{Auth=DQAAAGgA...dk3fA5N} field is used, and is needed for the other
+half of the authentication process.
+
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\begin{code}
+HTTP/1.0 200 OK
+Server: GFE/1.3
+Content-Type: text/plain 
+
+SID=DQAAAGgA...7Zg8CTN
+LSID=DQAAAGsA...lk8BBbG
+Auth=DQAAAGgA...dk3fA5N
+\end{code}
+\caption{ClientLogin Response.\label{clientlogin-resp}}
+\end{center}
+\end{figure*}
+
+The second part of the authentication request is initiating an HTTP GET request
+to the following URL:
+
+\begin{center}
+\begin{code}
+http://jondoe.appspot.com/_ah/login?continue=
+    https://jondoe.appspot.com/&auth=DQAAAGgA...dk3fA5N
+\end{code}
+\end{center}
+
+Here, \texttt{jondoe.appspot.com} is the domain where the Advert server is
+running. Note that we append the authentication token we just received from the
+ClientLogin to this URL. Once this URL is requested, the App Engine will
+respond with an \texttt{HTTP/1.0 302 Found} response code, trying to redirect
+to the URL stated in the \texttt{continue=} part of the URL described above.
+We, on the other hand, are only interested in the \emph{authentication cookie}
+of the response. Once we found the header field containing the
+\texttt{Set-Cookie} key, we know we have found our authentication cookie (see
+Figure \ref{auth-cookie}) and we will store it in a variable so it can be used
+in subsequent requests. For more information about using cookies in Java,
+please see
+\url{http://java.sun.com/j2se/1.5.0/docs/guide/deployment/deployment-guide/cookie\_support.html}.
+
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\begin{code}
+ACSID=AJKiYcH9...29E6Qylx; expires=Sun, 17-May-2009 12:58:04 GMT; 
+    path=/; secure
+\end{code}
+\caption{Authentication Cookie.\label{auth-cookie}}
+\end{center}
+\end{figure*}
+
+\section{The Advert Service Protocol}
+\label{protocol}
+Once authenticated to the Google App Engine, the client can make use of the
+various functions provided by the Advert server. Currently, five functions are
+implemented, being \texttt{add}, \texttt{del}, \texttt{get}, \texttt{getmd}, 
+and \texttt{find}. All functions are addressed by requesting the following URL:
+
+\begin{center}
+\begin{code}
+http://jondoe.appspot.com/function_name
+\end{code}
+\end{center}
+
+Where \texttt{function\_name} should be replaced by the function name as
+described above. Note, when using a authenticated server, for each function
+authentication will be required. Not only by using a Google Account, but
+the user is also required to be an administrator of this App Engine project. This
+is described in more detail in Section \ref{admin-panel}. 
+
+Since all function calls are HTTP requests, the function parameters are encoded
+in the HTTP (POST) request. Encoding the parameters is done by using the
+\emph{JSON} (JavaScript Object Notation) data-interchange format. At the
+client-side we used \texttt{json-lib} and at the server-side we used
+\texttt{simplejson} for enconding/decoding data to/from JSON. More information
+on JSON and various JSON libraries can be found at \url{http://www.json.org/}.
+
+Next, we will describe each function in more detail.
+
+\subsection{Add}
+\label{add}
+The \texttt{add} function is used for adding an \emph{Advert object} to the
+Advert server (i.e. the database). This function takes three parameters: 
+
+\begin{itemize}
+  \item \texttt{pathname}: the location where the object should be stored
+  \item \texttt{metadata}: additional \emph{meta data} of the object
+  \item \texttt{object}: the object itself
+\end{itemize} 
+
+These three parameters should be encoded in a JSON Array in this order. The
+\texttt{pathname} should be a String (which is not \texttt{null}, the
+\texttt{metadata} should be a JSON Object with key-value pairs (which are both
+Strings) or \texttt{null}, and the \texttt{object} should be a Text (i.e. a long
+string, which is a subclass of the built-in unicode type) or \texttt{null}.
+
+Once the JSON Array is received, the server will check if the \texttt{pathname}
+already exists, and if so, it will be overwritten. If \texttt{pathname} does
+not exist, a new entry will be created, and the object with meta data attached
+will be stored in an atomic action.
+
+All functions can return both \texttt{403 Forbidden} and \texttt{500 Internal
+Server Error} HTTP response codes. The function-specific return values of
+\texttt{add} are:
+
+\begin{itemize}
+  \item \texttt{201 Created}: the data is stored successfully, and a TTL (Time to
+  Live) is returned
+  \item \texttt{205 Reset Content}: the data is stored successfully, but
+  overwritten (also a TTL is returned)
+  \item \texttt{400 Bad Request}: the JSON Array/Object is not properly
+  structured, the object is not stored
+  \item \texttt{503 Service Unavailable}: the transaction failed, the object is
+  not stored
+\end{itemize}
+
+\subsection{Del}
+\label{del}
+The \texttt{del} function is used for deleting an object from the Advert
+server. This function does not use JSON for parameter encoding since it only
+has one parameter:
+
+\begin{itemize}
+  \item \texttt{pathname}: the location of the object to be deleted
+\end{itemize}
+
+The \texttt{pathname} should be a String which is not \texttt{null}. Once the
+\texttt{pathname} is retrieved from the message body, the server will try to
+atomically remove the object and all meta data associated to that path name.
+Function-specific return values are:
+
+\begin{itemize}
+  \item \texttt{200 OK}: the data was removed successfully from the Advert
+  server
+  \item \texttt{404 Not Found}: the data associated with \texttt{pathname}
+  could not be found
+  \item \texttt{503 Service Unavailable}: the transaction failed, nothing is
+  removed from the database
+\end{itemize}
+
+\subsection{Get}
+\label{get}
+The \texttt{get} function is used for retrieving data from the Advert server.
+This function does not use JSON for parameter encoding since it only has one
+parameter:
+
+\begin{itemize}
+  \item \texttt{pathname}: the location of the object to be fetched
+\end{itemize}
+
+The \texttt{pathname} should be a String which is not \texttt{null}. Once the
+\texttt{pathname} is retrieved from the message body, the server will try to
+fetch the associated object from the database. Function-specific return values
+are:
+
+\begin{itemize}
+  \item \texttt{200 OK}: the data was fetched, the actual object will be sent
+  as unicode text in the message body
+  \item \texttt{404 Not Found}: the data associated with \texttt{pathname}
+  could not be found
+\end{itemize}
+
+\subsection{GetMD}
+\label{getmd}
+The \texttt{getmd} function is used for retrieving meta data from the Advert
+server. This function does not use JSON for parameter encoding since it only has one
+parameter:
+
+\begin{itemize}
+  \item \texttt{pathname}: the location of the meta data to be fetched
+\end{itemize}
+
+\ldots
+
+\section{The Administration Panel}
+\label{admin-panel}
+
+\section{Example: The Ibis Advert Library}
+\label{advert-lib}
 
 \section{Further Reading}
-
+\label{further}
 The Javadoc included in the \texttt{javadoc} directory has detailed
 information on all classes and their methods.
 
-The Ibis web page \url{http://www.cs.vu.nl/ibis} lists all
+The Ibis web page lists all
 the documentation and software available for Ibis, including papers, and
 slides of presentations.
 
