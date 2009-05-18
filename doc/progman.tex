@@ -288,7 +288,17 @@ parameter:
   \item \texttt{pathname}: the location of the meta data to be fetched
 \end{itemize}
 
-\ldots
+The \texttt{pathname} should be a String which is not \texttt{null}. Once the
+\texttt{pathname} is retrieved from the message body, the server will try to
+fetch the associated meta data from the database. This meta data will be
+encoded as a JSON Object (in random order). Function-specific return values are:
+
+\begin{itemize}
+  \item \texttt{200 OK}: the meta data was fetched, the actual JSON object will
+  be returned in serialized form
+  \item \texttt{404 Not Found}: the meta data associated with \texttt{pathname}
+  could not be found, \texttt{null} is returned
+\end{itemize}
 
 \section{The Administration Panel}
 \label{admin-panel}

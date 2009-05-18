@@ -256,16 +256,23 @@ public class SimpleTests {
 	}
 	
 	private static void base64test() throws Exception {
-		byte[] b = new byte[5000];
+//		byte[] b = new byte[5000];
+//		
+//		for (int i = 0; i<5000; i++) {
+//			b[i] = (byte)i;
+//		}
+//		
+//		String base64 = new sun.misc.BASE64Encoder().encode(b);
+//		
+//		System.out.println(base64.length());
 		
-		for (int i = 0; i<5000; i++) {
-			b[i] = (byte)i;
-		}
+		String s = "This is a test String.";
+		byte[] b = s.getBytes();
 		
 		String base64 = new sun.misc.BASE64Encoder().encode(b);
 		
-		System.out.println(base64.length());
-		
+		b = new sun.misc.BASE64Decoder().decodeBuffer(base64);
+		System.out.println(new String(b));
 	}
 
 	private static void makeHttpJson(String uri) throws Exception {
@@ -980,7 +987,7 @@ public class SimpleTests {
 //		makeHttpJson(uri);
 		
 		/* Base64 tests. */
-//		base64test();
+		base64test();
 		
 		uri = server.concat("queries/find");
 //		testFind(uri);
@@ -990,6 +997,6 @@ public class SimpleTests {
 		
 //		testLogger();
 		
-		testJSON();
+//		testJSON();
 	}
 }
