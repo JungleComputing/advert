@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class AdvertTests {
 
-	private static final String SERVER = "bbn230.appspot.com";
+	private static final String SERVER = "google://bbn230.appspot.com/";
 	private static final String USER   = "ibisadvert@gmail.com";
 
 	final static Logger logger = LoggerFactory.getLogger(AdvertTests.class);
@@ -119,8 +120,15 @@ public class AdvertTests {
 		}
 		else {
 			/* Create a new Advert object. */
-			advert = new Advert(SERVER, USER, argv[0]);
-			logger.info("Advert object created.");
+			try {
+				URI advertUri = new URI(SERVER);
+				advert = new Advert(advertUri, USER, argv[0]);
+				logger.info("Advert object created.");
+			}
+			catch (Exception e) {
+				System.err.println("Malformed URI");
+				System.exit(-1);
+			}
 			
 			path     = argv[1];
 			filename = argv[2];

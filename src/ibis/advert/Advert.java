@@ -14,6 +14,7 @@ package ibis.advert;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -39,9 +40,14 @@ public class Advert {
 	 * @param server
 	 * 		Location of Advert server to connect to.
 	 */
-	public Advert(String server) { 
-		logger.debug("Connecting to public server at: {}", server);
-		comm = new Communications(server);
+	public Advert(URI server) throws SchemeNotSupportedException {
+		if (!(server.getScheme().equals("any") || 
+				server.getScheme().equals("google"))) {
+			throw new SchemeNotSupportedException(
+					"Scheme should be google:// or any://");
+		}
+		logger.debug("Connecting to public server at: {}", server.getHost());
+		comm = new Communications(server.getHost());
 		logger.info("Communications class created.");
 	}
 	
@@ -64,13 +70,16 @@ public class Advert {
 	 * @throws MalformedURLException
 	 * 		URL was malformed. 
 	 */
-	public Advert(String server, String user, String passwd)
+	public Advert(URI server, String user, String passwd)
 			throws MalformedURLException, ProtocolException, IOException,
-			AuthenticationException {
-		logger.debug("Connecting to private server at: {}", server);
-		logger.debug("User/Pass found: {}/{}", user, (passwd != null && passwd
-				.length() > 0) ? passwd.charAt(passwd.length() - 1) : "null");
-		comm = new Communications(server, user, passwd);
+			AuthenticationException, SchemeNotSupportedException {
+		if (!(server.getScheme().equals("any") || server.getScheme().equals("google"))) {
+			throw new SchemeNotSupportedException(
+					"Scheme should be google:// or any://");
+		}
+		logger.debug("Connecting to private server at: {}", server.getHost());
+		logger.debug("User/Pass found: {}/********", user);
+		comm = new Communications(server.getHost(), user, passwd);
 		logger.info("Communications class created.");
 	}
 	
