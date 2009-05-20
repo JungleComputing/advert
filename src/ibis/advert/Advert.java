@@ -40,11 +40,14 @@ public class Advert {
 	 * @param server
 	 * 		Location of Advert server to connect to.
 	 */
-	public Advert(URI server) throws SchemeNotSupportedException {
-		if (!(server.getScheme().equals("any") || 
+	public Advert(URI server) throws UriNotSupportedException {
+		if (server.getScheme() == null || !(server.getScheme().equals("any") || 
 				server.getScheme().equals("google"))) {
-			throw new SchemeNotSupportedException(
-					"Scheme should be google:// or any://");
+			throw new UriNotSupportedException(
+					"Scheme not supported, should be google:// or any://");
+		}
+		if (server.getHost() == null) {
+			throw new UriNotSupportedException("Hostname can't be null");
 		}
 		logger.debug("Connecting to public server at: {}", server.getHost());
 		comm = new Communications(server.getHost());
@@ -72,10 +75,14 @@ public class Advert {
 	 */
 	public Advert(URI server, String user, String passwd)
 			throws MalformedURLException, ProtocolException, IOException,
-			AuthenticationException, SchemeNotSupportedException {
-		if (!(server.getScheme().equals("any") || server.getScheme().equals("google"))) {
-			throw new SchemeNotSupportedException(
-					"Scheme should be google:// or any://");
+			AuthenticationException, UriNotSupportedException {
+		if (server.getScheme() == null || !(server.getScheme().equals("any") || 
+				server.getScheme().equals("google"))) {
+			throw new UriNotSupportedException(
+					"Scheme not supported, should be google:// or any://");
+		}
+		if (server.getHost() == null) {
+			throw new UriNotSupportedException("Hostname can't be null");
 		}
 		logger.debug("Connecting to private server at: {}", server.getHost());
 		logger.debug("User/Pass found: {}/********", user);
