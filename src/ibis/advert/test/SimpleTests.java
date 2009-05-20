@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -65,6 +66,18 @@ public class SimpleTests {
 		System.setProperties(properties); 	
 	}
 	
+	private static void testURI() {
+		try {
+			URI uri = new URI("gae://jondoe.appspot.com/some/identifier/here");
+			System.out.println(uri.getScheme());
+			System.out.println(uri.getHost());
+			System.out.println(uri.getPath());
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+	}
+	
 	private static void testJSON() {
 		String[] roseindia = null;
 		
@@ -97,7 +110,7 @@ public class SimpleTests {
 			}
 		}
 	}
-
+	
 	private static void testLogger() {
 		String[] roseindia = {"chanan","tapan","Amar","santosh","deepak"};
 		
@@ -987,7 +1000,7 @@ public class SimpleTests {
 //		makeHttpJson(uri);
 		
 		/* Base64 tests. */
-		base64test();
+//		base64test();
 		
 		uri = server.concat("queries/find");
 //		testFind(uri);
@@ -998,5 +1011,7 @@ public class SimpleTests {
 //		testLogger();
 		
 //		testJSON();
+		
+		testURI();
 	}
 }

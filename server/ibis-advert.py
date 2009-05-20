@@ -137,6 +137,11 @@ class AddObject(webapp.RequestHandler):
       self.response.out.write("Failed to load JSON: object not properly structured")
       return
     
+    if json[0] is None:
+      self.error(400)
+      self.response.out.write("Failed to load JSON: object not properly structured")
+      return     
+    
     if json[1] is not None:
       try:
         json[1].keys() #check if second array entry is a JSON object
