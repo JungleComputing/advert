@@ -22,9 +22,31 @@ public class MetaData {
 	private HashMap<String, String> hMap = new HashMap<String, String>();
 
 	/**
-	 * Constructor.
+	 * Empty constructor.
 	 */
 	public MetaData() {
+	}
+	
+	/**
+	 * This constructor constructs a {@link MetaData} object from a serialized
+	 * form.
+	 * @param serialized
+	 * 			  Serialized {@link String} of {@link MetaData} that will be 
+	 * 			  parsed into a {@link MetaData} object. The serialized form
+	 * 			  should be of the form 
+	 * 			  <code>key1=value1,key2=value2,key3=value3</code>.
+	 */
+	public MetaData(String serialized) {
+		String[] keyvalue = serialized.split(",");
+		String[] temp = null;
+		
+		for (int i = 0; i < keyvalue.length; i++) {
+			temp = keyvalue[i].split("=");
+			if (temp.length != 2) {
+				continue;
+			}
+			hMap.put(temp[0], temp[1]);
+		}
 	}
 
 	/**

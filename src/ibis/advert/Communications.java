@@ -15,10 +15,10 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.CharBuffer;
 import java.security.Security;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 class Communications {
 	final static Logger logger = LoggerFactory.getLogger(Communications.class);
 
-	private static final int MAX_REQ_SIZE = 10000000; /* 10e7 */
+//	private static final int MAX_REQ_SIZE = 10000000; /* 10e7 */
 	private static final int MAX_DB_SIZE  = 1000000;  /* 10e6 */
 	private static final int MAX_RETRIES  = 3; /* max number of retries */
 	private static final String CLIENTLOGIN = 
@@ -207,6 +207,9 @@ class Communications {
 		if (cookie == null) {
 			throw new AuthenticationException();
 		}
+		else {
+			/* Get expiration time and start NOOP thread. */
+		}
 	}
 	
 	/**
@@ -269,6 +272,16 @@ class Communications {
 				in = new 
 					BufferedReader(new InputStreamReader(httpc.getErrorStream()));
 			}
+		    
+		    logger.debug("httpSend() header fields:");
+			for (int i = 0; httpc.getHeaderField(i) != null; i++) {
+				logger.debug("{} - {}", httpc.getHeaderFieldKey(i), 
+						httpc.getHeaderField(i));
+				if (httpc.getHeaderFieldKey(i) != null && 
+					httpc.getHeaderFieldKey(i).equals("Set-Cookie")) {
+					cookie = httpc.getHeaderField(i); /* Renew Cookie. */
+				}
+			}		    
 		    
 		    StringBuilder body = new StringBuilder();
 	        String inputLine;
