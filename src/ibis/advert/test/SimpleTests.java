@@ -71,15 +71,16 @@ public class SimpleTests {
 	
 	private static void testDateFormat() {
 		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d-MMMMM-yyyy HH:mm:ss z");
-				
-		try {
-			date = sdf.parse("Tue, 26-May-2009 10:02:33 GMT");
-			System.out.println(date);
-		}
-		catch (ParseException pe) {
-			System.out.println(pe);
-		}
+//		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d-MMMMM-yyyy HH:mm:ss z");
+//				
+//		try {
+//			date = sdf.parse("Tue, 26-May-2009 10:02:33 GMT");
+//			System.out.println(date);
+//		}
+//		catch (ParseException pe) {
+//			System.out.println(pe);
+//		}
+		System.out.println(date.getTime());
 
 	}
 	

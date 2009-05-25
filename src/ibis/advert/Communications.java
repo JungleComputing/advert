@@ -208,10 +208,9 @@ class Communications {
 			throw new AuthenticationException();
 		}
 		else {
-			/* Get expiration time and start NOOP thread. */
-			String[] cookieArray = cookie.split(";");
-			String[] dateArray = cookieArray[1].split("=");
-			
+		/* Get expiration time and start NOOP thread. */
+		KeepAlive ka = new KeepAlive(cookie, server);
+		ka.run();
 		}
 	}
 	
