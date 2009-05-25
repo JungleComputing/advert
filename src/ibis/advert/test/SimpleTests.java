@@ -28,6 +28,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.Security;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import net.sf.json.JSONArray;
@@ -64,6 +67,20 @@ public class SimpleTests {
 					"com.sun.net.ssl.internal.www.protocol|".concat(handlers));
 		}
 		System.setProperties(properties); 	
+	}
+	
+	private static void testDateFormat() {
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d-MMMMM-yyyy HH:mm:ss z");
+				
+		try {
+			date = sdf.parse("Tue, 26-May-2009 10:02:33 GMT");
+			System.out.println(date);
+		}
+		catch (ParseException pe) {
+			System.out.println(pe);
+		}
+
 	}
 	
 	private static void testURI() {
@@ -1012,6 +1029,8 @@ public class SimpleTests {
 		
 //		testJSON();
 		
-		testURI();
+//		testURI();
+		
+		testDateFormat();
 	}
 }

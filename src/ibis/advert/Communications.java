@@ -209,6 +209,9 @@ class Communications {
 		}
 		else {
 			/* Get expiration time and start NOOP thread. */
+			String[] cookieArray = cookie.split(";");
+			String[] dateArray = cookieArray[1].split("=");
+			
 		}
 	}
 	
