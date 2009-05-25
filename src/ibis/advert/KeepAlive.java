@@ -6,6 +6,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * This class is used as {@link Thread} for keeping the connection with the
+ * Google App Engine alive. It wil sleep for a certain amount of time
+ * (determined by the Cookie's <code>expire</code> field before renewing its
+ * cookie.
+ * 
+ * @author Bas
+ *
+ */
+
 public class KeepAlive extends Thread {
 	private String cookie = null;
 	private String server = null;
@@ -13,11 +23,28 @@ public class KeepAlive extends Thread {
 	private static final String GOOGLE_FORMAT = "EEE, d-MMMMM-yyyy HH:mm:ss z";
 	private static final long   GRACE_PERIOD  = 3600000; /* 1 hour */
 	
+	/**
+	 * Constructor. Uses the current cookie plus the server address to
+	 * initialize.
+	 * 
+	 * @param cookie
+	 * 		A {@link String} containing the current cookie.
+	 * @param server
+	 * 		A {@link String} containing the server address.
+	 */
 	KeepAlive(String cookie, String server) {
 		this.cookie = cookie;
 		this.server = server;
 	}
 
+	/**
+	 * Private function which parses the <code>expire</code> field in the 
+	 * cookie, and returns the Epoch value.
+	 * 
+	 * @return
+	 * 		A {@link long} containing the Epoch value of the date just
+	 * 		parsed, or <code>-1</code> if parsing failed.
+	 */
 	private long getDateFromCookie() {
 		String[] cookieArray = cookie.split(";");
 		String[] dateArray   = cookieArray[1].split("=");
@@ -37,6 +64,14 @@ public class KeepAlive extends Thread {
 		return -1;	
 	}
 	
+	/**
+	 * Private function which sends a <code>NOOP</code> (i.e. a dummy-command)
+	 * to the App Engine, in order to receive a renewed cookie.
+	 * 
+	 * @return
+	 * 		A {@link String} containing the renewed cookie, or 
+	 * 		<code>null</code> if renewing the cookie failed. 
+	 */
 	private String noop() {
 		URL url;
 		try {
@@ -72,6 +107,13 @@ public class KeepAlive extends Thread {
 		return null; /* fail */
 	}
 	
+	/**
+	 * Main function that is called when the {@link Thread} starts. This
+	 * function infinitely calculates the time to sleep (until 
+	 * <code>GRACE_PERIOD</code> before the cookie would expire), and then
+	 * calls <code>noop()</code> to renew the cookie, which is sent to the
+	 * parent.
+	 */
 	public void run() {
 		while (true) {
 			/* Calculate time to wait. */
