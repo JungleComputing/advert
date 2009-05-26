@@ -6,6 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is used as {@link Thread} for keeping the connection with the
  * Google App Engine alive. It wil sleep for a certain amount of time
@@ -19,6 +22,8 @@ import java.util.Date;
 public class KeepAlive extends Thread {
 	private String cookie = null;
 	private String server = null;
+	
+	final static Logger logger = LoggerFactory.getLogger(KeepAlive.class);
 	
 	private static final String GOOGLE_FORMAT = "EEE, d-MMMMM-yyyy HH:mm:ss z";
 	private static final long   GRACE_PERIOD  = 3600000; /* 1 hour */
@@ -35,6 +40,7 @@ public class KeepAlive extends Thread {
 	KeepAlive(String cookie, String server) {
 		this.cookie = cookie;
 		this.server = server;
+		logger.info("KeepAlive intialized.");
 	}
 
 	/**
@@ -115,6 +121,7 @@ public class KeepAlive extends Thread {
 	 * parent.
 	 */
 	public void run() {
+		logger.info("Thread started.");
 		while (true) {
 			/* Calculate time to wait. */
 			long now = new Date().getTime();
@@ -122,6 +129,7 @@ public class KeepAlive extends Thread {
 			
 			/* Wait until cookie almost expires. */
 			try {
+				logger.debug("Sleeping {} ms.", (exp - now) - GRACE_PERIOD);
 				Thread.sleep((exp - now) - GRACE_PERIOD);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -129,8 +137,10 @@ public class KeepAlive extends Thread {
 			}
 			
 			/* Refresh cookie */
+			logger.info("Calling noop().");
 			cookie = noop();
 			
+			logger.debug("New cookie: {}", cookie);
 			//return renewed cookie to parent
 		}
 	}

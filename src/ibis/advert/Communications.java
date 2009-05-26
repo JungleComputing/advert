@@ -208,9 +208,10 @@ class Communications {
 			throw new AuthenticationException();
 		}
 		else {
-		/* Get expiration time and start NOOP thread. */
-		KeepAlive ka = new KeepAlive(cookie, server);
-		ka.run();
+			/* Get expiration time and start NOOP thread. */
+			logger.info("Starting KeepAlive thread.");
+			KeepAlive ka = new KeepAlive(cookie, server);
+			ka.run();
 		}
 	}
 	
