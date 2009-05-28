@@ -9,12 +9,12 @@ package ibis.advert;
  */
 
 @SuppressWarnings("serial")
-public class IlligalPathException extends Exception {
-	public IlligalPathException() {
+public class IllegalPathException extends Exception {
+	public IllegalPathException() {
 		super();
 	}
 	
-	public IlligalPathException(String message) {
+	public IllegalPathException(String message) {
 		super(message);
 	}
 }

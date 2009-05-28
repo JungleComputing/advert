@@ -115,7 +115,7 @@ public class Advert {
 		}
 		if (path.endsWith("/")) {
 			logger.warn("Throwing IlligalPathException");
-			throw new IlligalPathException("Path cannot be a directory.");
+			throw new IllegalPathException("Path cannot be a directory.");
 		}
 		
 		JSONArray  jsonarr = new JSONArray();
@@ -175,7 +175,7 @@ public class Advert {
 		}
 		if (path.endsWith("/")) {
 			logger.warn("Throwing IlligalPathException");
-			throw new IlligalPathException("Path cannot be a directory.");
+			throw new IllegalPathException("Path cannot be a directory.");
 		}
 		
 		logger.info("Calling httpSend() /del...");
@@ -201,7 +201,7 @@ public class Advert {
 		}
 		if (path.endsWith("/")) {
 			logger.warn("Throwing IlligalPathException");
-			throw new IlligalPathException("Path cannot be a directory.");
+			throw new IllegalPathException("Path cannot be a directory.");
 		}
 		
 		logger.info("Calling httpSend() /get...");
@@ -229,7 +229,7 @@ public class Advert {
 		}
 		if (path.endsWith("/")) {
 			logger.warn("Throwing IlligalPathException");
-			throw new IlligalPathException("Path cannot be a directory.");
+			throw new IllegalPathException("Path cannot be a directory.");
 		}
 		
 		MetaData   metadata = new MetaData();

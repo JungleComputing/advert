@@ -38,9 +38,32 @@ public class KeepAlive extends Thread {
 	 * 		A {@link String} containing the server address.
 	 */
 	KeepAlive(String cookie, String server) {
+		setDaemon(true);
 		this.cookie = cookie;
 		this.server = server;
 		logger.info("KeepAlive intialized.");
+	}
+	
+	/**
+	 * Sets the current cookie to the value as passed in <code>cook</code>.
+	 * 
+	 * @param cook
+	 * 		A {@link String} containing the new value of the most recent 
+	 * 		cookie.
+	 */
+	public void setCookie(String cook) {
+		cookie = cook;
+	}
+	
+	/**
+	 * Public function which returns the most recent authentication cookie 
+	 * known.
+	 * 
+	 * @return
+	 * 		A {@link String} containing the most recent cookie.
+	 */
+	public String getCookie() {
+		return cookie;
 	}
 
 	/**
@@ -52,7 +75,7 @@ public class KeepAlive extends Thread {
 	 * 		parsed, or <code>-1</code> if parsing failed.
 	 */
 	private long getDateFromCookie() {
-		String[] cookieArray = cookie.split(";");
+		String[] cookieArray = getCookie().split(";");
 		String[] dateArray   = cookieArray[1].split("=");
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(GOOGLE_FORMAT);
@@ -122,26 +145,33 @@ public class KeepAlive extends Thread {
 	 */
 	public void run() {
 		logger.info("Thread started.");
+		String noop = null;
 		while (true) {
-			/* Calculate time to wait. */
-			long now = new Date().getTime();
-			long exp = getDateFromCookie();
 			
-			/* Wait until cookie almost expires. */
-			try {
-				logger.debug("Sleeping {} ms.", (exp - now) - GRACE_PERIOD);
-				Thread.sleep((exp - now) - GRACE_PERIOD);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+			while ((getDateFromCookie() - new Date().getTime()) > GRACE_PERIOD) {
+				/* Calculate time to wait. */
+				long now = new Date().getTime();
+				long exp = getDateFromCookie();
+
+				try {
+					/* Wait until cookie almost expires. */
+					logger.debug("Sleeping {} ms.", (exp - now) - GRACE_PERIOD);
+					Thread.sleep((exp - now) - GRACE_PERIOD);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			/* Refresh cookie */
 			logger.info("Calling noop().");
-			cookie = noop();
 			
-			logger.debug("New cookie: {}", cookie);
-			//return renewed cookie to parent
+			noop = noop();
+			if (noop != null && !noop.equals("")) {
+				setCookie(noop);
+			}
+			logger.debug("New cookie: {}", getCookie());
 		}
 	}
 }

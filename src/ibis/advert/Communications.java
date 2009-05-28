@@ -15,9 +15,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.Security;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +38,7 @@ class Communications {
 	
 	private String  cookie; /* authentication cookie */
 	private String  server; /* server connecting to */
+	private KeepAlive keepAlive; /* keep alive */
 	private Boolean pub;    /* denotes if server is public */
 	
 	/**
@@ -85,23 +84,23 @@ class Communications {
 	/**
 	 * Function to set up SSL in the system properties. 
 	 */
-	private static void setupSsl() {
-		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-
-		Properties properties = System.getProperties();
-
-		String handlers = System.getProperty("java.protocol.handler.pkgs");
-		if (handlers == null) {
-			/* nothing specified yet (expected case) */
-			properties.put("java.protocol.handler.pkgs",
-					"com.sun.net.ssl.internal.www.protocol");
-		} else {
-			/* something already there, put ourselves out front */
-			properties.put("java.protocol.handler.pkgs",
-					"com.sun.net.ssl.internal.www.protocol|".concat(handlers));
-		}
-		System.setProperties(properties); 	
-	}
+//	private static void setupSsl() {
+//		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+//
+//		Properties properties = System.getProperties();
+//
+//		String handlers = System.getProperty("java.protocol.handler.pkgs");
+//		if (handlers == null) {
+//			/* nothing specified yet (expected case) */
+//			properties.put("java.protocol.handler.pkgs",
+//					"com.sun.net.ssl.internal.www.protocol");
+//		} else {
+//			/* something already there, put ourselves out front */
+//			properties.put("java.protocol.handler.pkgs",
+//					"com.sun.net.ssl.internal.www.protocol|".concat(handlers));
+//		}
+//		System.setProperties(properties); 	
+//	}
 	
 	/**
 	 * Function to authenticate to the Google App Engine.
@@ -122,7 +121,7 @@ class Communications {
 	    HttpURLConnection httpc = null;
 		
 		/* Setting up SSL. */
-		setupSsl();
+//		setupSsl();
 		
 		/* Create URL object and open connection to ClientLogin. */
 		url   = new URL(CLIENTLOGIN);
@@ -200,7 +199,7 @@ class Communications {
 					httpc.getHeaderField(i));
 			if (httpc.getHeaderFieldKey(i) != null && 
 				httpc.getHeaderFieldKey(i).equals("Set-Cookie")) {
-				cookie = httpc.getHeaderField(i);
+				 = httpc.getHeaderField(i);
 			}
 		}
 		
@@ -210,8 +209,8 @@ class Communications {
 		else {
 			/* Get expiration time and start NOOP thread. */
 			logger.info("Starting KeepAlive thread.");
-			KeepAlive ka = new KeepAlive(cookie, server);
-			ka.run();
+			keepAlive = new KeepAlive(cookie, server);
+//			keepAlive.run();
 		}
 	}
 	
@@ -248,7 +247,7 @@ class Communications {
 			/* Setting headers. */
 			httpc.setRequestMethod("POST");
 			if (!pub) { /* Authenticated server. */
-				httpc.setRequestProperty("Cookie", cookie);
+				httpc.setRequestProperty("Cookie", keepAlive.getCookie());
 			}
 			httpc.setDoInput(true);
 		    httpc.setDoOutput(true);
@@ -282,7 +281,7 @@ class Communications {
 						httpc.getHeaderField(i));
 				if (httpc.getHeaderFieldKey(i) != null && 
 					httpc.getHeaderFieldKey(i).equals("Set-Cookie")) {
-					cookie = httpc.getHeaderField(i); /* Renew Cookie. */
+//					cookie = httpc.getHeaderField(i); /* Renew Cookie. */
 				}
 			}		    
 		    
@@ -325,4 +324,10 @@ class Communications {
 		} while (retries < MAX_RETRIES); /* done MAX_RETRIES times */
 		throw new Exception(result);
 	}
+	
+	@SuppressWarnings("deprecation")
+	public void end() {
+		keepAlive.stop(); //Deprecated?
+	}
+
 }
