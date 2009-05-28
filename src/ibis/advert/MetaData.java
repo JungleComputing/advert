@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 
-@SuppressWarnings("serial")
 public class MetaData {
 	private HashMap<String, String> hMap = new HashMap<String, String>();
 

@@ -10,13 +10,21 @@ Ibis Advert server source release installation
     google.appengine.* packages are required. All are offered by the current
     version of the Google App Engine.
     
+Configuration
+	Before running/uploading the application, please adjust the configuration
+	file "app.yaml" (present in ./server/). The first line (application) should
+	contain the application identifier. This is the identifier you selected 
+	when you created the application in the Administration Console.
+	
+	More information about configuring your app can be found at
+	http://code.google.com/appengine/docs/python/config/appconfig.html
+    
 Upload
-
     To upload the application to the Google App Eninge, the Google App Engine 
     SDK (for Python) is required. This can be downloaded at 
     http://code.google.com/appengine/downloads.html.
 
-    After installation the Advert service can be run locally by running:
+    After configuration the Advert service can be run locally by running:
     	$ dev_appserver.py /home/username/advert_server/
     Or it can be uploaded by running:
     	$ appcfg.py update /home/username/advert_server/
@@ -27,4 +35,5 @@ Upload
     http://code.google.com/appengine/docs/python/tools/.
 
 API
-    The Advert Service Programmer's Manual can be found at ./doc/progman.tex.
+    The API of the Advert Server can be found in the Programmer's Manual, 
+    present in ./doc/progman.tex.
