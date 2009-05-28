@@ -26,7 +26,8 @@ public class KeepAlive extends Thread {
 	final static Logger logger = LoggerFactory.getLogger(KeepAlive.class);
 	
 	private static final String GOOGLE_FORMAT = "EEE, d-MMMMM-yyyy HH:mm:ss z";
-	private static final long   GRACE_PERIOD  = 3600000; /* 1 hour */
+	private static final double GRACE_PERIOD  = .9;
+	private static final int    MAX_RETRIES   = 3;
 	
 	/**
 	 * Constructor. Uses the current cookie plus the server address to
@@ -147,21 +148,24 @@ public class KeepAlive extends Thread {
 		logger.info("Thread started.");
 		String noop = null;
 		while (true) {
+			/* Calculate time to wait. */
+			int retries = 0;
+			long now    = new Date().getTime();
+			long exp    = getDateFromCookie();
+			long slp    = new Double((exp - now) * GRACE_PERIOD).longValue();
 			
-
-			while ((getDateFromCookie() - new Date().getTime()) > GRACE_PERIOD) {
-				/* Calculate time to wait. */
-				long now = new Date().getTime();
-				long exp = getDateFromCookie();
-
-				try {
-					/* Wait until cookie almost expires. */
-					logger.debug("Sleeping {} ms.", (exp - now) - GRACE_PERIOD);
-					Thread.sleep((exp - now) - GRACE_PERIOD);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				/* Wait until cookie almost expires. */
+				logger.debug("Sleeping {} ms.", slp);
+				Thread.sleep(slp);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			/* Check if cookie was already refreshed. */
+			if (exp < getDateFromCookie()) {
+				continue;
 			}
 			
 			/* Refresh cookie */
@@ -170,6 +174,10 @@ public class KeepAlive extends Thread {
 			noop = noop();
 			if (noop != null && !noop.equals("")) {
 				setCookie(noop);
+			}
+			else if (retries++ > MAX_RETRIES) {
+				//TODO: Throw Exception
+				return;
 			}
 			logger.debug("New cookie: {}", getCookie());
 		}

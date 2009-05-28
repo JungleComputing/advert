@@ -36,7 +36,6 @@ class Communications {
 	private static final String CLIENTLOGIN = 
 		"https://www.google.com/accounts/ClientLogin";
 	
-	private String  cookie; /* authentication cookie */
 	private String  server; /* server connecting to */
 	private KeepAlive keepAlive; /* keep alive */
 	private Boolean pub;    /* denotes if server is public */
@@ -194,12 +193,13 @@ class Communications {
 		
 		/* Retrieving cookie. */
 	    logger.debug("GAE header fields:");
+	    String cookie = null;
 		for (int i = 0; httpc.getHeaderField(i) != null; i++) {
 			logger.debug("{} - {}", httpc.getHeaderFieldKey(i), 
 					httpc.getHeaderField(i));
 			if (httpc.getHeaderFieldKey(i) != null && 
 				httpc.getHeaderFieldKey(i).equals("Set-Cookie")) {
-				 = httpc.getHeaderField(i);
+				cookie = httpc.getHeaderField(i);
 			}
 		}
 		
@@ -281,7 +281,7 @@ class Communications {
 						httpc.getHeaderField(i));
 				if (httpc.getHeaderFieldKey(i) != null && 
 					httpc.getHeaderFieldKey(i).equals("Set-Cookie")) {
-//					cookie = httpc.getHeaderField(i); /* Renew Cookie. */
+					keepAlive.setCookie(httpc.getHeaderField(i)); /* Renew. */
 				}
 			}		    
 		    

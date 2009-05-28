@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +141,7 @@ public class Advert {
 		
 		String base64 = null;
 		if (object != null) {
-			base64 = new sun.misc.BASE64Encoder().encode(object);
+			base64 = new String(new Base64().encode(object)); 
 		}
 		
 		jsonarr.add(path);
@@ -207,7 +208,7 @@ public class Advert {
 		logger.info("Calling httpSend() /get...");
 		String base64 = comm.httpSend("/get", path);
 		
-		return new sun.misc.BASE64Decoder().decodeBuffer(base64);
+		return new Base64().decode(base64.getBytes());
 	}
 
 	/**

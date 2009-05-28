@@ -36,6 +36,7 @@ import java.util.Properties;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,8 +302,15 @@ public class SimpleTests {
 		byte[] b = s.getBytes();
 		
 		String base64 = new sun.misc.BASE64Encoder().encode(b);
+		System.out.println(base64);
 		
+		base64 = new String(new Base64().encode(b));
+		System.out.println(base64);
+
 		b = new sun.misc.BASE64Decoder().decodeBuffer(base64);
+		System.out.println(new String(b));
+		
+		b = new Base64().decode(base64.getBytes());
 		System.out.println(new String(b));
 	}
 
@@ -1018,7 +1026,7 @@ public class SimpleTests {
 //		makeHttpJson(uri);
 		
 		/* Base64 tests. */
-//		base64test();
+		base64test();
 		
 		uri = server.concat("queries/find");
 //		testFind(uri);
@@ -1032,6 +1040,6 @@ public class SimpleTests {
 		
 //		testURI();
 		
-		testDateFormat();
+//		testDateFormat();
 	}
 }
