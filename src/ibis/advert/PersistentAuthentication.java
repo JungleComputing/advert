@@ -1,3 +1,7 @@
+/*
+ * Created 22 May 2009 by Bas Boterman.
+ */
+
 package ibis.advert;
 
 import java.net.HttpURLConnection;
@@ -19,11 +23,11 @@ import org.slf4j.LoggerFactory;
  *
  */
 
-public class KeepAlive extends Thread {
+public class PersistentAuthentication extends Thread {
 	private String cookie = null;
 	private String server = null;
 	
-	final static Logger logger = LoggerFactory.getLogger(KeepAlive.class);
+	final static Logger logger = LoggerFactory.getLogger(PersistentAuthentication.class);
 	
 	private static final String GOOGLE_FORMAT = "EEE, d-MMMMM-yyyy HH:mm:ss z";
 	private static final double GRACE_PERIOD  = .9;
@@ -38,7 +42,7 @@ public class KeepAlive extends Thread {
 	 * @param server
 	 * 		A {@link String} containing the server address.
 	 */
-	KeepAlive(String cookie, String server) {
+	PersistentAuthentication(String cookie, String server) {
 		setDaemon(true);
 		this.cookie = cookie;
 		this.server = server;

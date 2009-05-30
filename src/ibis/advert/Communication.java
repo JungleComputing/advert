@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
  * @author bbn230
  */
 
-class Communications {
-	final static Logger logger = LoggerFactory.getLogger(Communications.class);
+class Communication {
+	final static Logger logger = LoggerFactory.getLogger(Communication.class);
 
 //	private static final int MAX_REQ_SIZE = 10000000; /* 10e7 */
 	private static final int MAX_DB_SIZE  = 1000000;  /* 10e6 */
@@ -37,7 +37,7 @@ class Communications {
 		"https://www.google.com/accounts/ClientLogin";
 	
 	private String  server; /* server connecting to */
-	private KeepAlive keepAlive; /* keep alive */
+	private PersistentAuthentication pAuth; /* keep alive */
 	private Boolean pub;    /* denotes if server is public */
 	
 	/**
@@ -46,7 +46,7 @@ class Communications {
 	 * @param server
 	 * 		Location of server to make connections to.
 	 */
-	Communications(String server) {
+	Communication(String server) {
 		this.server = server;
 		pub = true;
 		logger.info("Connected to {}.", server);
@@ -71,7 +71,7 @@ class Communications {
 	 * @throws AuthenticationException
 	 * 		Authentication to server failed.
 	 */
-	Communications(String server, String user, String passwd) 
+	Communication(String server, String user, String passwd) 
 	  throws MalformedURLException, ProtocolException, IOException, 
 	  AuthenticationException {
 		this.server = server;
@@ -79,27 +79,6 @@ class Communications {
 		authenticate(user, passwd);
 		logger.info("Authenticated to {}.", server);
 	}
-	
-	/**
-	 * Function to set up SSL in the system properties. 
-	 */
-//	private static void setupSsl() {
-//		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-//
-//		Properties properties = System.getProperties();
-//
-//		String handlers = System.getProperty("java.protocol.handler.pkgs");
-//		if (handlers == null) {
-//			/* nothing specified yet (expected case) */
-//			properties.put("java.protocol.handler.pkgs",
-//					"com.sun.net.ssl.internal.www.protocol");
-//		} else {
-//			/* something already there, put ourselves out front */
-//			properties.put("java.protocol.handler.pkgs",
-//					"com.sun.net.ssl.internal.www.protocol|".concat(handlers));
-//		}
-//		System.setProperties(properties); 	
-//	}
 	
 	/**
 	 * Function to authenticate to the Google App Engine.
@@ -118,9 +97,6 @@ class Communications {
 	  AuthenticationException {
 		URL url                 = null;
 	    HttpURLConnection httpc = null;
-		
-		/* Setting up SSL. */
-//		setupSsl();
 		
 		/* Create URL object and open connection to ClientLogin. */
 		url   = new URL(CLIENTLOGIN);
@@ -209,7 +185,7 @@ class Communications {
 		else {
 			/* Get expiration time and start NOOP thread. */
 			logger.info("Starting KeepAlive thread.");
-			keepAlive = new KeepAlive(cookie, server);
+			pAuth = new PersistentAuthentication(cookie, server);
 //			keepAlive.run();
 		}
 	}
@@ -247,7 +223,7 @@ class Communications {
 			/* Setting headers. */
 			httpc.setRequestMethod("POST");
 			if (!pub) { /* Authenticated server. */
-				httpc.setRequestProperty("Cookie", keepAlive.getCookie());
+				httpc.setRequestProperty("Cookie", pAuth.getCookie());
 			}
 			httpc.setDoInput(true);
 		    httpc.setDoOutput(true);
@@ -281,7 +257,7 @@ class Communications {
 						httpc.getHeaderField(i));
 				if (httpc.getHeaderFieldKey(i) != null && 
 					httpc.getHeaderFieldKey(i).equals("Set-Cookie")) {
-					keepAlive.setCookie(httpc.getHeaderField(i)); /* Renew. */
+					pAuth.setCookie(httpc.getHeaderField(i)); /* Renew. */
 				}
 			}		    
 		    
@@ -325,9 +301,13 @@ class Communications {
 		throw new Exception(result);
 	}
 	
+	/**
+	 * Function to call when communication class is destroyed. Daemon 
+	 * thread will be stopped accordingly.
+	 */
 	@SuppressWarnings("deprecation")
 	public void end() {
-		keepAlive.stop(); //Deprecated?
+		pAuth.stop(); //Deprecated?
 	}
 
 }

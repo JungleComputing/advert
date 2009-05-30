@@ -29,7 +29,7 @@ public class Advert {
 	
 	final static Logger logger = LoggerFactory.getLogger(Advert.class);
 	
-	private Communications comm = null;
+	private Communication comm = null;
 
 	/**
 	 * Constructor for a new Advert client, which connects to a public (i.e. a
@@ -51,7 +51,7 @@ public class Advert {
 			throw new UriNotSupportedException("Hostname can't be null");
 		}
 		logger.debug("Connecting to public server at: {}", server.getHost());
-		comm = new Communications(server.getHost());
+		comm = new Communication(server.getHost());
 		logger.info("Communications class created.");
 	}
 	
@@ -87,7 +87,7 @@ public class Advert {
 		}
 		logger.debug("Connecting to private server at: {}", server.getHost());
 		logger.debug("User/Pass found: {}/********", user);
-		comm = new Communications(server.getHost(), user, passwd);
+		comm = new Communication(server.getHost(), user, passwd);
 		logger.info("Communications class created.");
 	}
 	

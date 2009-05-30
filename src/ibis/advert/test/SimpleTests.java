@@ -87,8 +87,11 @@ public class SimpleTests {
 	
 	private static void testURI() {
 		try {
-			URI uri = new URI("gae://jondoe.appspot.com/some/identifier/here");
+			URI uri = new URI("google://jondoe%40gmail.com:pass@jondoe.appspot.com/home/jondoe");
 			System.out.println(uri.getScheme());
+			System.out.println(uri.getAuthority());
+			System.out.println(uri.getRawUserInfo());
+			System.out.println(uri.getUserInfo());
 			System.out.println(uri.getHost());
 			System.out.println(uri.getPath());
 		}
@@ -1026,7 +1029,7 @@ public class SimpleTests {
 //		makeHttpJson(uri);
 		
 		/* Base64 tests. */
-		base64test();
+//		base64test();
 		
 		uri = server.concat("queries/find");
 //		testFind(uri);
@@ -1038,7 +1041,7 @@ public class SimpleTests {
 		
 //		testJSON();
 		
-//		testURI();
+		testURI();
 		
 //		testDateFormat();
 	}
