@@ -10,7 +10,12 @@ class MainPage(webapp.RequestHandler):
     
     if user:
       self.response.headers['Content-Type'] = 'text/plain'
-      self.response.out.write('Hello, ' + user.nickname())
+      self.response.out.write('Hello')
+      if users.is_current_user_admin():
+        self.response.out.write(' administator')
+        
+      
+      self.response.out.write(', ' + user.nickname() + '.')
     else:
       self.redirect(users.create_login_url(self.request.uri))
     

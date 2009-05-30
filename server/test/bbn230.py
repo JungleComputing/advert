@@ -43,17 +43,17 @@ class MetaData(db.Model):
 
 #Authentication
 def auth(self): 
-#  if not users.get_current_user():
-#    self.error(403)
-#    self.response.headers['Content-Type'] = 'text/plain'
-#    self.response.out.write('Not Authenticated')
-#    return -1
-#
-#  if not users.is_current_user_admin():
-#    self.error(403)
-#    self.response.headers['Content-Type'] = 'text/plain'
-#    self.response.out.write('No Administrator')
-#    return -1
+  if not users.get_current_user():
+    self.error(403)
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.out.write('Not Authenticated')
+    return -1
+
+  if not users.is_current_user_admin():
+    self.error(403)
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.out.write('No Administrator')
+    return -1
 
   return 0
 

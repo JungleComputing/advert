@@ -136,8 +136,6 @@ public class AdvertTests {
 			logger.debug("File: {}", filename);
 		}
 
-		Thread.sleep(3600000); /* sleep one hour */
-		
 		/* add() */
 //		logger.info("Testing add()...");
 //		testAdd(advert, path, filename);
