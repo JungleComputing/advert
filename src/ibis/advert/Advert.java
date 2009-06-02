@@ -32,16 +32,31 @@ public class Advert {
 	private Communication comm = null;
 
 	/**
-	 * Constructor for a new Advert client, which connects to a public (i.e. a
-	 * server without authentication) Advert server. Note that connecting to a 
-	 * public server does not guarantee the server being alive/existing. The 
-	 * client will notice this once any of the functions below are called. This
-	 * approach saves startup time.
+	 * Constructor for a new Advert client, which dynamically decides to
+	 * connects to a private or public (i.e. a server with or without
+	 * authentication, respectively) Advert server. This choice is made
+	 * depending on <code>userinfo</code> being present in the server
+	 * {@link URI}. Note that connecting to a public server does not guarantee
+	 * the server being alive/existing. The client will notice this once any of
+	 * the functions below are called. This approach saves startup time.
 	 * 
 	 * @param server
-	 * 		Location of Advert server to connect to.
+	 *      Location of Advert server to connect to.
+	 * @throws AuthenticationException 
+	 * 		Authentication to Advert server failed.
+	 * @throws IOException
+	 * 		I/O to Advert server failed.
+	 * @throws ProtocolException 
+	 * 		Wrong protocol applied.
+	 * @throws MalformedURLException
+	 * 		URL was malformed. 
+	 * @throws UriNotSupportedException
+	 * 		The server {@link URI} given does not adhere to:
+	 * 		<code>google://hostname/</code> or <code>any://hostname/</code>
 	 */
-	public Advert(URI server) throws UriNotSupportedException {
+	public Advert(URI server) 
+			throws MalformedURLException, ProtocolException, IOException,
+			AuthenticationException, UriNotSupportedException {
 		if (server.getScheme() == null || !(server.getScheme().equals("any") || 
 				server.getScheme().equals("google"))) {
 			throw new UriNotSupportedException(
@@ -49,6 +64,13 @@ public class Advert {
 		}
 		if (server.getHost() == null) {
 			throw new UriNotSupportedException("Hostname can't be null");
+		}
+		if (server.getUserInfo() != null) { //user info found
+			//Parse user info
+			String[] userpass = server.getUserInfo().split(":");
+			if (userpass != null && userpass.length == 2) {
+				comm = new Communication(server.getHost(), userpass[0], userpass[1]);
+			}
 		}
 		logger.debug("Connecting to public server at: {}", server.getHost());
 		comm = new Communication(server.getHost());
@@ -73,6 +95,9 @@ public class Advert {
 	 * 		Wrong protocol applied.
 	 * @throws MalformedURLException
 	 * 		URL was malformed. 
+	 * @throws UriNotSupportedException
+	 * 		The server {@link URI} given does not adhere to:
+	 * 		<code>google://hostname/</code> or <code>any://hostname/</code>
 	 */
 	public Advert(URI server, String user, String passwd)
 			throws MalformedURLException, ProtocolException, IOException,
