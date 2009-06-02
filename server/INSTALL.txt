@@ -2,7 +2,11 @@ Ibis Advert server source release installation
 
     Before you try to install the Advert server, an app-engine account is
     needed (including an appspot.com domain and a google account). This can
-    be accquired at http://appengine.google.com/.
+    be acquired at http://appengine.google.com/.
+    
+    Note: when creating an Application, do not restrict Authentication options
+    to a domain (i.e. choose the default: "Open to all Google Accounts users").
+    Our server will take care of authenticating owners/administrators itself.
 
     The Advert server software requires at least Python runtime environment 
     version 2.5.2. With an older version of Python, some parts will not 
