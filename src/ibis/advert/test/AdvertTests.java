@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 
 public class AdvertTests {
 
-	private static final String SERVER = "google://bbn230.appspot.com/";
-	private static final String USER   = "ibisadvert@gmail.com";
+	private static final String SERVER = "google://jondoe.appspot.com/";
+	private static final String USER   = "jondoe@gmail.com";
 
 	final static Logger logger = LoggerFactory.getLogger(AdvertTests.class);
 	
@@ -137,22 +137,22 @@ public class AdvertTests {
 		}
 
 		/* add() */
-//		logger.info("Testing add()...");
-//		testAdd(advert, path, filename);
+		logger.info("Testing add()...");
+		testAdd(advert, path, filename);
 		
 		/* get() */
-//		logger.info("Testing get()...");
-//		testGet(advert, path);
+		logger.info("Testing get()...");
+		testGet(advert, path);
 		
-//		/* getMetaData() */
-//		logger.info("Testing getMetaData()...");
-//		testGetMD(advert, path);
-//		
-//		/* find() */
-//		logger.info("Testing find()...");
-//		testFind(advert);
-//		
-//		/* delete() */
+		/* getMetaData() */
+		logger.info("Testing getMetaData()...");
+		testGetMD(advert, path);
+		
+		/* find() */
+		logger.info("Testing find()...");
+		testFind(advert);
+		
+		/* delete() */
 		logger.info("Testing delete()...");
 		testDelete(advert, path);
 	}
