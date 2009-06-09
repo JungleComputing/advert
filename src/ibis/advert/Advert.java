@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 
 public class Advert {
 	
+	private static final int MAX_DB_SIZE  = 1000000;  /* 10e6 */
+
 	final static Logger logger = LoggerFactory.getLogger(Advert.class);
 	
 	private Communication comm = null;
@@ -135,13 +137,19 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
-		if (path == null) {
+		if (path == null || path.equals("")) {
 			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}
 		if (path.endsWith("/")) {
 			logger.warn("Throwing IlligalPathException");
 			throw new IllegalPathException("Path cannot be a directory.");
+		}
+		if ((object.length  + path.length() + 10) > MAX_DB_SIZE) {
+			logger.warn("Throwing RequestTooLargeException");
+			throw new RequestTooLargeException("Object to add larger than " +
+					MAX_DB_SIZE + " bytes (now: " + (object.length + path.length() + 10) + 
+					" bytes )");
 		}
 		
 		JSONArray  jsonarr = new JSONArray();
@@ -195,7 +203,7 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
-		if (path == null) {
+		if (path == null || path.equals("")) {
 			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}
@@ -221,7 +229,7 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException,Exception {
-		if (path == null) {
+		if (path == null || path.equals("")) {
 			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}
@@ -249,7 +257,7 @@ public class Advert {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
-		if (path == null) {
+		if (path == null || path.equals("")) {
 			logger.warn("Throwing NullPointerException");
 			throw new NullPointerException("Path can't be null.");
 		}

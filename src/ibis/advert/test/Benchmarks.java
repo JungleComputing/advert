@@ -129,6 +129,32 @@ public class Benchmarks {
 		}
 	}
 	
+	private static void conn_speed(Advert advert) {
+		byte[] b = new byte[1000000 - 250000];
+		MetaData md = new MetaData();
+		
+		md.put("key1", "value1");
+		md.put("key2", "value2");
+		md.put("key3", "value3");
+		md.put("key4", "value3");
+		md.put("key5", "value3");
+		md.put("key6", "value3");
+		md.put("key3", "value3");
+		md.put("key3", "value3");
+
+		long startTime = System.currentTimeMillis();
+		try {
+			advert.add(b, md, "");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		long stopTime = System.currentTimeMillis();
+		
+		/* Calculate max, min, mean. */
+		System.out.println(1000000 / (stopTime - startTime) + "kB/s");
+	}
+	
 	/**
 	 * @param args
 	 */
@@ -137,9 +163,6 @@ public class Benchmarks {
 		if (args.length != 1) {
 			logger.error("***Usage: AdvertTests <passwd>");
 		}
-		
-		
-		
 		
 		/* Create advert object. */
 		Advert advert = null;
@@ -155,10 +178,12 @@ public class Benchmarks {
 		}
 		
 		/* Start benchmarks. */
-		advert_create(advertUri, args[0]);
-		round_trip_add(advert);
-		round_trip_del(advert);
+//		advert_create(advertUri, args[0]);
+//		round_trip_add(advert);
+//		round_trip_del(advert);
 		
-		connectivity(advert);
+//		connectivity(advert);
+		
+		conn_speed(advert);
 	}
 }

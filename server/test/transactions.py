@@ -12,6 +12,9 @@ class Data(db.Model):
 class MData(db.Model):
   path = db.StringProperty()
   data = db.IntegerProperty()
+  
+class Max(db.Model):
+  data = db.TextProperty()
 
 def dbfunc():
     data = Data()
@@ -28,8 +31,15 @@ def dbfunc():
       mdata.put()
       
     return
+  
+class Size(webapp.RequestHandler):
+  def post(self):
+    m = Max()
+    m.data = self.request.get('upfile') #1MB
+    #m.put()
+    self.response.out.write(len(m)) 
 
-class MainPage(webapp.RequestHandler):
+class Test(webapp.RequestHandler):
   def get(self):
     self.response.out.write('TESTING')
     try:
@@ -40,8 +50,22 @@ class MainPage(webapp.RequestHandler):
     
     self.response.out.write('SUCCESS')
 
+class MainPage(webapp.RequestHandler):
+  def get(self):
+    self.response.out.write("""
+      <html>
+        <body>
+          <form enctype="multipart/form-data" action="./size" method="post">
+            <div><input type=file name=upfile></div>
+            <div><input type="submit" value="Test></div>
+          </form>
+        </body>
+      </html>""")
+
 application = webapp.WSGIApplication(
-                                     [('/trans/', MainPage)],
+                                     [('/trans/', MainPage),
+                                      ('/trans/test', Test),
+                                      ('/trans/size', Size)],
                                      debug=True)
 
 def main():

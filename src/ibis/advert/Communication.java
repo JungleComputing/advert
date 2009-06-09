@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 class Communication {
 	final static Logger logger = LoggerFactory.getLogger(Communication.class);
 
-//	private static final int MAX_REQ_SIZE = 10000000; /* 10e7 */
-	private static final int MAX_DB_SIZE  = 1000000;  /* 10e6 */
+	private static final int MAX_REQ_SIZE = 10000000; /* 10e7 */
 	private static final int MAX_RETRIES  = 3; /* max number of retries */
 	private static final String CLIENTLOGIN = 
 		"https://www.google.com/accounts/ClientLogin";
@@ -207,10 +206,11 @@ class Communication {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
-		if (payload.length() > MAX_DB_SIZE) {
+		if (payload.length() > MAX_REQ_SIZE) {
 			//TODO: for now, otherwise we have to split up at server side
-			throw new RequestTooLargeException("Payload max " + MAX_DB_SIZE +
-				" (currently " + payload.length() + ")");
+			throw new RequestTooLargeException("Payload larger than " +
+					MAX_REQ_SIZE + " bytes (now: " + payload.length() + 
+					" bytes )");
 		}
 		
 		String  result  = null;

@@ -86,20 +86,33 @@ public class SimpleTests {
 	}
 	
 	private static void testURI() {
-		try {
-			URI uri = new URI("google://jondoe%40gmail.com:pass@jondoe.appspot.com/home/jondoe");
-			System.out.println(uri.getScheme());
-			System.out.println(uri.getAuthority());
-			System.out.println(uri.getRawUserInfo());
-			System.out.println(uri.getUserInfo());
-			System.out.println(uri.getHost());
-			System.out.println(uri.getPath());
+//		try {
+//			URI uri = new URI("google://jondoe%40gmail.com:pass@jondoe.appspot.com/home/jondoe");
+//			System.out.println(uri.getScheme());
+//			System.out.println(uri.getAuthority());
+//			System.out.println(uri.getRawUserInfo());
+//			System.out.println(uri.getUserInfo());
+//			System.out.println(uri.getHost());
+//			URI uri = new URI("google://bla.appspot.com");
+//			System.out.println(uri.getPath());
+//		}
+//		catch(Exception e) {
+//			System.out.println(e);
+//		}
+		
+		String aboutToBecomeNull = "test";
+		if ((aboutToBecomeNull = returnNull()).equals("string")) {
+			System.out.println("Hij is dus null");
+			System.out.println(aboutToBecomeNull);
 		}
-		catch(Exception e) {
-			System.out.println(e);
-		}
+			
 	}
 	
+	private static String returnNull() {
+		// TODO Auto-generated method stub
+		return "string";
+	}
+
 	private static void testJSON() {
 		String[] roseindia = null;
 		
