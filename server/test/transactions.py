@@ -15,6 +15,7 @@ class MData(db.Model):
   
 class Max(db.Model):
   data = db.TextProperty()
+  path = db.StringProperty()
 
 def dbfunc():
     data = Data()

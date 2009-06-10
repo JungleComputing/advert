@@ -305,9 +305,8 @@ class Communication {
 	 * Function to call when communication class is destroyed. Daemon 
 	 * thread will be stopped accordingly.
 	 */
-	@SuppressWarnings("deprecation")
 	public void end() {
-		pAuth.stop(); //Deprecated?
+		pAuth.interrupt();
 	}
 
 }

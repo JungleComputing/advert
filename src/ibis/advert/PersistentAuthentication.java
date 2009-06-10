@@ -30,7 +30,7 @@ public class PersistentAuthentication extends Thread {
 	final static Logger logger = LoggerFactory.getLogger(PersistentAuthentication.class);
 	
 	private static final String GOOGLE_FORMAT = "EEE, d-MMMMM-yyyy HH:mm:ss z";
-	private static final double GRACE_PERIOD  = .9;
+	private static final double EXPIRATION_FACTOR = .9;
 	private static final int    MAX_RETRIES   = 3;
 	
 	/**
@@ -156,15 +156,14 @@ public class PersistentAuthentication extends Thread {
 			int retries = 0;
 			long now    = new Date().getTime();
 			long exp    = getDateFromCookie();
-			long slp    = new Double((exp - now) * GRACE_PERIOD).longValue();
+			long slp = new Double((exp - now) * EXPIRATION_FACTOR).longValue();
 			
 			try {
 				/* Wait until cookie almost expires. */
 				logger.debug("Sleeping {} ms.", slp);
 				Thread.sleep(slp);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return; /* Thread was interrupted, we quit. */
 			}
 			
 			/* Check if cookie was already refreshed. */
@@ -180,7 +179,7 @@ public class PersistentAuthentication extends Thread {
 				setCookie(noop);
 			}
 			else if (retries++ > MAX_RETRIES) {
-				//TODO: Throw Exception
+				logger.warn("Failed to refresh cookie. Returning...");
 				return;
 			}
 			logger.debug("New cookie: {}", getCookie());
