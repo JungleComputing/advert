@@ -129,7 +129,8 @@ class Communication {
 	    	inputStream = httpc.getInputStream();
 	    } 
 	    else {
-	    	throw new AuthenticationException();
+	    	throw new AuthenticationException("ClientLogin failed: " + 
+	    			user + "/********");
 	    }
 	    
 	    /* Retrieve body. */
@@ -178,13 +179,14 @@ class Communication {
 		}
 		
 		if (cookie == null) {
-			throw new AuthenticationException();
+			throw new AuthenticationException("Retrieving App Engine " + 
+					"authentication failed: no cookie");
 		}
 		else {
 			/* Get expiration time and start NOOP thread. */
 			logger.info("Starting KeepAlive thread.");
 			pAuth = new PersistentAuthentication(cookie, server);
-			pAuth.run();
+			pAuth.start();
 		}
 	}
 	

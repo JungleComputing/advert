@@ -1,11 +1,14 @@
-import datetime
-import sys
-import asizeof
+import time
 
 print 'Content-Type: text/plain'
 print ''
 print 'Hello, world!'
 
-t = datetime.datetime.now()
+start = time.time()
 
-print asizeof.asizeof(t)
+for x in range(1000000):
+  y = 100*x - 99 # do something
+
+end = time.time()
+
+print (end - start) * 1000

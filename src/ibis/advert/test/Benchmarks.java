@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class Benchmarks {
 	private static final String SERVER = "google://bbn230.appspot.com/";
 	private static final String USER   = "ibisadvert@gmail.com";
-	private static int   TRIES         = 5;
+	private static int   TRIES         = 10;
 	private static long  MS_TO_MEASURE = 1000;
 
 	final static Logger logger = LoggerFactory.getLogger(AdvertTests.class);
@@ -173,17 +173,17 @@ public class Benchmarks {
 			logger.info("Advert object created.");
 		}
 		catch (Exception e) {
-			System.err.println("Malformed URI");
+			e.printStackTrace();
 			System.exit(-1);
 		}
 		
 		/* Start benchmarks. */
-//		advert_create(advertUri, args[0]);
+		advert_create(advertUri, args[0]);
 //		round_trip_add(advert);
 //		round_trip_del(advert);
 		
 //		connectivity(advert);
 		
-		conn_speed(advert);
+//		conn_speed(advert);
 	}
 }
