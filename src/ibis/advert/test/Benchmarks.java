@@ -130,7 +130,7 @@ public class Benchmarks {
 	}
 	
 	private static void conn_speed(Advert advert) {
-		byte[] b = new byte[1000000 - 250000];
+		byte[] b = new byte[10485760];
 		MetaData md = new MetaData();
 		
 		md.put("key1", "value1");
@@ -144,7 +144,7 @@ public class Benchmarks {
 
 		long startTime = System.currentTimeMillis();
 		try {
-			advert.add(b, md, "");
+			advert.add(b, md, "/home/benchmarks/id");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class Advert {
 	
-	private static final int MAX_DB_SIZE  = 1000000;  /* 10e6 */
-
 	final static Logger logger = LoggerFactory.getLogger(Advert.class);
 	
 	private Communication comm = null;
@@ -144,12 +142,6 @@ public class Advert {
 		if (path.endsWith("/")) {
 			logger.warn("Throwing IlligalPathException");
 			throw new IllegalPathException("Path cannot be a directory.");
-		}
-		if ((object.length  + path.length() + 10) > MAX_DB_SIZE) {
-			logger.warn("Throwing RequestTooLargeException");
-			throw new RequestTooLargeException("Object to add larger than " +
-					MAX_DB_SIZE + " bytes (now: " + (object.length + path.length() + 10) + 
-					" bytes )");
 		}
 		
 		JSONArray  jsonarr = new JSONArray();

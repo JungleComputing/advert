@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 class Communication {
 	final static Logger logger = LoggerFactory.getLogger(Communication.class);
 
-	private static final int MAX_REQ_SIZE = 10000000; /* 10e7 */
 	private static final int MAX_RETRIES  = 3; /* max number of retries */
 	private static final String CLIENTLOGIN = 
 		"https://www.google.com/accounts/ClientLogin";
@@ -185,8 +184,23 @@ class Communication {
 			/* Get expiration time and start NOOP thread. */
 			logger.info("Starting KeepAlive thread.");
 			pAuth = new PersistentAuthentication(cookie, server);
-//			keepAlive.run();
+			pAuth.run();
 		}
+	}
+	
+	/**
+	 * This function parses a server-generated error to a human readable format.
+	 * @param message
+	 * 		A {@link String}, containing the error message as thrown by the 
+	 * 		server (most likely HTML).
+	 * @return
+	 * 		A {@link String}, containing a human readable error message, or
+	 * 		<code>Unknown error</code>, if the error message could not be 
+	 * 		parsed.
+	 */
+	private String parseError(String message) {
+		String[] result = message.split("\n");
+		return result[result.length - 2];
 	}
 	
 	/**
@@ -206,13 +220,6 @@ class Communication {
 	  throws MalformedURLException, IOException, AuthenticationException,
 	  AppEngineResourcesException, NoSuchElementException, 
 	  RequestTooLargeException, Exception {
-		if (payload.length() > MAX_REQ_SIZE) {
-			//TODO: for now, otherwise we have to split up at server side
-			throw new RequestTooLargeException("Payload larger than " +
-					MAX_REQ_SIZE + " bytes (now: " + payload.length() + 
-					" bytes )");
-		}
-		
 		String  result  = null;
 		int     retries = 0;
 		
@@ -266,6 +273,7 @@ class Communication {
 	        
 	        while ((inputLine = in.readLine()) != null) {
 	        	body.append(inputLine);
+	        	body.append("\n");
 	        }
 		    
 		    httpc.disconnect();
@@ -288,6 +296,8 @@ class Communication {
 				case HttpURLConnection.HTTP_NOT_FOUND:
 					throw new NoSuchElementException(result);
 				case HttpURLConnection.HTTP_REQ_TOO_LONG:
+					/*fall through*/
+				case HttpURLConnection.HTTP_ENTITY_TOO_LARGE:
 					throw new RequestTooLargeException(result);
 				case HttpURLConnection.HTTP_UNAVAILABLE:
 					throw new AppEngineResourcesException(result);
@@ -298,9 +308,11 @@ class Communication {
 					throw new Exception(result);
 			}
 		} while (retries < MAX_RETRIES); /* done MAX_RETRIES times */
-		throw new Exception(result);
+		throw new Exception(parseError(result)); /* parsing internal error */
 	}
 	
+
+
 	/**
 	 * Function to call when communication class is destroyed. Daemon 
 	 * thread will be stopped accordingly.
