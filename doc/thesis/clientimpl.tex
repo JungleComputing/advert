@@ -310,6 +310,33 @@ urlc.addRequestProperty("Cookie", "SID=abcde");
 \end{center}
 \end{figure*}
 
+\subsubsection{Persistent Authentication}
+Because the authentication cookies, as provided by the Google App Engine,
+generally expire after 24 hours. This means that, unless the user restarts the
+Advert library, the user will receive an \emph{HTTP 403 Authentication} error,
+once an Advert server runs over 24 hours consequently. 
+
+To prevent the user from resetting the Advert server himself, we added a
+\emph{Persistent Authentication} class. This class is actually a daemon thread,
+which is created once the server has been authenticated. This server thread
+parses the expiry date, which comes with the authentication cookie, and goes to
+sleep 0.9 times the calculated expiry interval. As soon as the cookie is about
+to expire, the daemon thread wakes up, and does a \texttt{NOOP} (NO OPeration)
+call (i.e. a HTTP GET request of the main page), after which the App Engine
+will automatically send a new authentication cookie and a new expiry date along
+with it. Accordingly, we calculate the new expiry interval and go to sleep
+again.
+
+If the Advert service is used on a frequent basis, it could occur that by using
+one of the Advert server's functions, a new (i.e. refreshed) cookie is sent
+alongside the server response. If this is the case, the library will
+automatically update the cookie present in the Persistent Authentication class,
+so the daemon thread won't have to perform unnecessary \texttt{NOOP} calls.
+
+The Persistent Authentication class is the only class where the authentication
+cookie is stored. If a function wants to reference or update the authentication
+cookie, \texttt{getCookie()} or \texttt{setCookie()} can be used respectively.
+
 \subsection{HTTP Response}
 After the HTTP request is sent, we are able to receive the HTTP response. To
 begin with, we will download the response headers sent by the web server, after

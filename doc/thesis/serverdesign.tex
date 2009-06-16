@@ -259,7 +259,6 @@ Section \ref{appengine-quotas}). Plus we don't give any guarantees. If we run
 out of HTTPS, we just have to wait another 24 hours and it will work again. Either way
 configuration is done beforehand , when it comes to secure connections.
 \subsubsection{GQL Queries}
-\dashline{
 SQL queries are generally vulnerable to SQL injection,
 which is a technique that exploits a security vulnerability occurring in the
 database layer of an application. Basically it would make it possible to insert
@@ -267,7 +266,6 @@ an SQL statement within a statement, and execute custom code. Usually this
 custom code exists of malicious statements like \texttt{DROP}. Since the Google
 App Engine's GQL Syntax only supports the \texttt{SELECT} stament, we do not
 have to prevent this (see Figure \ref{gql-syntax}).
-}
 
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
@@ -286,8 +284,6 @@ have to prevent this (see Figure \ref{gql-syntax}).
 \end{center}
 \end{figure*}
 
-\dashline{
 In addition, the App Engine does not support multiple queries seperated by a
 semi-colon (``\texttt{;}''), because it raises a parse error. Only one query at
 a time can be executed and there is no support for nested queries also.
-}

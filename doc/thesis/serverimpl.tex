@@ -79,38 +79,33 @@ class MetaData(db.Model):
 \end{center}
 \end{figure*}
 
-\dashline{
 Note that an Advert object can be \texttt{null}. Although we do not see why
 just storing meta data would be useful, we do allow to store a \texttt{null}
 object.
-}
 
 \paragraph{MetaData}
 At our server, we would like to store meta data not as a binary object, but as
 readable strings of data. This way, we can search meta data when it is queried.
-According to the AdvertService API, a MetaData object should look like Figure\ref{serverimpl-ds}. In this object, we just need to store key-value pairs,
-which are String properties. Every object will be linked to a parent (Advertobject), as soon as it's created. \dashline{Note that there is redundant
-information inside this object, being the \texttt{path} value. We did this to
-simplify our GQL queries as described in Section \ref{serverimpl-findmd}.}
-
-\dashline{
+According to the AdvertService API, a MetaData object should look like Figure
+\ref{serverimpl-ds}. In this object, we just need to store key-value pairs, which
+are String properties. Every object will be linked to a parent (Advert object),
+as soon as it's created. Note that there is redundant information inside this
+object, being the \texttt{path} value. We did this to simplify our GQL queries as
+described in Section \ref{serverimpl-findmd}.
 Just like the Advert object, a MetaData object can be null (i.e. no MetaData
 is to be stored). The only way the object can then be referenced is by using
 the specified pathname. 
-}
 
 \subsubsection{Transactions}
 \label{serverimpl-trans}
-\dashline{
 Since the (Advert) object and the MetaData object are stored sequentially, it is
 essential that they are stored either both, or neither of them, to ensure
 consistency. Fortunately, the Google App Engine datastore provides a mechanism
 for ensuring both are stored or, if the datastore fails, nothing is stored.
 Using transactions, we can call a function and maintain atomicity. All
 functionality of the App Engine can be used inside a function that is called in
-transaction, except for GQL functions.}
+transaction, except for GQL functions.
 
-\dashline{
 Another prequisite of transactions is that all data operated on must be in the
 same entity group (this includes retrieving entities by key, updating entities, and
 deleting entities). Entity group relationships tell App Engine to store several
@@ -121,7 +116,6 @@ entity puts the new entity in the same entity group as the parent entity. This i
 exactly what we do when storing an object with meta data attached to it (all
 meta data which belongs to a certain object have the same parent, being the
 object itself). Notice that each root entity belongs to a separate entity group,so a single transaction cannot create or operate on more than one root entity. 
-}
 
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
@@ -136,7 +130,6 @@ except db.TransactionFailedError, message:
 \end{center}
 \end{figure*}
 
-\dashline{
 A small example of how transactions work inside the App Engine is shown in Figure
 \ref{serverimpl-transfun}. In this example we encapsulated the transaction
 function \texttt{store}, with arguments \texttt{json}, into a \texttt{try},
@@ -144,15 +137,12 @@ function \texttt{store}, with arguments \texttt{json}, into a \texttt{try},
 applied, and the datastore API raises an exception, which in turn is caught bythe \texttt{except} statement and an error message is attached. The transction
 could fail due to a high rate of contention, with too many users trying
 to modify an entity at the same time. Or an operation may fail due to the
-application reaching a quota limit. Or there may be an internal error with thedatastore.}
-
-\dashline{
+application reaching a quota limit. Or there may be an internal error with thedatastore.
 Note that to ensure consistency of the datastore, we will also use transactions
 to remove objects from the datstore. Again this is done sequentially. If one
 delete function would fail, we would end op with an inconsistent copy of the
 datastore. Hence we will again use transactions for atomicity and thus
 consistency.
-}
 
 \subsubsection{Path Encoding}
 To have the AdvertService work properly, we need some path encoding to save
@@ -174,7 +164,8 @@ advantage of this model is that it works exactly analogue to the JavaGAT
 AdvertService. The disadvantage of this is that we have to parse our own
 pathnames, and keep track of them by means of a non-existing mechanism (i.e.
 something that we need to build ourselves). Since this is not a major obstacle,
-we will stick with the second approach. \dashline{Note that all pathnames areallowed at the server side. They are just used as identifiers of objects, notactual paths.}
+we will stick with the second approach. Note that all pathnames are allowed at
+the server side. They are just used as identifiers of objects, not actual paths.
 \subsection{Public Server Functions}
 Below we will list some of the major functions the advert server will offer to
 the client. These functions will be used by, for example, the JavaGAT
@@ -307,13 +298,11 @@ binary data only. The only option is to use the \texttt{db.TextProperty()},
 since it is not limited to 500 characters, like the \texttt{db.StringProperty()}
 is.
 
-\dashline{
 Before storing the JSON object it is checked to be a valid JSON object, which
 should adhere to the syntax shown in Figure \ref{serverimpl-json-syntax}.
 Otherwise an error is returned and the object is not stored. Note that storing a
 JSON object is done in an atomic transaction, as described in section
-\ref{serverimpl-trans}.}
-
+\ref{serverimpl-trans}.
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
 \begin{code}
@@ -346,11 +335,9 @@ specified path, that entry gets overwritten, and a warning is issued. This is
 done by sending an HTTP 205 (Reset Content) Status Code and a warning in the
 message body.
 
-\dashline{
 Note that if meta data is \texttt{null}, no meta data will be stored in the
 datastore, since it would not make any sense to search for data that is never
 sent.
-}
 
 \subsubsection{Finding MetaData}
 \label{serverimpl-findmd}
@@ -445,7 +432,6 @@ self.response.out.write(bin.data)
 \end{figure*}
 
 \subsubsection{Removing an Object From the Datastore}
-\dashline{
 To remove an (Advert) object from the datastore, a user calls the
 \texttt{delete()} function, with a pathname as argument. Obviously, the most
 straightforward way to remove an item from the datastore is to query all
@@ -453,9 +439,7 @@ objects and meta data that match the pathname given. Naturally, we want to
 perform the removal of the object and associated meta data in transaction,
 because we do not want inconsistencies in our datastore (i.e. querying meta
 data of which the associated object does not exist anymore).
-}
 
-\dashline{
 The only problem we have now is that we cannot perform queries inside a
 transaction, since the Google App Engine does not allow us to do so. The
 solution that Google provides is either to work with keys (which is not
@@ -463,7 +447,6 @@ feasible in our case), or prepare your queries before performing the
 transaction. We adapted this solution by sending our query results to a
 \texttt{remove()} function, which iterates through the query results and
 deletes all objects and meta data given to the function.
-}
 
 \subsection{Private Server Functions}
 Below we will describe some of the private server functions provided for the

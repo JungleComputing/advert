@@ -35,7 +35,7 @@ class Communication {
 		"https://www.google.com/accounts/ClientLogin";
 	
 	private String  server; /* server connecting to */
-	private PersistentAuthentication pAuth; /* keep alive */
+	private PersistentAuthentication pAuth; /* keep cookie alive */
 	private Boolean pub;    /* denotes if server is public */
 	
 	/**
@@ -184,7 +184,7 @@ class Communication {
 		}
 		else {
 			/* Get expiration time and start NOOP thread. */
-			logger.info("Starting KeepAlive thread.");
+			logger.info("Starting Persistent Authentication thread.");
 			pAuth = new PersistentAuthentication(cookie, server);
 			pAuth.start();
 		}
@@ -317,10 +317,11 @@ class Communication {
 
 	/**
 	 * Function to call when communication class is destroyed. Daemon 
-	 * thread will be stopped accordingly.
+	 * thread will be interrupted accordingly.
 	 */
 	public void end() {
-		pAuth.interrupt();
+		if (!pub) {
+			pAuth.interrupt();
+		}
 	}
-
 }

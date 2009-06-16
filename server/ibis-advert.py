@@ -116,7 +116,17 @@ def gc():
 
 class MainPage(webapp.RequestHandler):
   def get(self):
-    self.redirect(users.create_login_url(self.request.uri))
+    self.response.out.write("""
+      <html>
+        <head>
+          <title>Google App Engine Advert Server</title>
+        </head>
+        <body>
+          <h1>Google App Engine Advert Server</h1>
+          <h2>&copy; 2008-2009 Copyright: Bas Boterman, Vrije Universiteit Amsterdam</h2>
+        </body>
+      </html> 
+    """)
 
 class AddObject(webapp.RequestHandler):
   def post(self):
@@ -283,13 +293,18 @@ class FindMetaData(webapp.RequestHandler):
     
     self.response.out.write(simplejson.dumps(paths))  
 
+class Login(webapp.RequestHandler):
+  def get(self):
+    self.redirect(users.create_login_url(self.request.uri))
+
 application = webapp.WSGIApplication(
                                      [('/',      MainPage),
                                       ('/add',   AddObject),
                                       ('/del',   DelObject),
                                       ('/get',   GetObject),
                                       ('/getmd', GetMetaData),
-                                      ('/find',  FindMetaData)],
+                                      ('/find',  FindMetaData),
+                                      ('/login', Login)],
                                      debug=True)
 
 def main():
