@@ -19,6 +19,8 @@ import cgi
 import datetime
 import logging
 
+import time #benchmark prequisite
+
 from sets import Set
 from google.appengine.api import users
 from google.appengine.ext import webapp
@@ -125,6 +127,8 @@ class AddObject(webapp.RequestHandler):
     response = 201 #standard response
     body = self.request.body
     
+    start = time.time()
+    
     try: #try to load serialized form of JSON
       json = simplejson.loads(body)
     except:
@@ -168,6 +172,10 @@ class AddObject(webapp.RequestHandler):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write(message)
         return
+    
+    stop = time.time()
+    
+    logging.info((stop - start) * 1000)
     
     self.response.http_status_message(response) #created/overwritten
     self.response.headers['Content-Type'] = 'text/plain'

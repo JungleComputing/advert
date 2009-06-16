@@ -50,12 +50,12 @@ public class Benchmarks {
 	
 	private static void round_trip_add(Advert advert) {
 		/* File sizes: 1kB, 10kB, 100kB, 1MB. */
-		byte[] b = new byte[1000];
+		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		md.put("key1", "value1");
-		md.put("key2", "value2");
-		md.put("key3", "value3");
+		for (int i=0; i<100; i++) {
+			md.put("key" + i, "value" + i);
+		}
 
 		long min = Long.MAX_VALUE;
 		long max = 0;
@@ -85,8 +85,8 @@ public class Benchmarks {
 		
 		/* Calculate max, min, mean. */
 		System.out.println("Approximate round trip times in milli-seconds:");
-		System.out.println("\tMinimum = " + min + "ms, Maximum = " + max +
-				"ms, Average = " + tot/TRIES + "ms");
+		System.out.println("\tMinimum = " + min + "ms, Average = " + tot/TRIES + 
+				"ms, Maximum = " + max + "ms");
 	}
 	
 	private static void round_trip_del(Advert advert) {
@@ -178,9 +178,9 @@ public class Benchmarks {
 		}
 		
 		/* Start benchmarks. */
-		advert_create(advertUri, args[0]);
-//		round_trip_add(advert);
-//		round_trip_del(advert);
+//		advert_create(advertUri, args[0]);
+		round_trip_add(advert);
+		round_trip_del(advert);
 		
 //		connectivity(advert);
 		
