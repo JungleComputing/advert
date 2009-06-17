@@ -1,0 +1,127 @@
+\documentclass{beamer}
+
+\usepackage{beamerthemesplit}
+
+\title{A Cloud-based Application Storage Service \newline for Ibis}
+\author{Bas Boterman}
+\date{\today}
+
+\begin{document}
+
+\frame{
+	\titlepage
+	\begin{figure}[h]
+	\begin{center}
+	\includegraphics[width=3cm]{msc_logo.png} 
+	\end{center}
+	\end{figure}
+}
+
+\section[Outline]{}
+\frame{\tableofcontents}
+
+\section{Introduction}
+\subsection{Thesis}
+\frame
+{
+  \frametitle{Thesis}
+  A Cloud-based Application Storage Service for Ibis 
+  \newline 
+  \newline 
+  \newline
+  \newline 
+}
+
+\frame
+{
+  \frametitle{Thesis}
+  A \textbf{Cloud-based} Application Storage Service for Ibis
+  
+  \begin{quote}
+  A style of computing in which dynamically scalable resources are provided as a service over the Internet.
+  \end{quote}
+
+  E.g. the Google App Engine.
+}
+
+\frame
+{
+  \frametitle{Thesis}
+  A Cloud-based \textbf{Application Storage Service} for Ibis
+  
+  \begin{quote}
+  A service used by applications to store and retrieve application data.
+  \end{quote}
+
+  I.e. an Advert service.
+}
+
+\frame
+{
+  \frametitle{Thesis}
+  A Cloud-based Application Storage Service for \textbf{Ibis}
+  
+  \begin{quote}
+  The main goal of the Ibis project is to create an efficient Java-based platform for grid computing.
+  \end{quote}
+
+  \begin{itemize}
+    \item JavaGAT (Grid Applicatin Toolkit)
+    \item IPL (Ibis Portible Layer)
+  \end{itemize}
+}
+
+\subsection{Google App Engine}
+\frame
+{
+	\frametitle{Google App Engine}
+	\begin{quote}
+    A platform for building and hosting web applications on
+	the Google infrastructure for free.
+    \end{quote}
+	
+	\begin{itemize}
+      \item Python programming language
+      \item Web application framework
+      \item Authentication through Google Accounts
+      \item 10GB traffic per day
+      \item 1GB of data storage
+    \end{itemize}
+}
+
+\subsection{Ibis}
+\frame
+{
+	\frametitle{JavaGAT}
+	\begin{quote}
+    JavaGAT offers a set of coordinated, generic and flexible APIs for accessing
+    grid services from application codes, portals, data managements systems, etc.
+    \end{quote}
+	
+	\begin{itemize}
+      \item File operations (File, LogicalFile, RandomAccessFile, Endpoint)
+      \item File stream operations (FileInputStream, FileOutputStream)
+      \item Job submission (ResourceBroker)
+      \item Monitoring (Monitorable)
+      \item Access to information services (AdvertService)
+    \end{itemize}
+}
+
+\frame
+{
+	\frametitle{IPL}
+	\begin{quote}
+    The IPL is a communication library is specifically designed for usage in a
+    grid environment.
+    \end{quote}
+}
+
+\section{Google App Engine Advert Server}
+\subsection{Design}
+
+\frame{
+	\frametitle{Server Design}
+	Public/Authenticated server
+	HTTP only
+}
+\end{document}

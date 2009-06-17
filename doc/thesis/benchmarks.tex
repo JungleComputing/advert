@@ -93,28 +93,28 @@ of size 730Bytes, 7.300Bytes, 73.000Bytes, and 730.000Bytes (being 1kB, 10kB,
 
 \paragraph{Variable Object Size}
 Below we state the results of the measurements we did client-side. Note that
-these measurements are network latency dependent. For network independent
-measurements see the Server-side measurements. We added an object (without meta
-data), of variable size, to the datastore ten times.\newline
+the client-side measurements are network latency dependent, where the
+server-side measurements are not (see Figure \ref{add-obj-size}). We added an
+object (without meta data), of variable size, to the datastore ten times.
+
+If we look at the subdivision of adding an object to the datastore, client
+side, we see that for all results that encoding the data to Base64 takes a
+negligible amount of time (less than 1\% of the total time, except when we add
+730.000Bytes, this takes 2.6\% of the total time). 
 
 \begin{figure}
 \begin{tabular}{|r|r|r|r|}
 \hline
 Bytes sent & Min. & Avg. & Max. \\
+\hline
+\multicolumn{4}{|c|}{Client side} \\
 \hline
 730 & 222ms & 279ms & 449ms \\
 7.300 & 221ms & 368ms & 815ms \\
 73.000 & 511ms & 786ms & 952ms \\ 
 730.000 & 1632ms & 2258ms & 5597ms \\
 \hline
-\end{tabular}
-\caption{Client}
-\end{figure}
-
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-Bytes sent & Min. & Avg. & Max. \\
+\multicolumn{4}{|c|}{Server side} \\
 \hline
 730 & 76ms & 117ms & 311ms \\
 7.300 & 63ms & 98ms & 273ms \\
@@ -122,16 +122,25 @@ Bytes sent & Min. & Avg. & Max. \\
 730.000 & 173ms & 213ms & 292ms \\
 \hline
 \end{tabular}
-\caption{Server}
+\caption{Sending Different Object Sizes. \label{add-obj-size}}
 \end{figure}
 
 \paragraph{Variable Meta Data Size}
-Lorem Ipsum \ldots
+In addition to varying object sizes, we also added an object (of size 730Bytes)
+to the datastore, with a variable number of key-value pairs. We chose sending 0
+pairs, 5 pairs, 25 pairs, 50 pairs, and 100 pairs. For results, see figure
+\ref{add-md-size}.
+
+Also the time to convert a \texttt{MetaData} object to JSON takes a negligible
+amount of time (less than 1\% of the total time), even when adding large numbers
+of key-value pairs (e.g. 100 pairs).
 
 \begin{figure}
 \begin{tabular}{|r|r|r|r|}
 \hline
 \# Key-Value Pairs & Min. & Avg. & Max. \\
+\hline
+\multicolumn{4}{|c|}{Client side} \\
 \hline
 0 & 222ms & 279ms & 449ms \\
 5 & 270ms & 405ms & 592ms \\
@@ -139,15 +148,7 @@ Lorem Ipsum \ldots
 50 &  641ms & 767ms & 909ms \\
 100 & 968ms & 1151ms & 1647ms\\
 \hline
-\end{tabular}
-\caption{Client}
-\end{figure}
-\paragraph{Variable Meta Data Size}
-
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-# Key-Value Pairs & Min. & Avg. & Max. \\
+\multicolumn{4}{|c|}{Server side} \\
 \hline
 0 & 76ms & 117ms & 311ms \\
 5 & 132ms & 238ms & 451ms \\
@@ -156,7 +157,7 @@ Lorem Ipsum \ldots
 100 & 818ms & 984ms & 1379ms \\
 \hline
 \end{tabular}
-\caption{Server}
+\caption{Sending Different Meta Data Sizes. \label{add-md-size}}
 \end{figure}
 
 \paragraph{Overwrite}
@@ -176,6 +177,62 @@ Overwrite & 355ms & 425ms & 552ms \\
 \hline
 \end{tabular}
 \caption{Server}
+\end{figure}
+
+\subsubsection{Get}
+After an element is stored in the datastore, it can be retrieved by a client.
+In this case, we tested the 10 elements residing in the datstore, all of the
+same size. Next, we retrieved every element from the datastore sequentially and
+measured the time to do so client and server-side (see Figure
+\ref{get-obj-size}). Note that we will not vary the number of Meta Data items,
+because those are not fetched using the \texttt{get()} function.
+
+As for client-side measurements. Decoding from Base64 to the actual binary
+object takes a negligible amount of time (less or equal to 0ms).
+
+Finally, we will see if latency increases (server-side), if the number of
+entries in the datatore increase. We measured server-side latency with a
+varialbe number of entries in the datastore (10, 100, 1000), where all objects
+are the same size (for results, see Figure \ref{get-obj-amt}). According to
+Google, the latency should stay consistent.
+
+\begin{figure}
+\begin{tabular}{|r|r|r|r|}
+\hline
+Bytes received & Min. & Avg. & Max. \\
+\hline
+\multicolumn{4}{|c|}{Client side} \\
+\hline
+730 & 151ms & 162ms & 176ms \\
+7.300 & 165ms & 186ms & 274ms \\
+73.000 & 213ms & 249ms & 403ms \\
+730.000 & 452ms & 537ms & 766ms \\
+\hline
+\multicolumn{4}{|c|}{Server side} \\
+\hline
+730 & 64ms & 90ms & 257ms \\
+7.300 & 64ms & 116ms & 208ms \\
+73.000 & 76ms & 96ms & 125ms \\
+730.000 & 182ms & 233ms & 342ms \\
+\hline
+\end{tabular}
+\caption{Receiving Different Object Sizes. \label{get-obj-size}}
+\end{figure}
+
+\begin{figure}
+\begin{tabular}{|r|r|r|r|}
+\hline
+\# Entries in datastore & Min. & Avg. & Max. \\
+\hline
+\multicolumn{4}{|c|}{Server side} \\
+\hline
+10 & 64ms & 90ms & 257ms \\
+100 & \\
+1000 & \\
+\hline
+\end{tabular}
+\caption{Receiving Objects With Different Amounts in Datastore.
+\label{get-obj-amt}}
 \end{figure}
 
 % ClientLogin: 66

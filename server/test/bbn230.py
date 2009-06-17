@@ -175,7 +175,7 @@ class AddObject(webapp.RequestHandler):
     
     stop = time.time()
     
-    logging.info((stop - start) * 1000)
+    #logging.info((stop - start) * 1000)
     
     self.response.http_status_message(response) #created/overwritten
     self.response.headers['Content-Type'] = 'text/plain'
@@ -206,14 +206,21 @@ class GetObject(webapp.RequestHandler):
     if auth(self) < 0: return
     
     body  = self.request.body
+    
+    start = time.time()
+    
     query = db.GqlQuery("SELECT * FROM Advert WHERE path = :1", body)
     
     if query.count() < 1: #no matching object found
       self.error(404)
       self.response.headers['Content-Type'] = 'text/plain'
       self.response.out.write('No Such Element')
-      return      
+      return
     
+    stop = time.time()
+    
+    logging.info((stop - start) * 1000)
+ 
     for advert in query:
       self.response.headers['Content-Type'] = 'text/plain'
       self.response.out.write(advert.object) #returning the first entry we find
