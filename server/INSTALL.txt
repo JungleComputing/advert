@@ -20,6 +20,10 @@ Configuration
 	contain the application identifier. This is the identifier you selected 
 	when you created the application in the Administration Console.
 	
+	The authenticated version is installed by default. When choosing to install 
+	the public version, change `ibis-advert-priv.py' into `ibis-advert-pub.py'
+	(as noted in the comments).
+	
 	More information about configuring your app can be found at
 	http://code.google.com/appengine/docs/python/config/appconfig.html
     

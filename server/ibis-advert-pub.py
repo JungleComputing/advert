@@ -1,18 +1,36 @@
 #!/usr/bin/env python
 #
-# Copyright 2007 Google Inc.
+# Copyright (c) 2008, 2009, Bas Boterman, Vrije Universiteit, The Netherlands
+# All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Redistribution and use in source and binary forms,
+# with or without modification, are permitted provided
+# that the following conditions are met:
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#    * Redistributions in binary form must reproduce the above
+#      copyright notice, this list of conditions and the following
+#      disclaimer in the documentation and/or other materials provided
+#      with the distribution.
+#
+#    * Neither the name of the Vrije Universiteit nor the names of its
+#      contributors may be used to endorse or promote products derived
+#      from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+# NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+# AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
 import cgi
@@ -40,22 +58,6 @@ class MetaData(db.Model):
   value  = db.StringProperty()
 
 ##Private Functions
-
-#Authentication
-def auth(self): 
-  if not users.get_current_user():
-    self.error(403)
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write('Not Authenticated')
-    return -1
-
-  if not users.is_current_user_admin():
-    self.error(403)
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write('No Administrator')
-    return -1
-
-  return 0
 
 #Storing a JSON object 
 def store(json):
@@ -130,8 +132,6 @@ class MainPage(webapp.RequestHandler):
 
 class AddObject(webapp.RequestHandler):
   def post(self):
-    if auth(self) < 0: return
-    
     response = 201 #standard response
     body = self.request.body
     
@@ -187,8 +187,6 @@ class AddObject(webapp.RequestHandler):
 
 class DelObject(webapp.RequestHandler):
   def post(self):
-    if auth(self) < 0: return
-    
     body  = self.request.body
     query1 = db.GqlQuery("SELECT * FROM Advert WHERE path = :1", body)
     query2 = db.GqlQuery("SELECT * FROM MetaData WHERE path = :1", body)
@@ -205,8 +203,6 @@ class DelObject(webapp.RequestHandler):
     
 class GetObject(webapp.RequestHandler):
   def post(self):
-    if auth(self) < 0: return
-    
     body  = self.request.body
     query = db.GqlQuery("SELECT * FROM Advert WHERE path = :1", body)
     
@@ -225,8 +221,6 @@ class GetObject(webapp.RequestHandler):
   
 class GetMetaData(webapp.RequestHandler):
   def post(self):
-    if auth(self) < 0: return
-    
     body  = self.request.body
     query = db.GqlQuery("SELECT * FROM MetaData WHERE path = :1", body)
     
@@ -246,8 +240,6 @@ class GetMetaData(webapp.RequestHandler):
 
 class FindMetaData(webapp.RequestHandler):
   def post(self):
-    if auth(self) < 0: return
-    
     body = self.request.body
     
     try: #try to load serialized form of JSON
@@ -293,18 +285,13 @@ class FindMetaData(webapp.RequestHandler):
     
     self.response.out.write(simplejson.dumps(paths))  
 
-class Login(webapp.RequestHandler):
-  def get(self):
-    self.redirect(users.create_login_url(self.request.uri))
-
 application = webapp.WSGIApplication(
                                      [('/',      MainPage),
                                       ('/add',   AddObject),
                                       ('/del',   DelObject),
                                       ('/get',   GetObject),
                                       ('/getmd', GetMetaData),
-                                      ('/find',  FindMetaData),
-                                      ('/login', Login)],
+                                      ('/find',  FindMetaData)],
                                      debug=True)
 
 def main():

@@ -5,5 +5,5 @@ api_version: 1
 
 handlers:
 - url: .*
-  script: ibis-advert.py
+  script: ibis-advert-priv.py #for public server, change `priv' to `pub'
   secure: optional
