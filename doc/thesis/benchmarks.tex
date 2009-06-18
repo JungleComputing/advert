@@ -211,10 +211,10 @@ Bytes received & Min. & Avg. & Max. \\
 \hline
 \multicolumn{4}{|c|}{Server side} \\
 \hline
-730 & 9ms & 12ms & 18ms \\
-7.300 & 9ms & 11ms & 10ms \\
-73.000 & 11ms & 14ms & 19ms \\
-730.000 & 36ms & 40ms & 47ms \\
+730 & 27ms & 30ms & 34ms \\
+7.300 &  \\
+73.000 &  \\
+730.000 &  \\
 \hline
 \end{tabular}
 \caption{Receiving Different Object Sizes. \label{get-obj-size}}
@@ -227,9 +227,9 @@ Bytes received & Min. & Avg. & Max. \\
 \hline
 \multicolumn{4}{|c|}{Server side} \\
 \hline
-10 & 9ms & 12ms & 18ms \\
-100 & 8ms & 12ms & 16ms \\
-1000 & 9ms & 11ms & 13ms \\
+10 & 27ms & 30ms & 34ms \\
+100 & 22ms & 26ms & 30ms \\
+1000 & 23ms & 30ms & 36ms \\
 \hline
 \end{tabular}
 \caption{Receiving Objects With Different Amounts in Datastore.
@@ -256,9 +256,9 @@ are the same size (for results, see Figure \ref{del-obj-amt}).
 \hline
 \multicolumn{4}{|c|}{Server side} \\
 \hline
-10 &  \\
-100 &  \\
-1000 &  \\
+10 & 79ms & 92ms & 104ms  \\
+100 & 82ms & 89ms & 94ms \\
+1000 & 80ms & 94ms & 129ms \\
 \hline
 \end{tabular}
 \caption{Deleting Objects With Different Amounts in Datastore.
