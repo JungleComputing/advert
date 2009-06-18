@@ -175,7 +175,7 @@ class AddObject(webapp.RequestHandler):
     
     stop = time.time()
     
-    #logging.info((stop - start) * 1000)
+    #logging.info("add %s" % ((stop - start) * 1000))
     
     self.response.http_status_message(response) #created/overwritten
     self.response.headers['Content-Type'] = 'text/plain'
@@ -188,6 +188,9 @@ class DelObject(webapp.RequestHandler):
     if auth(self) < 0: return
     
     body  = self.request.body
+    
+    start = time.time()
+    
     query1 = db.GqlQuery("SELECT * FROM Advert WHERE path = :1", body)
     query2 = db.GqlQuery("SELECT * FROM MetaData WHERE path = :1", body)
     
@@ -198,6 +201,8 @@ class DelObject(webapp.RequestHandler):
       return      
     
     if remove(body) is 0: #remove went well
+      stop = time.time()
+      logging.info("del %s" % ((stop - start) * 1000))
       self.response.headers['Content-Type'] = 'text/plain'
       self.response.out.write('OK')
     
@@ -217,11 +222,11 @@ class GetObject(webapp.RequestHandler):
       self.response.out.write('No Such Element')
       return
     
-    stop = time.time()
     
-    logging.info((stop - start) * 1000)
- 
+    
     for advert in query:
+      stop = time.time()
+      logging.info("get %s" % ((stop - start) * 1000))
       self.response.headers['Content-Type'] = 'text/plain'
       self.response.out.write(advert.object) #returning the first entry we find
       break #and stop

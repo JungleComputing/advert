@@ -53,7 +53,7 @@ public class Benchmarks {
 		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<1; i++) {
+		for (int i=0; i<100; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -62,32 +62,25 @@ public class Benchmarks {
 		long tot = 0;
 		long[] times = new long[TRIES];
 		char add = 'a';
-		char add2 = 'a';
 		for (int i=0; i<TRIES; i++) {
-			for (int j=0; j<TRIES; j++) {
-//				for (int k=0; k<9; k++) {
-					long startTime = System.currentTimeMillis();
-					try {
-						advert.add(b, null, "/home/benchmarks/" + add + add2);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					long stopTime = System.currentTimeMillis();
-					times[i] = (stopTime - startTime);
-					tot += times[i];
-					
-					if (times[i] < min) {
-						min = times[i];
-					}
-					if (times[i] > max) {
-						max = times[i];
-					}
-					add2++;
-				}
-				add2 = 'a';
-				add++;
-//			}
+			long startTime = System.currentTimeMillis();
+			try {
+				advert.add(b, md, "/home/benchmarks/" + add);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			long stopTime = System.currentTimeMillis();
+			times[i] = (stopTime - startTime);
+			tot += times[i];
+			
+			if (times[i] < min) {
+				min = times[i];
+			}
+			if (times[i] > max) {
+				max = times[i];
+			}
+			add++;
 		}
 		
 		/* Calculate max, min, mean. */
@@ -106,7 +99,7 @@ public class Benchmarks {
 		for (int i=0; i<TRIES; i++) {
 			long startTime = System.currentTimeMillis();
 			try {
-				advert.get("/home/benchmarks/a" + add);
+				advert.get("/home/benchmarks/" + add);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -136,29 +129,24 @@ public class Benchmarks {
 		long tot = 0;
 		long[] times = new long[TRIES];
 		char add = 'a';
-		char add2 = 'a';
 		for (int i=0; i<TRIES; i++) {
-			for (int j=0; j<TRIES; j++) {
-				long startTime = System.currentTimeMillis();
-				try {
-					advert.delete("/home/benchmarks/" + add + add2);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				long stopTime = System.currentTimeMillis();
-				times[i] = (stopTime - startTime);
-				tot += times[i];
-				
-				if (times[i] < min) {
-					min = times[i];
-				}
-				if (times[i] > max) {
-					max = times[i];
-				}
-				add2++;
+			long startTime = System.currentTimeMillis();
+			try {
+				advert.delete("/home/benchmarks/" + add);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			add2 = 'a';
+			long stopTime = System.currentTimeMillis();
+			times[i] = (stopTime - startTime);
+			tot += times[i];
+			
+			if (times[i] < min) {
+				min = times[i];
+			}
+			if (times[i] > max) {
+				max = times[i];
+			}
 			add++;
 		}
 		
@@ -166,6 +154,47 @@ public class Benchmarks {
 		System.out.println("Approximate round trip times in milli-seconds:");
 		System.out.println("\tMinimum = " + min + "ms, Maximum = " + max +
 				"ms, Average = " + tot/TRIES + "ms");
+	}
+	
+	private static void round_trip_find(Advert advert) {
+		/* File sizes: 1kB, 10kB, 100kB, 1MB. */
+		byte[] b = new byte[730];
+		MetaData md = new MetaData();
+		
+		for (int i=0; i<100; i++) {
+			md.put("key" + i, "value" + i);
+		}
+
+		long min = Long.MAX_VALUE;
+		long max = 0;
+		long tot = 0;
+		long[] times = new long[TRIES];
+		char add = 'a';
+		for (int i=0; i<TRIES; i++) {
+			long startTime = System.currentTimeMillis();
+			try {
+				advert.find(md);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			long stopTime = System.currentTimeMillis();
+			times[i] = (stopTime - startTime);
+			tot += times[i];
+			
+			if (times[i] < min) {
+				min = times[i];
+			}
+			if (times[i] > max) {
+				max = times[i];
+			}
+			add++;
+		}
+		
+		/* Calculate max, min, mean. */
+		System.out.println("Approximate round trip times in milli-seconds:");
+		System.out.println("\tMinimum = " + min + "ms, Average = " + tot/TRIES + 
+				"ms, Maximum = " + max + "ms");
 	}
 	
 	private static void connectivity(Advert advert) {
@@ -225,9 +254,10 @@ public class Benchmarks {
 		
 		/* Start benchmarks. */
 //		advert_create(advertUri, args[0]);
-//		round_trip_add(advert);
+		round_trip_add(advert);
 //		round_trip_get(advert);
-		round_trip_del(advert);
+//		round_trip_del(advert);
+		round_trip_find(advert);
 		
 //		connectivity(advert);
 		
