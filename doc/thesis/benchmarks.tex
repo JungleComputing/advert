@@ -188,13 +188,14 @@ measured the time to do so client and server-side (see Figure
 because those are not fetched using the \texttt{get()} function.
 
 As for client-side measurements. Decoding from Base64 to the actual binary
-object takes a negligible amount of time (less or equal to 0ms).
+object takes a negligible amount of time (less than or equal to 1ms).
 
 Finally, we will see if latency increases (server-side), if the number of
 entries in the datatore increase. We measured server-side latency with a
 varialbe number of entries in the datastore (10, 100, 1000), where all objects
 are the same size (for results, see Figure \ref{get-obj-amt}). According to
-Google, the latency should stay consistent.
+Google, the latency should stay consistent, and as we can see from Figure
+\ref{get-obj-amt}, its average stays around 25 to 30ms.
 
 \begin{figure}
 \begin{tabular}{|r|r|r|r|}
@@ -210,10 +211,10 @@ Bytes received & Min. & Avg. & Max. \\
 \hline
 \multicolumn{4}{|c|}{Server side} \\
 \hline
-730 & 64ms & 90ms & 257ms \\
-7.300 & 64ms & 116ms & 208ms \\
-73.000 & 76ms & 96ms & 125ms \\
-730.000 & 182ms & 233ms & 342ms \\
+730 & 9ms & 12ms & 18ms \\
+7.300 & 9ms & 11ms & 10ms \\
+73.000 & 11ms & 14ms & 19ms \\
+730.000 & 36ms & 40ms & 47ms \\
 \hline
 \end{tabular}
 \caption{Receiving Different Object Sizes. \label{get-obj-size}}
@@ -226,13 +227,42 @@ Bytes received & Min. & Avg. & Max. \\
 \hline
 \multicolumn{4}{|c|}{Server side} \\
 \hline
-10 & 64ms & 90ms & 257ms \\
-100 & \\
-1000 & \\
+10 & 9ms & 12ms & 18ms \\
+100 & 8ms & 12ms & 16ms \\
+1000 & 9ms & 11ms & 13ms \\
 \hline
 \end{tabular}
 \caption{Receiving Objects With Different Amounts in Datastore.
 \label{get-obj-amt}}
+\end{figure}
+
+\subsubsection{Delete}
+Deleting an item from the datastore should not be an issue at the client side
+(the client sends the pathname of the object to be deleted, and \texttt{OK} or
+\texttt{Not Found} is returned accordingly). Hence, we only measured the
+\texttt{delete()} function at the server side. 
+
+Again, we are curious to see if the server needs more time to delete an item
+when the datastore is full of data or almost empty (it should not make any
+difference, since the functionality is much alike the \texttt{get()} function).
+Similar to \texttt{get()}, we timed the \texttt{delete()} statement for a
+varialbe number of entries in the datastore (10, 100, 1000), where all objects
+are the same size (for results, see Figure \ref{del-obj-amt}).
+
+\begin{figure}
+\begin{tabular}{|r|r|r|r|}
+\hline
+\# Entries in datastore & Min. & Avg. & Max. \\
+\hline
+\multicolumn{4}{|c|}{Server side} \\
+\hline
+10 &  \\
+100 &  \\
+1000 &  \\
+\hline
+\end{tabular}
+\caption{Deleting Objects With Different Amounts in Datastore.
+\label{del-obj-amt}}
 \end{figure}
 
 % ClientLogin: 66
