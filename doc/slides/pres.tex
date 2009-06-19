@@ -89,6 +89,46 @@
     \end{itemize}
 }
 
+\section{App Engine Advert Server}
+\subsection{Properties}
+
+\frame{
+	\frametitle{(Dis)Advantages}
+	\uncover<1->{Advantages:}
+	\begin{itemize}
+      \item <1->Powerful (distributed) database with query engine and
+      transactions
+      \item <1->Authentication through Google Accounts
+      \item <1->Built-in frameworks (Django, WebOb, PyYAML)
+    \end{itemize}
+    
+    \uncover<2->{Disadvantages:}
+    \begin{itemize}
+      \item <2->Python 2.5 (limited functionality)
+      \item <2->HTTP(S) Only
+      \item <2->Sandbox (no \texttt{fork}, no threads)
+    \end{itemize}
+}
+
+\subsection{Design}
+\frame{
+	\frametitle{Server Design}
+	Public functions:
+	\begin{itemize}
+      \item <1->\texttt{add(data, metadata, path)}
+      \item <1->\texttt{del(path)}
+      \item <1->\texttt{get(path)}
+      \item <1->\texttt{getmd(path)}
+      \item <1->\texttt{find(metadata)}
+    \end{itemize}
+    \newline
+	\begin{itemize}
+      \item <2->\texttt{data}: Text
+      \item <2->\texttt{metadata}: Key-value pairs of Strings
+      \item <2->\texttt{path}: String
+    \end{itemize}
+}
+
 \subsection{Ibis}
 \frame
 {
@@ -116,23 +156,4 @@
     \end{quote}
 }
 
-\section{Google App Engine Advert Server}
-\subsection{Design}
-
-\frame{
-	\frametitle{(Dis)Advantages}
-	Advantages:
-	\begin{itemize}
-      \item <1->Powerful (distributed) database with query engine and
-      transactions
-      \item <1->Authentication through Google Accounts
-      \item <1->Built-in frameworks (Django, WebOb, PyYAML)
-    \end{itemize}
-    
-    Disadvantages:
-    \begin{itemize}
-      \item <2->Python 2.5
-      \item <2->HTTP(S) Only
-    \end{itemize}
-}
 \end{document}

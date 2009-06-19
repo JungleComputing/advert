@@ -53,7 +53,7 @@ public class Benchmarks {
 		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<100; i++) {
+		for (int i=0; i<1000; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -158,43 +158,25 @@ public class Benchmarks {
 	
 	private static void round_trip_find(Advert advert) {
 		/* File sizes: 1kB, 10kB, 100kB, 1MB. */
-		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
 		for (int i=0; i<100; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
-		long min = Long.MAX_VALUE;
-		long max = 0;
-		long tot = 0;
-		long[] times = new long[TRIES];
 		char add = 'a';
 		for (int i=0; i<TRIES; i++) {
-			long startTime = System.currentTimeMillis();
 			try {
 				advert.find(md);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			long stopTime = System.currentTimeMillis();
-			times[i] = (stopTime - startTime);
-			tot += times[i];
-			
-			if (times[i] < min) {
-				min = times[i];
-			}
-			if (times[i] > max) {
-				max = times[i];
-			}
 			add++;
 		}
 		
 		/* Calculate max, min, mean. */
-		System.out.println("Approximate round trip times in milli-seconds:");
-		System.out.println("\tMinimum = " + min + "ms, Average = " + tot/TRIES + 
-				"ms, Maximum = " + max + "ms");
+		System.out.println("done.");
 	}
 	
 	private static void connectivity(Advert advert) {
@@ -205,29 +187,7 @@ public class Benchmarks {
 	}
 	
 	private static void conn_speed(Advert advert) {
-		byte[] b = new byte[10485760];
-		MetaData md = new MetaData();
-		
-		md.put("key1", "value1");
-		md.put("key2", "value2");
-		md.put("key3", "value3");
-		md.put("key4", "value3");
-		md.put("key5", "value3");
-		md.put("key6", "value3");
-		md.put("key3", "value3");
-		md.put("key3", "value3");
 
-		long startTime = System.currentTimeMillis();
-		try {
-			advert.add(b, md, "/home/benchmarks/id");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		long stopTime = System.currentTimeMillis();
-		
-		/* Calculate max, min, mean. */
-		System.out.println(1000000 / (stopTime - startTime) + "kB/s");
 	}
 	
 	/**
@@ -254,10 +214,10 @@ public class Benchmarks {
 		
 		/* Start benchmarks. */
 //		advert_create(advertUri, args[0]);
-		round_trip_add(advert);
+//		round_trip_add(advert);
 //		round_trip_get(advert);
-//		round_trip_del(advert);
-		round_trip_find(advert);
+		round_trip_del(advert);
+//		round_trip_find(advert);
 		
 //		connectivity(advert);
 		
