@@ -107,12 +107,25 @@ def remove(path):
   return 0 #successful remove
 
 #Garbage Collector
-def gc(): 
-  query = db.GqlQuery("SELECT * FROM Advert WHERE ttl < :1", datetime.datetime.today() + datetime.timedelta(days=-10))
-  
-  for advert in query: #all entities that can be deleted
-    advert.delmd()     #delete all associated metadata
-    advert.delete()    #delete the object itself
+def gc():
+  try:
+    while 1:
+      q = db.GqlQuery("SELECT * FROM Advert WHERE ttl < :1", datetime.datetime.today() + datetime.timedelta(days=-10))
+      results = q.fetch(100)
+      if len(results) <= 0:
+        break
+      for result in results:
+        result.delete()
+
+    while 1:
+      q = db.GqlQuery("SELECT * FROM MetaData WHERE ttl < :1", datetime.datetime.today() + datetime.timedelta(days=-10))
+      results = q.fetch(100)
+      if len(results) <= 0:
+        break
+      for result in results:
+        result.delete()
+  except: #the call probably took too long, but enough should be deleted
+    return
 
 ##Public Functions
 
@@ -286,13 +299,63 @@ class FindMetaData(webapp.RequestHandler):
     
     self.response.out.write(simplejson.dumps(paths))  
 
+class DelAll(webapp.RequestHandler):
+  def get(self):
+    if auth(self) < 0: return
+    
+    if not self.request.get('continue'):
+      self.response.out.write("""
+        <html>
+          <head>
+            <title>Google App Engine Advert Server</title>
+          </head>
+          <body>
+            <h1>Purge Database (ALL data will be deleted, this cannot be undone)?</h1>
+            <form method="GET" action="./purge">
+              <input type="submit" value="Purge now" />
+              <input type="hidden" name="continue" value="yes">
+            </form>
+          </body>
+        </html> 
+      """)
+      return
+    
+    self.response.out.write("PURGED.")
+    return
+      
+    try:
+      while 1:
+        q = db.GqlQuery("SELECT * FROM MetaData")
+        results = q.fetch(100)
+        if len(results) <= 0:
+          break
+        for result in results:
+          result.delete()
+        logging.info("Iteration done.")
+  
+      while 1:
+        q = db.GqlQuery("SELECT * FROM Advert")
+        results = q.fetch(100)
+        if len(results) <= 0:
+          break
+        for result in results:
+          result.delete()
+        logging.info("Iteration done.")
+          
+      self.response.headers['Content-Type'] = 'text/plain'
+      self.response.out.write('Done.')
+    except:
+      self.response.headers['Content-Type'] = 'text/plain'
+      self.response.out.write('Could not complete. Refresh this page to try again.')
+
 application = webapp.WSGIApplication(
                                      [('/',      MainPage),
                                       ('/add',   AddObject),
                                       ('/del',   DelObject),
                                       ('/get',   GetObject),
                                       ('/getmd', GetMetaData),
-                                      ('/find',  FindMetaData)],
+                                      ('/find',  FindMetaData),
+                                      ('/purge', DelAll)],
                                      debug=True)
 
 def main():
