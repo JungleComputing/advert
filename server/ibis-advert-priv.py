@@ -282,10 +282,11 @@ class FindMetaData(webapp.RequestHandler):
       return      
       
     try: #check if second array entry is a JSON object
-      json[1].keys() 
+      json.keys() 
     except:
       self.error(400)
       self.response.out.write("Failed to load JSON: object not properly structured")
+      return
     
     query = db.GqlQuery("SELECT * FROM MetaData")
     
