@@ -63,7 +63,7 @@ public class Benchmarks {
 		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<1000; i++) {
+		for (int i=0; i<1; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -75,7 +75,7 @@ public class Benchmarks {
 		for (int i=0; i<TRIES; i++) {
 			long startTime = System.currentTimeMillis();
 			try {
-				advert.add(b, md, "/home/benchmarks/" + add);
+				advert.add(b, null, "/home/benchmarks/" + add);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -268,33 +268,33 @@ public class Benchmarks {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		/* Parse args. */
-//		if (args.length != 1) {
-//			logger.error("***Usage: AdvertTests <passwd>");
-//		}
-//		
-//		/* Create advert object. */
-//		Advert advert = null;
-//		URI advertUri = null;
-//		try {
-//			advertUri = new URI(SERVER);
-//			advert = new Advert(advertUri, USER, args[0]);
-//			logger.info("Advert object created.");
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			System.exit(-1);
-//		}
+		/* Parse args. */
+		if (args.length != 1) {
+			logger.error("***Usage: AdvertTests <passwd>");
+		}
+		
+		/* Create advert object. */
+		Advert advert = null;
+		URI advertUri = null;
+		try {
+			advertUri = new URI(SERVER);
+			advert = new Advert(advertUri, USER, args[0]);
+			logger.info("Advert object created.");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 		
 		/* Start benchmarks. */
 //		advert_create(advertUri, args[0]);
-//		round_trip_add(advert);
+		round_trip_add(advert);
 //		round_trip_get(advert);
 //		round_trip_del(advert);
 //		round_trip_find(advert);
 		
 //		connectivity(advert);
 		
-		speedTest();
+//		speedTest();
 	}
 }

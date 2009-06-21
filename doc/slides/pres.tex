@@ -2,13 +2,16 @@
 
 \usepackage{beamerthemesplit}
 
+\setbeamerfont{code}{size=\tiny}
+
 \title{A Cloud-based Application Storage Service \newline for Ibis}
 \author{Bas Boterman}
 \date{\today}
 
 \begin{document}
 
-\frame{
+\frame
+{
 	\titlepage
 	\begin{figure}[h]
 	\begin{center}
@@ -18,57 +21,63 @@
 }
 
 \section[Outline]{}
-\frame{\tableofcontents}
+\frame
+{
+	\tableofcontents
+}
 
 \section{Introduction}
 \subsection{Thesis}
-\frame
+\frame[t]
 {
-  \frametitle{Thesis}
-  A Cloud-based Application Storage Service for Ibis 
-  \newline 
-  \newline 
-  \newline
-  \newline 
+	\frametitle{Thesis}
+	A Cloud-based Application Storage Service for Ibis 
 }
 
-\frame
+\frame[t]
 {
-  \frametitle{Thesis}
-  A \textbf{Cloud-based} Application Storage Service for Ibis
-  
-  \begin{quote}
-  A style of computing in which dynamically scalable resources are provided as a service over the Internet.
-  \end{quote}
-
-  E.g. the Google App Engine.
+	\frametitle{Thesis}
+	A \textbf{Cloud-based} Application Storage Service for Ibis
+	\newline
+	\uncover<2->{
+		\begin{quote}
+			A style of computing in which dynamically scalable resources are provided as
+			a service over the Internet.
+		\end{quote}
+	
+		E.g. the Google App Engine.
+	}
 }
 
-\frame
+\frame[t]
 {
-  \frametitle{Thesis}
-  A Cloud-based \textbf{Application Storage Service} for Ibis
-  
-  \begin{quote}
-  A service used by applications to store and retrieve application data.
-  \end{quote}
-
-  I.e. an Advert service.
+\frametitle{Thesis}
+	A Cloud-based \textbf{Application Storage Service} for Ibis
+	\newline
+	\uncover<2->{
+		\begin{quote}
+			A service used by applications to store and retrieve application data.
+		\end{quote}
+		
+		I.e. an Advert service.
+	}
 }
 
-\frame
+\frame[t]
 {
-  \frametitle{Thesis}
-  A Cloud-based Application Storage Service for \textbf{Ibis}
-  
-  \begin{quote}
-  The main goal of the Ibis project is to create an efficient Java-based platform for grid computing.
-  \end{quote}
-
-  \begin{itemize}
-    \item JavaGAT (Grid Applicatin Toolkit)
-    \item IPL (Ibis Portible Layer)
-  \end{itemize}
+\frametitle{Thesis}
+	A Cloud-based Application Storage Service for \textbf{Ibis}
+	\newline
+	\uncover<2->{
+		\begin{quote}
+			The main goal of the Ibis project is to create an efficient Java-based
+			platform for grid computing.
+		\end{quote}
+	}
+	\begin{itemize}
+		\item<2-> JavaGAT (Grid Applicatin Toolkit)
+		\item<2-> IPL (Ibis Portible Layer)
+	\end{itemize}
 }
 
 \subsection{Google App Engine}
@@ -76,84 +85,272 @@
 {
 	\frametitle{Google App Engine}
 	\begin{quote}
-    A platform for building and hosting web applications on
-	the Google infrastructure for free.
-    \end{quote}
+		A platform for building and hosting web applications on
+		the Google infrastructure for free.
+	\end{quote}
 	
 	\begin{itemize}
-      \item Python programming language
-      \item Web application framework
-      \item Authentication through Google Accounts
-      \item 10GB traffic per day
-      \item 1GB of data storage
-    \end{itemize}
+		\item Python programming language
+		\item Web application framework
+		\item Authentication through Google Accounts
+		\item 10GB traffic per day
+		\item 1GB of data storage
+	\end{itemize}
 }
 
 \section{App Engine Advert Server}
 \subsection{Properties}
-
-\frame{
+\frame
+{
 	\frametitle{(Dis)Advantages}
 	\uncover<1->{Advantages:}
 	\begin{itemize}
-      \item <1->Powerful (distributed) database with query engine and
-      transactions
-      \item <1->Authentication through Google Accounts
-      \item <1->Built-in frameworks (Django, WebOb, PyYAML)
-    \end{itemize}
-    
-    \uncover<2->{Disadvantages:}
-    \begin{itemize}
-      \item <2->Python 2.5 (limited functionality)
-      \item <2->HTTP(S) Only
-      \item <2->Sandbox (no \texttt{fork}, no threads, no FS)
-    \end{itemize}
+		\item <1->Powerful (distributed) database with query engine and
+			transactions
+		\item <1->Authentication through Google Accounts
+		\item <1->Built-in frameworks (Django, WebOb, PyYAML)
+	\end{itemize}
+
+	\uncover<2->{Disadvantages:}
+	\begin{itemize}
+		\item <2->Python 2.5 (limited functionality)
+		\item <2->HTTP(S) Only
+		\item <2->Sandbox (no \texttt{fork}, no threads, no FS)
+	\end{itemize}
 }
 
 \subsection{Design}
-\frame{
+\frame
+{
 	\frametitle{Server Design}
 	Public functions:
 	\begin{itemize}
-      \item <1->\texttt{add(data, metadata, path)}
-      \item <1->\texttt{del(path)}
-      \item <1->\texttt{get(path)}
-      \item <1->\texttt{getmd(path)}
-      \item <1->\texttt{find(metadata)}
-    \end{itemize}
-    \newline
+		\item <1->\texttt{add(data, metadata, path)}
+		\item <1->\texttt{del(path)}
+		\item <1->\texttt{get(path)}
+		\item <1->\texttt{getmd(path)}
+		\item <1->\texttt{find(metadata)}
+	\end{itemize}
 	\begin{itemize}
-      \item <2->\texttt{data}: Text
-      \item <2->\texttt{metadata}: Key-value pairs of Strings
-      \item <2->\texttt{path}: String
-    \end{itemize}
+		\item <2->\texttt{data}: Text
+		\item <2->\texttt{metadata}: Key-value pairs of Strings
+		\item <2->\texttt{path}: String
+	\end{itemize}
 }
 
-\subsection{Ibis}
+\frame
+{
+	\frametitle{Client Library}
+	\begin{itemize}
+		\item Written in Java
+		\item Implements the GAE Advert server's protocol
+		\begin{itemize}
+			\item Base64 encoding
+			\item JSON encoding
+			\item Error handling 
+		\end{itemize}
+		\item Takes care of authentication
+		\begin{itemize}
+			\item Authentication through \emph{Google ClientLogin}
+			\item Automatically refresh authentication cookie
+		\end{itemize} 
+	\end{itemize}
+}
+
+\section{Benchmarks}
+\subsection{Server Functions}
+\frame
+{
+	\frametitle{Add()}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{add_obj.pdf} 
+	\caption{Adding Objects of Variable Size}
+	\end{center}
+	\end{figure}
+}
+
+\frame
+{
+	\frametitle{Add()}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{add_md.pdf} 
+	\caption{Adding Objects with Variable Meta Data}
+	\end{center}
+	\end{figure}
+}
+
+\frame
+{
+	\frametitle{Get()}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{get_obj.pdf} 
+	\caption{Retrieving Objects of Variable Size}
+	\end{center}
+	\end{figure}
+}
+
+\frame
+{
+	\frametitle{Get()}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{get_amt.pdf} 
+	\caption{Retrieving Objects with Variable Meta Data}
+	\end{center}
+	\end{figure}
+}
+
+\frame
+{
+	\frametitle{Find()}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{find_amt.pdf} 
+	\caption{Finding Meta Data}
+	\end{center}
+	\end{figure}
+}
+
+\subsection{Clients in Parallel}
+\frame
+{
+	\frametitle{Parellel Benchmarks}
+	\textbf{TODO:} under construction!
+}
+
+\section{Applications}
+\subsection{JavaGAT}
 \frame
 {
 	\frametitle{JavaGAT}
 	\begin{quote}
-    JavaGAT offers a set of coordinated, generic and flexible APIs for accessing
-    grid services from application codes, portals, data managements systems, etc.
-    \end{quote}
+		JavaGAT offers a set of coordinated, generic and flexible APIs for accessing
+		grid services from application codes, portals, data managements systems, etc.
+	\end{quote}
 	
 	\begin{itemize}
-      \item File operations (File, LogicalFile, RandomAccessFile, Endpoint)
-      \item File stream operations (FileInputStream, FileOutputStream)
-      \item Job submission (ResourceBroker)
-      \item Monitoring (Monitorable)
-      \item Access to information services (AdvertService)
-    \end{itemize}
+		\item File operations (File, LogicalFile, RandomAccessFile, Endpoint)
+		\item File stream operations (FileInputStream, FileOutputStream)
+		\item Job submission (ResourceBroker)
+		\item Monitoring (Monitorable)
+		\item Access to information services (AdvertService)
+	\end{itemize}
+}
+
+\frame[t]
+{
+	\frametitle{JavaGAT structure}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[width=8cm]{gat-design.png} 
+	\end{center}
+	\end{figure}
+}
+
+\frame[t]
+{
+	\frametitle{JavaGAT structure}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[width=8cm]{gat-mydesign.png} 
+	\end{center}
+	\end{figure}
 }
 
 \frame
 {
-	\frametitle{IPL}
-	\begin{quote}
-    The IPL is a communication library is specifically designed for usage in a
-    grid environment.
-    \end{quote}
+	\begin{itemize}
+      \item As of yet, only a local AdvertService existed
+      \item Completely transparent to user
+      \item Path handling is done locally
+    \end{itemize}
 }
 
+\subsection{IPL}
+\frame
+{
+	\frametitle{IPL}
+	\begin{quote}
+		The IPL is a communication library is specifically designed for usage in a
+		grid environment.
+	\end{quote}
+	\begin{figure}[h]
+	\begin{center}
+	\includegraphics[width=5cm]{ibis-design.png} 
+	\end{center}
+	\end{figure}
+}
+
+\frame[containsverbatim]
+{
+	\frametitle{IPL Example}
+	\usebeamerfont{small}
+	\begin{verbatim}
+		$ $IPL_HOME/bin/ipl-server --events
+		Ibis server running on 130.37.20.18-8888~bbn230
+		List of Services:
+		    Bootstrap service on virtual port 303
+		    Central Registry service on virtual port 302
+		    Management service
+		Known hubs now: 130.37.20.18-8888~bbn230
+		
+	\end{verbatim}
+	\begin{verbatim}
+		$IPL_HOME/bin/ipl-run \
+		-Dibis.server.address=130.37.20.18-8888~bbn230 -Dibis.pool.name=test \
+		ibis.ipl.examples.Hello
+		
+    \end{verbatim}
+}
+
+\frame[containsverbatim]
+{
+	\frametitle{IPL Example Using Advert}
+	\begin{verbatim}
+		$ $IPL_HOME/bin/ipl-server --advert google://jondoe.appspot.com/identifier \
+		--metadata author=jondoe,created=24jun,pool=test,color=purple
+		Ibis server running on 130.37.20.18-8888~bbn230
+		List of Services:
+		    Bootstrap service on virtual port 303
+		    Central Registry service on virtual port 302
+		    Management service
+		Known hubs now: 130.37.20.18-8888~bbn230
+		
+	\end{verbatim}
+
+	\begin{verbatim}
+		$IPL_HOME/bin/ipl-run \
+		-Dibis.advert.address=google://jondoe.appspot.com \
+		-Dibis.advert.metadata=created=24jun,color=purple \
+		-Dibis.pool.name=test \
+		ibis.ipl.examples.Hello
+		
+    \end{verbatim}
+}
+
+\section{Conclusion}
+\subsection{Verdict}
+\frame{
+	\frametitle{Pros and Cons}
+	Pros:
+	\begin{itemize}
+      \item[+] <1->Free of charge (until quota exceeds)
+      \item[+] <1->AdvertService only existed locally
+      \item[+] <1->No registry bootstrap server as of yet
+    \end{itemize}
+    
+    \uncover<2->{Cons:}
+    \begin{itemize}
+      \item[-] <2->No guarantees
+      \item[-] <2->\ldots
+    \end{itemize}
+}
+
+\subsection{Questions}
+\frame{
+	\large{Any questions?}
+}
 \end{document}

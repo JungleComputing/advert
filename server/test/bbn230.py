@@ -175,7 +175,7 @@ class AddObject(webapp.RequestHandler):
     
     stop = time.time()
     
-    #logging.info("add %s" % ((stop - start) * 1000))
+    logging.info("add %s" % ((stop - start) * 1000))
     
     self.response.http_status_message(response) #created/overwritten
     self.response.headers['Content-Type'] = 'text/plain'

@@ -102,28 +102,28 @@ side, we see that for all results that encoding the data to Base64 takes a
 negligible amount of time (less than 1\% of the total time, except when we add
 730.000Bytes, this takes 2.6\% of the total time). 
 
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-Bytes sent & Min. & Avg. & Max. \\
-\hline
-\multicolumn{4}{|c|}{Client side} \\
-\hline
-730 & 222ms & 279ms & 449ms \\
-7.300 & 221ms & 368ms & 815ms \\
-73.000 & 511ms & 786ms & 952ms \\ 
-730.000 & 1632ms & 2258ms & 5597ms \\
-\hline
-\multicolumn{4}{|c|}{Server side} \\
-\hline
-730 & 76ms & 117ms & 311ms \\
-7.300 & 63ms & 98ms & 273ms \\
-73.000 & 85ms & 117ms & 305ms \\
-730.000 & 173ms & 213ms & 292ms \\
-\hline
-\end{tabular}
-\caption{Sending Different Object Sizes. \label{add-obj-size}}
-\end{figure}
+% \begin{figure}
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+% Bytes sent & Min. & Avg. & Max. \\
+% \hline
+% \multicolumn{4}{|c|}{Client side} \\
+% \hline
+% 730 & 222ms & 279ms & 449ms \\
+% 7.300 & 221ms & 368ms & 815ms \\
+% 73.000 & 511ms & 786ms & 952ms \\ 
+% 730.000 & 1632ms & 2258ms & 5597ms \\
+% \hline
+% \multicolumn{4}{|c|}{Server side} \\
+% \hline
+% 730 & 76ms & 117ms & 311ms \\
+% 7.300 & 63ms & 98ms & 273ms \\
+% 73.000 & 85ms & 117ms & 305ms \\
+% 730.000 & 173ms & 213ms & 292ms \\
+% \hline
+% \end{tabular}
+% \caption{Sending Different Object Sizes. \label{add-obj-size}}
+% \end{figure}
 
 \paragraph{Variable Meta Data Size}
 In addition to varying object sizes, we also added an object (of size 730Bytes)
@@ -135,30 +135,30 @@ Also the time to convert a \texttt{MetaData} object to JSON takes a negligible
 amount of time (less than 1\% of the total time), even when adding large numbers
 of key-value pairs (e.g. 100 pairs).
 
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-\# Key-Value Pairs & Min. & Avg. & Max. \\
-\hline
-\multicolumn{4}{|c|}{Client side} \\
-\hline
-0 & 222ms & 279ms & 449ms \\
-5 & 270ms & 405ms & 592ms \\
-25 & 398ms & 489ms & 718ms\\
-50 &  641ms & 767ms & 909ms \\
-100 & 968ms & 1151ms & 1647ms\\
-\hline
-\multicolumn{4}{|c|}{Server side} \\
-\hline
-0 & 76ms & 117ms & 311ms \\
-5 & 132ms & 238ms & 451ms \\
-25 & 257ms & 326ms & 574ms \\
-50 & 491ms & 600ms & 724ms \\
-100 & 818ms & 984ms & 1379ms \\
-\hline
-\end{tabular}
-\caption{Sending Different Meta Data Sizes. \label{add-md-size}}
-\end{figure}
+% \begin{figure}
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+% \# Key-Value Pairs & Min. & Avg. & Max. \\
+% \hline
+% \multicolumn{4}{|c|}{Client side} \\
+% \hline
+% 0 & 222ms & 279ms & 449ms \\
+% 5 & 270ms & 405ms & 592ms \\
+% 25 & 398ms & 489ms & 718ms\\
+% 50 &  641ms & 767ms & 909ms \\
+% 100 & 968ms & 1151ms & 1647ms\\
+% \hline
+% \multicolumn{4}{|c|}{Server side} \\
+% \hline
+% 0 & 76ms & 117ms & 311ms \\
+% 5 & 132ms & 238ms & 451ms \\
+% 25 & 257ms & 326ms & 574ms \\
+% 50 & 491ms & 600ms & 724ms \\
+% 100 & 818ms & 984ms & 1379ms \\
+% \hline
+% \end{tabular}
+% \caption{Sending Different Meta Data Sizes. \label{add-md-size}}
+% \end{figure}
 
 \paragraph{Overwrite}
 Note that two occasions can occur server-side: an entry does not exist yet; the
@@ -197,44 +197,44 @@ are the same size (for results, see Figure \ref{get-obj-amt}). According to
 Google, the latency should stay consistent, and as we can see from Figure
 \ref{get-obj-amt}, its average stays around 25 to 30ms.
 
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-Bytes received & Min. & Avg. & Max. \\
-\hline
-\multicolumn{4}{|c|}{Client side} \\
-\hline
-730 & 151ms & 162ms & 176ms \\
-7.300 & 165ms & 186ms & 274ms \\
-73.000 & 213ms & 249ms & 403ms \\
-730.000 & 452ms & 537ms & 766ms \\
-\hline
-\multicolumn{4}{|c|}{Server side} \\
-\hline
-730 & 27ms & 30ms & 34ms \\
-7.300 &  \\
-73.000 &  \\
-730.000 &  \\
-\hline
-\end{tabular}
-\caption{Receiving Different Object Sizes. \label{get-obj-size}}
-\end{figure}
+% \begin{figure}
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+% Bytes received & Min. & Avg. & Max. \\
+% \hline
+% \multicolumn{4}{|c|}{Client side} \\
+% \hline
+% 730 & 151ms & 162ms & 176ms \\
+% 7.300 & 165ms & 186ms & 274ms \\
+% 73.000 & 213ms & 249ms & 403ms \\
+% 730.000 & 452ms & 537ms & 766ms \\
+% \hline
+% \multicolumn{4}{|c|}{Server side} \\
+% \hline
+% 730 & 27ms & 30ms & 34ms \\
+% 7.300 &  \\
+% 73.000 &  \\
+% 730.000 &  \\
+% \hline
+% \end{tabular}
+% \caption{Receiving Different Object Sizes. \label{get-obj-size}}
+% \end{figure}
 
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-\# Entries in datastore & Min. & Avg. & Max. \\
-\hline
-\multicolumn{4}{|c|}{Server side} \\
-\hline
-10 & 27ms & 30ms & 34ms \\
-100 & 22ms & 26ms & 30ms \\
-1000 & 23ms & 30ms & 36ms \\
-\hline
-\end{tabular}
-\caption{Receiving Objects With Different Amounts in Datastore.
-\label{get-obj-amt}}
-\end{figure}
+% \begin{figure}
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+% \# Entries in datastore & Min. & Avg. & Max. \\
+% \hline
+% \multicolumn{4}{|c|}{Server side} \\
+% \hline
+% 10 & 27ms & 30ms & 34ms \\
+% 100 & 22ms & 26ms & 30ms \\
+% 1000 & 23ms & 30ms & 36ms \\
+% \hline
+% \end{tabular}
+% \caption{Receiving Objects With Different Amounts in Datastore.
+% \label{get-obj-amt}}
+% \end{figure}
 
 \subsubsection{Delete}
 Deleting an item from the datastore should not be an issue at the client side
@@ -249,49 +249,52 @@ Similar to \texttt{get()}, we timed the \texttt{delete()} statement for a
 varialbe number of entries in the datastore (10, 100, 1000), where all objects
 are the same size (for results, see Figure \ref{del-obj-amt}).
 
-\begin{figure}
-\begin{tabular}{|r|r|r|r|}
-\hline
-\# Entries in datastore & Min. & Avg. & Max. \\
-\hline
-\multicolumn{4}{|c|}{Server side} \\
-\hline
-10 & 79ms & 92ms & 104ms  \\
-100 & 82ms & 89ms & 94ms \\
-1000 & 80ms & 94ms & 129ms \\
-\hline
-\end{tabular}
-\caption{Deleting Objects With Different Amounts in Datastore.
-\label{del-obj-amt}}
-\end{figure}
+% \begin{figure}
+% \begin{tabular}{|r|r|r|r|}
+% \hline
+% \# Entries in datastore & Min. & Avg. & Max. \\
+% \hline
+% \multicolumn{4}{|c|}{Server side} \\
+% \hline
+% 10 & 79ms & 92ms & 104ms  \\
+% 100 & 82ms & 89ms & 94ms \\
+% 1000 & 80ms & 94ms & 129ms \\
+% \hline
+% \end{tabular}
+% \caption{Deleting Objects With Different Amounts in Datastore.
+% \label{del-obj-amt}}
+% \end{figure}
 
-% ClientLogin: 66
-% Cookie: 121
-% Thread: 0
-% ClientLogin: 72
-% Cookie: 120
-% Thread: 0
-% ClientLogin: 76
-% Cookie: 117
-% Thread: 1
-% ClientLogin: 82
-% Cookie: 117
-% Thread: 0
-% ClientLogin: 62
-% Cookie: 112
-% Thread: 0
-% ClientLogin: 65
-% Cookie: 124
-% Thread: 0
-% ClientLogin: 64
-% Cookie: 127
-% Thread: 0
-% ClientLogin: 66
-% Cookie: 116
-% Thread: 0
-% ClientLogin: 66
-% Cookie: 117
-% Thread: 0
-% ClientLogin: 66
-% Cookie: 116
-% Thread: 0
+\section{Bandwidth}
+In addition to latency, we also tried to measure the bandwidth between the
+Vrije Universiteit, Amsterdam, and the Google App Engine (located as stated in
+Figure \ref{tracert}).
+
+First of all, we measured the round-trip delay, by creating a dummy server
+which would instantly reply the shortest possible message to the client. Also,
+the client would only send a GET request and wait for a response code. We
+measured the round-trip delay to be 120ms on average.
+
+Next we measured the upload bandwidth (of the client), by sending the maximum
+request size (10MB) to the server, and letting the server send an empty message
+back as minimum response. We measured this to be 5113ms on average. 
+
+Finally, we measured the download bandwidth (client-side), by doing a GET
+request of 10MB. The server would actually have to read a 10MB file and return
+it to the client. Reading this file also has a little overhead (approximately
+130ms), so we substract that form our measured results, which gives us a
+round-trip delay of 26387ms on average. Our download fluctuated quite a bit,
+this might be the cause of multiple users using the same internet connection
+for various purposes.
+
+Finally, we want to know our bandwith in kB/sec. This we calculate by
+substracting the round-trip delay from the upload and download round-trip
+delays measured. Which gives us 4983ms and 26257ms respectively. Now, we divide
+the number of bytes sent (10.000.000bytes each), by the number of seconds, and
+divide it by 1024 to get the kB/sec. We can conclude that our upload bandwidth
+is 1960kB/sec, and our download bandwidth is 372kB/sec. \textbf{TODO: ik denk
+dat het downloaden ook slow kan gaan door de manier waarop Java de byte stream
+uitleest.}
+
+
+
