@@ -16,7 +16,7 @@ App Engine application is hosted. The results can be found in figure
 (US), which is where Google Inc. is residing. It is safe to assume that all our
 request go to Google US and back.
 
-\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{figure*} %[placement] where placement is h,t,b,p
 \begin{center}
 \begin{code}
 $ traceroute ibisadvert.appspot.com
@@ -102,9 +102,9 @@ side, we see that for all results that encoding the data to Base64 takes a
 negligible amount of time (less than 1\% of the total time, except when we add
 730.000Bytes, this takes 2.6\% of the total time). 
 
-\begin{figure}[ht] %[placement] where placement is h,t,b,p
+\begin{figure} %[placement] where placement is h,t,b,p
 \begin{center}
-\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{add_obj.pdf}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/add_obj.pdf}
 \caption{Adding Objects of Variable Size. \label{add-obj-size}}
 \end{center}
 \end{figure}
@@ -119,10 +119,10 @@ Also the time to convert a \texttt{MetaData} object to JSON takes a negligible
 amount of time (less than 1\% of the total time), even when adding large numbers
 of key-value pairs (e.g. 100 pairs).
 
-\begin{figure}[ht] %[placement] where placement is h,t,b,p
+\begin{figure} %[placement] where placement is h,t,b,p
 \begin{center}
-\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{add_md.pdf}
-\caption{Adding Objects with Variable Meta Data. \label{add-obj-size}}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/add_md.pdf}
+\caption{Adding Objects with Variable Meta Data. \label{add-md-size}}
 \end{center}
 \end{figure}
 
@@ -133,19 +133,26 @@ overwritten. We tested the latency at the server side by sending a various
 number of bytes, with and without any meta data to see how the latency
 increases. Ideally the maximum latency wouldn't exceed the sum of the latencies
 of a \texttt{del()} and an \texttt{add()} statement (that's what overwrite
-does locally).
+does locally). The results of our measurements can be found in Figures
+\label{ovw-obj-size} and \label{ovw-md-size}.
 
-\begin{figure}
-\begin{tabular}{|l|r|r|r|}
-\hline
- & Min. & Avg. & Max. \\
-\hline
-No Overwrite & 173ms & 213ms & 292ms \\
-Overwrite & 355ms & 425ms & 552ms \\
-\hline
-\end{tabular}
-\caption{Server}
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/ovw_obj.pdf}
+\caption{Overwriting Objects of Variable Size. \label{ovw-obj-size}}
+\end{center}
 \end{figure}
+
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/ovw_md.pdf}
+\caption{Overwriting Objects with Variable Meta Data. \label{ovw-md-size}}
+\end{center}
+\end{figure}
+
+As expected, overwriting data takes more time than just adding data to the
+datastore. We also expected meta data to take longer to overwrite, since every
+key-value pair is deleted seperately (by using a \texttt{for()} loop). 
 
 \subsubsection{Get}
 After an element is stored in the datastore, it can be retrieved by a client.
@@ -154,6 +161,13 @@ same size. Next, we retrieved every element from the datastore sequentially and
 measured the time to do so client and server-side (see Figure
 \ref{get-obj-size}). Note that we will not vary the number of Meta Data items,
 because those are not fetched using the \texttt{get()} function.
+
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_obj.pdf}
+\caption{Receiving Objects of Variable Size. \label{get-obj-size}}
+\end{center}
+\end{figure}
 
 As for client-side measurements. Decoding from Base64 to the actual binary
 object takes a negligible amount of time (less than or equal to 1ms).
@@ -165,44 +179,13 @@ are the same size (for results, see Figure \ref{get-obj-amt}). According to
 Google, the latency should stay consistent, and as we can see from Figure
 \ref{get-obj-amt}, its average stays around 25 to 30ms.
 
-% \begin{figure}
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-% Bytes received & Min. & Avg. & Max. \\
-% \hline
-% \multicolumn{4}{|c|}{Client side} \\
-% \hline
-% 730 & 151ms & 162ms & 176ms \\
-% 7.300 & 165ms & 186ms & 274ms \\
-% 73.000 & 213ms & 249ms & 403ms \\
-% 730.000 & 452ms & 537ms & 766ms \\
-% \hline
-% \multicolumn{4}{|c|}{Server side} \\
-% \hline
-% 730 & 27ms & 30ms & 34ms \\
-% 7.300 &  \\
-% 73.000 &  \\
-% 730.000 &  \\
-% \hline
-% \end{tabular}
-% \caption{Receiving Different Object Sizes. \label{get-obj-size}}
-% \end{figure}
-
-% \begin{figure}
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-% \# Entries in datastore & Min. & Avg. & Max. \\
-% \hline
-% \multicolumn{4}{|c|}{Server side} \\
-% \hline
-% 10 & 27ms & 30ms & 34ms \\
-% 100 & 22ms & 26ms & 30ms \\
-% 1000 & 23ms & 30ms & 36ms \\
-% \hline
-% \end{tabular}
-% \caption{Receiving Objects With Different Amounts in Datastore.
-% \label{get-obj-amt}}
-% \end{figure}
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_amt.pdf}
+\caption{Receiving Objects With Different Amounts in Datastore.
+\label{get-obj-amt}}
+\end{center}
+\end{figure}
 
 \subsubsection{Delete}
 Deleting an item from the datastore should not be an issue at the client side
@@ -217,21 +200,44 @@ Similar to \texttt{get()}, we timed the \texttt{delete()} statement for a
 varialbe number of entries in the datastore (10, 100, 1000), where all objects
 are the same size (for results, see Figure \ref{del-obj-amt}).
 
-% \begin{figure}
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-% \# Entries in datastore & Min. & Avg. & Max. \\
-% \hline
-% \multicolumn{4}{|c|}{Server side} \\
-% \hline
-% 10 & 79ms & 92ms & 104ms  \\
-% 100 & 82ms & 89ms & 94ms \\
-% 1000 & 80ms & 94ms & 129ms \\
-% \hline
-% \end{tabular}
-% \caption{Deleting Objects With Different Amounts in Datastore.
-% \label{del-obj-amt}}
-% \end{figure}
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/del_amt.pdf}
+\caption{Deleting Objects With Different Amounts in Datastore.
+\label{del-obj-amt}}
+\end{center}
+\end{figure}
+
+\subsubsection{Get Meta Data}
+This function was not significant to benchmark. The data sent by the client
+doesn't vary that much (it's just a relatively short String, as path name), and
+the return value is not very large either. The only thing that is interesting
+to see is what would happen if we would actually have a lot of meta data in the
+databse. That is exactly what we benchmarked in the next section.
+
+\subsubsection{Find}
+Finally, an interesting function to benchmark is the find function. Because the
+GQL does not support wildcard nor \texttt{LIKE}-statements in queries (see
+Section \ref{server-design-structure}), we had to build a comprehensive find
+function which executes a GQL query for every two key-value pairs, in order to
+match them. By increasing the number of data items, our performance would
+decrease exponentially. In Figure \ref{find-md-amt} we show some measure points
+we obtained from comparing various number of key-value pairs to various number
+of key-value pairs present in the datastore.
+
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/find_amt.pdf}
+\caption{Finding Meta Data With Different Amounts in Datastore.
+\label{find-md-amt}}
+\end{center}
+\end{figure}
+
+As we can see from Figure \ref{find-md-amt}, the latency does increase
+exponentially. For some measuring points the data points are beyond 30seconds
+latency, which means we received a timeout from Google. Note that we had ten
+objects in the database at all time, which means we effectively had ten times
+as much data to compare as suggested by the x-axis of the graph.
 
 \section{Bandwidth}
 In addition to latency, we also tried to measure the bandwidth between the
@@ -245,7 +251,13 @@ measured the round-trip delay to be 120ms on average.
 
 Next we measured the upload bandwidth (of the client), by sending the maximum
 request size (10MB) to the server, and letting the server send an empty message
-back as minimum response. We measured this to be 5113ms on average. 
+back as minimum response. Now we noted that the maximum request size actually
+is smaller than 10MB. We regularly got an error message which indicated that
+the bandwidth was temporarily exceeded. By trial-and-error we figured that the
+maximum amount we could send (without recieving such an error) lies around
+5MB, after which we have to wait 60 seconds, before sending the next batch,
+otherwise our subsequent requests would still get the error messages. We
+measured sending 5MB to the App Engine to be 3721ms on average.
 
 Finally, we measured the download bandwidth (client-side), by doing a GET
 request of 10MB. The server would actually have to read a 10MB file and return
@@ -256,13 +268,16 @@ this might be the cause of multiple users using the same internet connection
 for various purposes.
 
 Finally, we want to know our bandwith in kB/sec. This we calculate by
-substracting the round-trip delay from the upload and download round-trip
-delays measured. Which gives us 4983ms and 26257ms respectively. Now, we divide
-the number of bytes sent (10.000.000bytes each), by the number of seconds, and
-divide it by 1024 to get the kB/sec. We can conclude that our upload bandwidth
-is 1960kB/sec, and our download bandwidth is 372kB/sec. \textbf{TODO: ik denk
-dat het downloaden ook slow kan gaan door de manier waarop Java de byte stream
-uitleest.}
+substracting the round-trip delay from the upload and download round-trip delays
+measured. Which gives us 3591ms and 26257ms respectively. Now, we divide the
+number of bytes sent (5.000.000 and 10.000.000bytes respectively), by the number
+of seconds, and divide it by 1024 to get the kB/sec. We can conclude that our
+upload bandwidth is 1360kB/sec, and our download bandwidth is 372kB/sec.
+\textbf{ToDo: explanation, Java read?}
 
-
+\section{Parellel Benchmarks}
+Finally, we tested what the server latency would be if multiple clients would
+connect at the sime time. To achieve parellelism, we made use of the VU's DAS-3
+cluster, which has 85 dual-core 2.4GHz nodes, with 4GB of memory and a Myri-10G
+and GbE network \cite{das3-www}.
 

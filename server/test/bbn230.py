@@ -328,9 +328,6 @@ class DelAll(webapp.RequestHandler):
       """)
       return
     
-    self.response.out.write("PURGED.")
-    return
-      
     try:
       while 1:
         q = db.GqlQuery("SELECT * FROM MetaData")

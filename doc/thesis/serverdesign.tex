@@ -3,6 +3,7 @@ Below we will describe some high-level design decisions we made, prior to
 implementing our server on the Google App Engine.
 
 \subsection{Server Structure}
+\label{server-design-structure}
 The server will have an iterative structure and servers clients on a
 one-thread-per-client basis; it will receive a client request, process it and
 return a reply (all in HTTP as described below). Since the App Engine distributes
