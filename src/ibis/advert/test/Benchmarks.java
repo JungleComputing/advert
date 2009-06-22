@@ -1,19 +1,14 @@
 package ibis.advert.test;
 
 import ibis.advert.Advert;
-import ibis.advert.AppEngineResourcesException;
-import ibis.advert.AuthenticationException;
 import ibis.advert.MetaData;
-import ibis.advert.RequestTooLargeException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +58,7 @@ public class Benchmarks {
 		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<1; i++) {
+		for (int i=0; i<100; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -75,7 +70,7 @@ public class Benchmarks {
 		for (int i=0; i<TRIES; i++) {
 			long startTime = System.currentTimeMillis();
 			try {
-				advert.add(b, null, "/home/benchmarks/" + add);
+				advert.add(b, md, "/home/benchmarks/" + add);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -207,15 +202,15 @@ public class Benchmarks {
 		
 		for (int i=0; i<TRIES; i++) { //try 10 times
 			try {
-				byte[] b = new byte[1000000];
+				byte[] b = new byte[1000000]; //1MB
 				String s = new String(b);
-				URL url = new URL("http://bbn230.appspot.com/ping/down");
+				URL url = new URL("http://bbn230.appspot.com/ping/up");
 				HttpURLConnection httpc = (HttpURLConnection) url.openConnection();
 				
 				/* Setting headers. */
-//				httpc.setRequestMethod("POST");
-				httpc.setRequestMethod("GET");
-//				httpc.setDoInput(true);
+				httpc.setRequestMethod("POST");
+//				httpc.setRequestMethod("GET");
+				httpc.setDoInput(true);
 			    httpc.setDoOutput(true);
 //			    httpc.setUseCaches(false);
 			    
@@ -224,22 +219,24 @@ public class Benchmarks {
 			    long startTime = System.currentTimeMillis();
 			    
 				httpc.connect();
-//				OutputStreamWriter osw = new OutputStreamWriter(httpc.getOutputStream());
-//				
-//				/* Writing JSON data. */
-//				for (int j=0; j<TRIES; j++) {
-//					osw.write(s);
-//				}
-//				osw.flush();
-//				osw.close();
+				OutputStreamWriter osw = new OutputStreamWriter(httpc.getOutputStream());
+				
+				/* Writing JSON data. */
+				for (int j=0; j<5; j++) {
+					osw.write(s);
+				}
+				osw.flush();
+				osw.close();
 				
 				/* Retrieving response headers. */
-				httpc.getResponseCode();
-				BufferedReader in = new 
-			    		BufferedReader(new InputStreamReader(httpc.getInputStream()));
-			    
-		        while ((in.readLine()) != null) {
-		        }
+				System.out.println("RESPONSE: " + httpc.getResponseCode());
+//				BufferedReader in = new 
+//			    		BufferedReader(new InputStreamReader(httpc.getErrorStream()));
+//			    
+//				String str = null;
+//		        while ((str = in.readLine()) != null) {
+//		        	System.out.println(str);
+//		        }
 				
 				long stopTime = System.currentTimeMillis();
 				times[i] = (stopTime - startTime);
@@ -254,6 +251,7 @@ public class Benchmarks {
 				}
 				
 			    httpc.disconnect();
+			    Thread.sleep(60000); //sleep 60 secs
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -289,8 +287,9 @@ public class Benchmarks {
 		/* Start benchmarks. */
 //		advert_create(advertUri, args[0]);
 		round_trip_add(advert);
+		round_trip_add(advert); /* overwrite */
 //		round_trip_get(advert);
-//		round_trip_del(advert);
+		round_trip_del(advert);
 //		round_trip_find(advert);
 		
 //		connectivity(advert);

@@ -1,8 +1,15 @@
+% You should give sufficient motivation to the problem you are dealing with,
+% present the background, the options you had in attacking the problem, and the
+% reasons you are following some specific policies in your research. This is a
+% non-exhaustive list. Depending on the project, you can think of various
+% additional aspects to present (e.g., what results would be considered good and
+% what bad, etc.).
+
 \documentclass{beamer}
 
 \usepackage{beamerthemesplit}
-
-\setbeamerfont{code}{size=\tiny}
+\usepackage{fancyvrb}
+\usepackage{multicol}
 
 \title{A Cloud-based Application Storage Service \newline for Ibis}
 \author{Bas Boterman}
@@ -15,7 +22,7 @@
 	\titlepage
 	\begin{figure}[h]
 	\begin{center}
-	\includegraphics[width=3cm]{msc_logo.png} 
+	\includegraphics[width=2cm]{msc_logo.png} 
 	\end{center}
 	\end{figure}
 }
@@ -23,10 +30,31 @@
 \section[Outline]{}
 \frame
 {
-	\tableofcontents
+	\frametitle{Outline}
+	\begin{columns}
+	\begin{column}{0.5\textwidth}
+		\tableofcontents[sections={1-3}]
+	\end{column}
+	\begin{column}{0.5\textwidth}
+		\tableofcontents[sections={4-6}]
+	\end{column}
+	\end{columns}
 }
 
 \section{Introduction}
+\subsection{Background}
+\frame
+{
+	\frametitle{Background}
+	\begin{itemize}
+    	\item <1->April 7, 2008, the Google App Engine was introduced
+    	\item <2->In what extent can we use the Google App Engine for scientific
+      		purposes?
+    	\item <3->Designing an application storage server for Ibis
+    \end{itemize}
+}
+
+
 \subsection{Thesis}
 \frame[t]
 {
@@ -107,15 +135,16 @@
 	\begin{itemize}
 		\item <1->Powerful (distributed) database with query engine and
 			transactions
+		\item <1->Replacting servers to improve scalability 
 		\item <1->Authentication through Google Accounts
 		\item <1->Built-in frameworks (Django, WebOb, PyYAML)
 	\end{itemize}
 
 	\uncover<2->{Disadvantages:}
 	\begin{itemize}
-		\item <2->Python 2.5 (limited functionality)
-		\item <2->HTTP(S) Only
-		\item <2->Sandbox (no \texttt{fork}, no threads, no FS)
+		\item <2->Python 2.5 (limited functionality, compared to 3.0)
+		\item <2->HTTP(S) only
+		\item <2->Sandbox (no \texttt{fork}, no threads, no file system)
 	\end{itemize}
 }
 
@@ -262,10 +291,12 @@
 
 \frame
 {
+	\frametitle{Our Solution}
 	\begin{itemize}
-      \item As of yet, only a local AdvertService existed
-      \item Completely transparent to user
-      \item Path handling is done locally
+		\item As of yet, only a local AdvertService existed
+		\item Scalable design (local AdvertService does not scale)
+		\item Completely transparent to user
+		\item Path handling is done locally
     \end{itemize}
 }
 
@@ -284,11 +315,10 @@
 	\end{figure}
 }
 
-\frame[containsverbatim]
+\frame[t,containsverbatim]
 {
 	\frametitle{IPL Example}
-	\usebeamerfont{small}
-	\begin{verbatim}
+	\begin{Verbatim}[fontsize=\small,gobble=2]
 		$ $IPL_HOME/bin/ipl-server --events
 		Ibis server running on 130.37.20.18-8888~bbn230
 		List of Services:
@@ -297,20 +327,20 @@
 		    Management service
 		Known hubs now: 130.37.20.18-8888~bbn230
 		
-	\end{verbatim}
-	\begin{verbatim}
 		$IPL_HOME/bin/ipl-run \
-		-Dibis.server.address=130.37.20.18-8888~bbn230 -Dibis.pool.name=test \
+		-Dibis.server.address=130.37.20.18-8888~bbn230 \
+		-Dibis.pool.name=test \
 		ibis.ipl.examples.Hello
-		
-    \end{verbatim}
+    \end{Verbatim}
 }
 
-\frame[containsverbatim]
+\frame[t,containsverbatim]
 {
-	\frametitle{IPL Example Using Advert}
-	\begin{verbatim}
-		$ $IPL_HOME/bin/ipl-server --advert google://jondoe.appspot.com/identifier \
+	\frametitle{IPL Example Using Advert Server (Server)}
+	\begin{Verbatim}[fontsize=\small,gobble=2]
+		$ $IPL_HOME/bin/ipl-server --events \
+		--advert google://jondoe.appspot.com/identifier \
+		--user jondoe@gmail.com --pass north23AZ \
 		--metadata author=jondoe,created=24jun,pool=test,color=purple
 		Ibis server running on 130.37.20.18-8888~bbn230
 		List of Services:
@@ -318,17 +348,33 @@
 		    Central Registry service on virtual port 302
 		    Management service
 		Known hubs now: 130.37.20.18-8888~bbn230
-		
-	\end{verbatim}
+	\end{Verbatim}
+}
 
-	\begin{verbatim}
+\frame[t,containsverbatim]
+{
+	\frametitle{IPL Example Using Advert Server (Application)}
+	\begin{Verbatim}[fontsize=\small,gobble=2]
 		$IPL_HOME/bin/ipl-run \
 		-Dibis.advert.address=google://jondoe.appspot.com \
+		-Dibis.advert.username=jondoe \
+		-Dibis.advert.password=north23AZ \
 		-Dibis.advert.metadata=created=24jun,color=purple \
 		-Dibis.pool.name=test \
 		ibis.ipl.examples.Hello
-		
-    \end{verbatim}
+    \end{Verbatim}
+}
+
+\frame
+{
+	\frametitle{Our Solution}
+	\begin{itemize}
+    	\item No server for bootstrapping IPL registries existed
+    	\item Large range of IPL registries can be started, whilst only rembering
+    		one (advert) address
+		\item Different groups of Ibis can be started without (manually) sharing the
+			server address
+    \end{itemize}
 }
 
 \section{Conclusion}
@@ -338,14 +384,16 @@
 	Pros:
 	\begin{itemize}
       \item[+] <1->Free of charge (until quota exceeds)
+      \item[+] <1->Powerful engine and sufficient bandwidth
+      \item[+] <1->Scalable design
       \item[+] <1->AdvertService only existed locally
-      \item[+] <1->No registry bootstrap server as of yet
+      \item[+] <1->No registry bootstrap server existed, as of yet
     \end{itemize}
     
     \uncover<2->{Cons:}
     \begin{itemize}
       \item[-] <2->No guarantees
-      \item[-] <2->\ldots
+      \item[-] <2->Missing functionality in App Engine/Python
     \end{itemize}
 }
 

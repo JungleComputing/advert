@@ -102,28 +102,12 @@ side, we see that for all results that encoding the data to Base64 takes a
 negligible amount of time (less than 1\% of the total time, except when we add
 730.000Bytes, this takes 2.6\% of the total time). 
 
-% \begin{figure}
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-% Bytes sent & Min. & Avg. & Max. \\
-% \hline
-% \multicolumn{4}{|c|}{Client side} \\
-% \hline
-% 730 & 222ms & 279ms & 449ms \\
-% 7.300 & 221ms & 368ms & 815ms \\
-% 73.000 & 511ms & 786ms & 952ms \\ 
-% 730.000 & 1632ms & 2258ms & 5597ms \\
-% \hline
-% \multicolumn{4}{|c|}{Server side} \\
-% \hline
-% 730 & 76ms & 117ms & 311ms \\
-% 7.300 & 63ms & 98ms & 273ms \\
-% 73.000 & 85ms & 117ms & 305ms \\
-% 730.000 & 173ms & 213ms & 292ms \\
-% \hline
-% \end{tabular}
-% \caption{Sending Different Object Sizes. \label{add-obj-size}}
-% \end{figure}
+\begin{figure}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{add_obj.pdf}
+\caption{Adding Objects of Variable Size. \label{add-obj-size}}
+\end{center}
+\end{figure}
 
 \paragraph{Variable Meta Data Size}
 In addition to varying object sizes, we also added an object (of size 730Bytes)
@@ -135,37 +119,21 @@ Also the time to convert a \texttt{MetaData} object to JSON takes a negligible
 amount of time (less than 1\% of the total time), even when adding large numbers
 of key-value pairs (e.g. 100 pairs).
 
-% \begin{figure}
-% \begin{tabular}{|r|r|r|r|}
-% \hline
-% \# Key-Value Pairs & Min. & Avg. & Max. \\
-% \hline
-% \multicolumn{4}{|c|}{Client side} \\
-% \hline
-% 0 & 222ms & 279ms & 449ms \\
-% 5 & 270ms & 405ms & 592ms \\
-% 25 & 398ms & 489ms & 718ms\\
-% 50 &  641ms & 767ms & 909ms \\
-% 100 & 968ms & 1151ms & 1647ms\\
-% \hline
-% \multicolumn{4}{|c|}{Server side} \\
-% \hline
-% 0 & 76ms & 117ms & 311ms \\
-% 5 & 132ms & 238ms & 451ms \\
-% 25 & 257ms & 326ms & 574ms \\
-% 50 & 491ms & 600ms & 724ms \\
-% 100 & 818ms & 984ms & 1379ms \\
-% \hline
-% \end{tabular}
-% \caption{Sending Different Meta Data Sizes. \label{add-md-size}}
-% \end{figure}
+\begin{figure}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{add_md.pdf}
+\caption{Adding Objects with Variable Meta Data. \label{add-obj-size}}
+\end{center}
+\end{figure}
 
 \paragraph{Overwrite}
 Note that two occasions can occur server-side: an entry does not exist yet; the
 object is stored in the datstore. An object does already exits; the object is
-overwritten. We tested the latency at the server side by sending 730.000Bytes
-with and without any meta data to see how the latency increases (\textbf{wil ik
-met meer sizes doen!}).
+overwritten. We tested the latency at the server side by sending a various
+number of bytes, with and without any meta data to see how the latency
+increases. Ideally the maximum latency wouldn't exceed the sum of the latencies
+of a \texttt{del()} and an \texttt{add()} statement (that's what overwrite
+does locally).
 
 \begin{figure}
 \begin{tabular}{|l|r|r|r|}
