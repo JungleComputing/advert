@@ -42,7 +42,9 @@
     	\item <1->April 7, 2008, the Google App Engine was introduced
     	\item <2->In what extent can we use the Google App Engine for scientific
       		purposes?
-    	\item <3->Designing an application storage server for Ibis
+      	\item <3->Robust distributed datastore with transactions and queries
+    	\item <4->This project is about designing an application storage server
+    		for Ibis
     \end{itemize}
 }
 
@@ -135,16 +137,21 @@
 	\begin{itemize}
 		\item <2->Python 2.5 (limited functionality, compared to 3.0)
 		\item <2->HTTP(S) only
-		\item <2->Sandbox (no \texttt{fork}, no threads, no file system)
+		\item <2->Sandbox (no \texttt{fork()}, no threads, no file system)
 	\end{itemize}
 }
 
-\section{Project}
+\section{Project Details}
 %\subsection{Design}
 \frame
 {
-	\frametitle{Schema}
-	IMG HERE
+	\frametitle{Project Overview}
+	\begin{figure}
+	\begin{center}
+	\includegraphics[width=10cm]{proj_design.pdf} 
+	\caption{Schematic Overview of the Project}
+	\end{center}
+	\end{figure}
 }
 
 \frame
@@ -175,7 +182,8 @@
 			\item Base64 encoding
 			\item JSON encoding
 			\item Error handling 
-		\end{itemize}
+        \end{itemize}
+        \item Establishes connections over HTTP(S)
 		\item Takes care of authentication
 		\begin{itemize}
 			\item Authentication through \emph{Google ClientLogin}
@@ -191,7 +199,7 @@
 	\frametitle{Add()}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{add_obj.pdf} 
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{add_obj.pdf} 
 	\caption{Adding Objects of Variable Size}
 	\end{center}
 	\end{figure}
@@ -202,7 +210,7 @@
 	\frametitle{Add()}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{add_md.pdf} 
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{add_md.pdf} 
 	\caption{Adding Objects with Variable Meta Data}
 	\end{center}
 	\end{figure}
@@ -213,18 +221,7 @@
 	\frametitle{Get()}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{get_obj.pdf} 
-	\caption{Retrieving Objects of Variable Size}
-	\end{center}
-	\end{figure}
-}
-
-\frame
-{
-	\frametitle{Get()}
-	\begin{figure}[t]
-	\begin{center}
-	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{get_amt.pdf} 
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{get_amt.pdf} 
 	\caption{Retrieving Objects with Variable Meta Data}
 	\end{center}
 	\end{figure}
@@ -235,7 +232,7 @@
 	\frametitle{Find()}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim = 0 5cm 0 5cm, width=10cm]{find_amt.pdf} 
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{find_amt.pdf} 
 	\caption{Finding Meta Data}
 	\end{center}
 	\end{figure}
@@ -246,6 +243,21 @@
 {
 	\frametitle{Parellel Benchmarks}
 	\textbf{TODO:} under construction!
+}
+
+\frame
+{
+	\frametitle{Benchmark Evaluation}
+	\begin{itemize}
+    	\item Latency increases if object size/meta data size increases
+    	\item Latency remains same if number of objects in datastore increase
+    	\item Latency increases if multiple clients connect at the same time
+    	\item Server times out if too many items are present in datastore (latency
+    		$>$ 30 seconds)
+    	\item Server temporarily exceeds quota if over 5MB is submitted within
+    		60 seconds
+    	\item Server fails if over 500 data items are manipulated in one call
+    \end{itemize}
 }
 
 \section{Applications}
@@ -272,7 +284,8 @@
 	\frametitle{JavaGAT structure}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[width=8cm]{gat-design.png} 
+	\includegraphics[width=7cm]{gat-design.png} 
+	\caption{Current JavaGAT Design}
 	\end{center}
 	\end{figure}
 }
@@ -282,14 +295,15 @@
 	\frametitle{JavaGAT structure}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[width=8cm]{gat-mydesign.png} 
+	\includegraphics[width=7cm]{gat-mydesign.png} 
+	\caption{JavaGAT with App Engine AdvertService Adaptor}
 	\end{center}
 	\end{figure}
 }
 
 \frame
 {
-	\frametitle{Our Solution}
+	\frametitle{App Engine AdvertService Adaptor}
 	\begin{itemize}
 		\item As of yet, only a local AdvertService existed
 		\item Scalable design (local AdvertService does not scale)
@@ -306,11 +320,12 @@
 		The IPL is a communication library is specifically designed for usage in a
 		grid environment.
 	\end{quote}
-	\begin{figure}[h]
-	\begin{center}
-	\includegraphics[width=5cm]{ibis-design.png} 
-	\end{center}
-	\end{figure}
+	\begin{itemize}
+    	\item Communication library for distributed applications
+    	\item All applications communicate through an IPL registry server
+    	\item IPL registry server address needs to be passed down to each Ibis
+    		application
+    \end{itemize}
 }
 
 \frame[t,containsverbatim]
@@ -318,6 +333,7 @@
 	\frametitle{IPL Example}
 	\begin{Verbatim}[fontsize=\small,gobble=2]
 		$ $IPL_HOME/bin/ipl-server --events
+
 		Ibis server running on 130.37.20.18-8888~bbn230
 		List of Services:
 		    Bootstrap service on virtual port 303
@@ -325,7 +341,8 @@
 		    Management service
 		Known hubs now: 130.37.20.18-8888~bbn230
 		
-		$IPL_HOME/bin/ipl-run \
+
+		$ $IPL_HOME/bin/ipl-run \
 		-Dibis.server.address=130.37.20.18-8888~bbn230 \
 		-Dibis.pool.name=test \
 		ibis.ipl.examples.Hello
@@ -340,6 +357,7 @@
 		--advert google://jondoe.appspot.com/identifier \
 		--user jondoe@gmail.com --pass north23AZ \
 		--metadata author=jondoe,created=24jun,pool=test,color=purple
+
 		Ibis server running on 130.37.20.18-8888~bbn230
 		List of Services:
 		    Bootstrap service on virtual port 303
@@ -353,7 +371,7 @@
 {
 	\frametitle{IPL Example Using Advert Server (Application)}
 	\begin{Verbatim}[fontsize=\small,gobble=2]
-		$IPL_HOME/bin/ipl-run \
+		$ $IPL_HOME/bin/ipl-run \
 		-Dibis.advert.address=google://jondoe.appspot.com \
 		-Dibis.advert.username=jondoe \
 		-Dibis.advert.password=north23AZ \
@@ -365,38 +383,47 @@
 
 \frame
 {
-	\frametitle{Our Solution}
+	\frametitle{IPL Registry Bootstrap Server}
 	\begin{itemize}
     	\item No server for bootstrapping IPL registries existed
-    	\item Large range of IPL registries can be started, whilst only rembering
+    	\item Large range of IPL registries can be started, whilst only remembering
     		one (advert) address
 		\item Different groups of Ibis can be started without (manually) sharing the
 			server address
+		\item Advert address can be hard-coded in Ibis application 
     \end{itemize}
 }
 
 \section{Conclusion}
 %\subsection{Verdict}
 \frame{
-	\frametitle{Pros and Cons}
-	Pros:
+	\frametitle{Conclusion}
+	Established:
 	\begin{itemize}
-      \item[+] <1->Free of charge (until quota exceeds)
-      \item[+] <1->Powerful engine and sufficient bandwidth
-      \item[+] <1->Scalable design
-      \item[+] <1->AdvertService only existed locally
-      \item[+] <1->No registry bootstrap server existed, as of yet
+      \item <1->A Google App Engine Advert server, written in Python
+      \item <1->An Advert client library, written in Java
+      \item <1->An App Engine AdvertService adaptor for JavaGAT
+      \item <1->A registry bootstrap server for IPL
+    \end{itemize}
+	
+	\uncover<2->{Properties:}
+	\begin{itemize}
+      \item <2->Scalable application and datastore
+      \item <2->High bandwidth (until quota reached)
+      \item <2->No guarantees
     \end{itemize}
     
-    \uncover<2->{Cons:}
+    \uncover<3->{Future work:}
     \begin{itemize}
-      \item[-] <2->No guarantees
-      \item[-] <2->Missing functionality in App Engine/Python
+      \item <3->An App Engine Advert server, written in Java
     \end{itemize}
 }
 
 %\subsection{Questions}
 \frame{
-	\large{Any questions?}
+	\frametitle{Questions}
+	\begin{center}
+		\huge{Any questions?}
+	\end{center}
 }
 \end{document}
