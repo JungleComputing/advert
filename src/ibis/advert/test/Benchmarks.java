@@ -21,7 +21,7 @@ public class Benchmarks {
 
 	final static Logger logger = LoggerFactory.getLogger(AdvertTests.class);
 	
-	private static void advert_create(URI u, String p) {
+	private static void advertCreate(URI u, String p) {
 		Advert advert = null;
 		long min = Long.MAX_VALUE;
 		long max = 0;
@@ -58,7 +58,7 @@ public class Benchmarks {
 		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<100; i++) {
+		for (int i=0; i<1000; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -165,7 +165,7 @@ public class Benchmarks {
 		/* File sizes: 1kB, 10kB, 100kB, 1MB. */
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<100; i++) {
+		for (int i=0; i<50; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -285,12 +285,12 @@ public class Benchmarks {
 		}
 		
 		/* Start benchmarks. */
-//		advert_create(advertUri, args[0]);
+//		advertCreate(advertUri, args[0]);
 		round_trip_add(advert);
-		round_trip_add(advert); /* overwrite */
+//		round_trip_add(advert); /* overwrite */
 //		round_trip_get(advert);
-		round_trip_del(advert);
-//		round_trip_find(advert);
+//		round_trip_del(advert);
+		round_trip_find(advert);
 		
 //		connectivity(advert);
 		

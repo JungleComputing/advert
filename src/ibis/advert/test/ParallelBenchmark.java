@@ -17,8 +17,66 @@ public class ParallelBenchmark {
 	private static final String USER   = "ibisadvert@gmail.com";
 	private static final int    TRIES  = 10;
 
-	final static Logger logger = LoggerFactory.getLogger(AdvertTests.class);
+	final static Logger logger = LoggerFactory.getLogger(ParallelBenchmark.class);
 
+	private static void get(Advert advert) {
+		String host = null;
+		String  pid = null;
+		
+		/* Setup path name. */
+		try {
+			host = InetAddress.getLocalHost().getHostName();
+			pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];		
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		/* Setup Timing. */
+		long min = Long.MAX_VALUE;
+		long max = 0;
+		long tot = 0;
+		long[] times = new long[TRIES];
+		char add = 'a';
+		
+		/* Start timers. */
+		for (int i=0; i<TRIES; i++) {
+			long startTime = System.currentTimeMillis();
+			try {
+				advert.get("/home/benchmarks/" + add);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			long stopTime = System.currentTimeMillis();
+			
+			times[i] = (stopTime - startTime);
+			tot += times[i];
+			
+			if (times[i] < min) {
+				min = times[i];
+			}
+			if (times[i] > max) {
+				max = times[i];
+			}
+			
+			add++;
+		}
+		
+		try {
+			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+//			bw.write("min,avg,max\n");
+			bw.write(min + "," + tot/TRIES + "," + max + "\n");
+			bw.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static void add(Advert advert) {
 		byte[]    b = new byte[73000];
 		MetaData md = new MetaData();
@@ -76,7 +134,7 @@ public class ParallelBenchmark {
 		try {
 			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write("min,avg,max\n");
+//			bw.write("min,avg,max\n");
 			bw.write(min + "," + tot/TRIES + "," + max + "\n");
 			bw.close();
 		}
@@ -106,8 +164,7 @@ public class ParallelBenchmark {
 			System.exit(-1);
 		}
 		
-		add(advert);
+		//add(advert);
+		get(advert);
 	}
 }
-
-//run: $JAVA_16/bin/java -classpath "./*" ibis.advert.test.ParallelBenchmark ********
