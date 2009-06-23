@@ -58,7 +58,7 @@ public class Benchmarks {
 		byte[] b = new byte[730];
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<1000; i++) {
+		for (int i=0; i<500; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -165,7 +165,7 @@ public class Benchmarks {
 		/* File sizes: 1kB, 10kB, 100kB, 1MB. */
 		MetaData md = new MetaData();
 		
-		for (int i=0; i<50; i++) {
+		for (int i=0; i<500; i++) {
 			md.put("key" + i, "value" + i);
 		}
 
@@ -222,7 +222,7 @@ public class Benchmarks {
 				OutputStreamWriter osw = new OutputStreamWriter(httpc.getOutputStream());
 				
 				/* Writing JSON data. */
-				for (int j=0; j<5; j++) {
+				for (int j=0; j<50; j++) {
 					osw.write(s);
 				}
 				osw.flush();
@@ -286,7 +286,7 @@ public class Benchmarks {
 		
 		/* Start benchmarks. */
 //		advertCreate(advertUri, args[0]);
-		round_trip_add(advert);
+//		round_trip_add(advert);
 //		round_trip_add(advert); /* overwrite */
 //		round_trip_get(advert);
 //		round_trip_del(advert);
