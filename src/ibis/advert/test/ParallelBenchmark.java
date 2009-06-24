@@ -19,6 +19,125 @@ public class ParallelBenchmark {
 
 	final static Logger logger = LoggerFactory.getLogger(ParallelBenchmark.class);
 
+	private static void find(Advert advert) {
+		String host = null;
+		String  pid = null;
+		MetaData md = new MetaData();
+		
+		/* Setup path name. */
+		try {
+			host = InetAddress.getLocalHost().getHostName();
+			pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];		
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		/* Setup Meta Data. */
+		for (int i=0; i<2; i++) {
+			md.put("key" + i, "value" + i);
+		}
+		
+		/* Setup Timing. */
+		long min = Long.MAX_VALUE;
+		long max = 0;
+		long tot = 0;
+		long[] times = new long[TRIES];
+		
+		/* Start timers. */
+		for (int i=0; i<TRIES; i++) {
+			long startTime = System.currentTimeMillis();
+			try {
+				advert.find(md);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			long stopTime = System.currentTimeMillis();
+			
+			times[i] = (stopTime - startTime);
+			tot += times[i];
+			
+			if (times[i] < min) {
+				min = times[i];
+			}
+			if (times[i] > max) {
+				max = times[i];
+			}
+		}
+		
+		try {
+			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+//			bw.write("min,avg,max\n");
+			bw.write(min + "," + tot/TRIES + "," + max + "\n");
+			bw.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void del(Advert advert) {
+		String host = null;
+		String  pid = null;
+		
+		/* Setup path name. */
+		try {
+			host = InetAddress.getLocalHost().getHostName();
+			pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];		
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		/* Setup Timing. */
+		long min = Long.MAX_VALUE;
+		long max = 0;
+		long tot = 0;
+		long[] times = new long[TRIES];
+		char add = 'a';
+		
+		/* Start timers. */
+		for (int i=0; i<TRIES; i++) {
+			long startTime = System.currentTimeMillis();
+			try {
+				advert.delete("/home/pbenchmarks/" + host + "/" + pid + "/" + add);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			long stopTime = System.currentTimeMillis();
+			
+			times[i] = (stopTime - startTime);
+			tot += times[i];
+			
+			if (times[i] < min) {
+				min = times[i];
+			}
+			if (times[i] > max) {
+				max = times[i];
+			}
+			
+			add++;
+		}
+		
+		try {
+			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+//			bw.write("min,avg,max\n");
+			bw.write(min + "," + tot/TRIES + "," + max + "\n");
+			bw.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static void get(Advert advert) {
 		String host = null;
 		String  pid = null;
@@ -131,16 +250,16 @@ public class ParallelBenchmark {
 		}
 		
 		/* Calculate max, min, avg. */
-		try {
-			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
-			BufferedWriter bw = new BufferedWriter(fw);
-//			bw.write("min,avg,max\n");
-			bw.write(min + "," + tot/TRIES + "," + max + "\n");
-			bw.close();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
+//			BufferedWriter bw = new BufferedWriter(fw);
+////			bw.write("min,avg,max\n");
+//			bw.write(min + "," + tot/TRIES + "," + max + "\n");
+//			bw.close();
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	/**
@@ -164,7 +283,9 @@ public class ParallelBenchmark {
 			System.exit(-1);
 		}
 		
-		//add(advert);
-		get(advert);
+//		add(advert);
+//		get(advert);
+//		del(advert);
+		find(advert);
 	}
 }

@@ -327,7 +327,12 @@ class FindMetaData(webapp.RequestHandler):
 
 class Login(webapp.RequestHandler):
   def get(self):
-    self.redirect(users.create_login_url(self.request.uri))
+    if auth(self) < 0:
+      self.redirect(users.create_login_url(self.request.uri))
+      return
+    
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.out.write('Authenticated to the Advert Server.')    
 
 class DelAll(webapp.RequestHandler):
   def get(self):
