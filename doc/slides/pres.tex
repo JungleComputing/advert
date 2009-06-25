@@ -9,9 +9,18 @@
 
 \usepackage{beamerthemesplit}
 \usepackage{fancyvrb}
-\usepackage{multicol}
 
-\title{A Cloud-based Application Storage Service \newline for Ibis}
+\defbeamertemplate{footline}{author and page number}{%
+  \usebeamercolor[fg]{page number in head/foot}%
+  \usebeamerfont{page number in head/foot}%
+  \hspace{1em}\insertshortauthor\hspace{.5em}--\hspace{.5em}\inserttitle\hfill%
+  \insertpagenumber\,/\,\insertpresentationendpage\kern1em\vskip2pt%
+}
+
+\setbeamertemplate{footline}[author and page number]{}
+\setbeamertemplate{navigation symbols}{}
+
+\title{A Cloud-based Application Storage Service for Ibis}
 \author{Bas Boterman}
 \date{\today}
 
@@ -30,6 +39,7 @@
 \section[Outline]{}
 \frame
 {
+	\frametitle{Outline}
 	\tableofcontents
 }
 
@@ -39,8 +49,9 @@
 {
 	\frametitle{Background}
 	\begin{itemize}
-    	\item <1->April 7, 2008, the Google App Engine was introduced
-    	\item <2->In what extent can we use the Google App Engine for scientific
+    	\item <1->April 7, 2008, the Google App Engine, a platform for developing
+    		and hosting web applications, was introduced
+    	\item <2->To what extent can we use the Google App Engine for scientific
       		purposes?
       	\item <3->Robust distributed datastore with transactions and queries
     	\item <4->This project is about designing an application storage server
@@ -52,19 +63,19 @@
 %\subsection{Thesis}
 \frame[t]
 {
-	\frametitle{Thesis}
+	\frametitle{Thesis Title}
 	A Cloud-based Application Storage Service for Ibis 
 }
 
 \frame[t]
 {
-	\frametitle{Thesis}
+	\frametitle{Thesis Title}
 	A \textbf{Cloud-based} Application Storage Service for Ibis
 	\newline
 	\uncover<2->{
 		\begin{quote}
-			A style of computing in which dynamically scalable resources are provided as
-			a service over the Internet.
+			``A style of computing in which dynamically scalable resources are provided
+			as a service over the Internet.''
 		\end{quote}
 	
 		E.g. the Google App Engine.
@@ -73,27 +84,32 @@
 
 \frame[t]
 {
-\frametitle{Thesis}
+	\frametitle{Thesis Title}
 	A Cloud-based \textbf{Application Storage Service} for Ibis
 	\newline
 	\uncover<2->{
 		\begin{quote}
-			A service used by applications to store and retrieve application data.
+			``A service used by applications to store and retrieve application data.''
 		\end{quote}
 		
-		I.e. an Advert service.
+		Example:
+		\begin{figure}[t]
+		\begin{center}
+		\includegraphics[width=10cm]{image_workflow.pdf} 
+		\end{center}
+		\end{figure}
 	}
 }
 
 \frame[t]
 {
-\frametitle{Thesis}
+	\frametitle{Thesis Title}
 	A Cloud-based Application Storage Service for \textbf{Ibis}
 	\newline
 	\uncover<2->{
 		\begin{quote}
-			The main goal of the Ibis project is to create an efficient Java-based
-			platform for grid computing.
+			``The main goal of the Ibis project is to create an efficient Java-based
+			platform for grid computing.''
 		\end{quote}
 	}
 	\begin{itemize}
@@ -107,23 +123,24 @@
 {
 	\frametitle{Google App Engine}
 	\begin{quote}
-		A platform for building and hosting web applications on
-		the Google infrastructure for free.
+		``A platform for building and hosting web applications on
+		the Google infrastructure.''
 	\end{quote}
 	
 	\begin{itemize}
 		\item Python programming language
 		\item Web application framework
 		\item Authentication through Google Accounts
-		\item 10GB traffic per day
-		\item 1GB of data storage
+		\item 10\,GB traffic per day
+		\item 1\,GB of data storage
+		\item Free of charge.
 	\end{itemize}
 }
 
 %\subsection{Properties}
 \frame
 {
-	\frametitle{(Dis)Advantages}
+	\frametitle{(Dis)Advantages of the Google App Engine}
 	\uncover<1->{Advantages:}
 	\begin{itemize}
 		\item <1->Powerful (distributed) database with query engine and
@@ -149,7 +166,6 @@
 	\begin{figure}
 	\begin{center}
 	\includegraphics[width=10cm]{proj_design.pdf} 
-	\caption{Schematic Overview of the Project}
 	\end{center}
 	\end{figure}
 }
@@ -159,16 +175,16 @@
 	\frametitle{Server Design}
 	Public functions:
 	\begin{itemize}
-		\item <1->\texttt{add(data, metadata, path)}
-		\item <1->\texttt{del(path)}
-		\item <1->\texttt{get(path)}
-		\item <1->\texttt{getmd(path)}
-		\item <1->\texttt{find(metadata)}
+		\item \texttt{add(data, metadata, path)}
+		\item \texttt{del(path)}
+		\item \texttt{get(path)}
+		\item \texttt{getmd(path)}
+		\item \texttt{find(metadata)}
 	\end{itemize}
 	\begin{itemize}
-		\item <2->\texttt{data}: Text
-		\item <2->\texttt{metadata}: Key-value pairs of Strings
-		\item <2->\texttt{path}: String
+		\item \texttt{data}: Text
+		\item \texttt{metadata}: Key-value pairs of Strings
+		\item \texttt{path}: String
 	\end{itemize}
 }
 
@@ -177,10 +193,10 @@
 	\frametitle{Client Library}
 	\begin{itemize}
 		\item Written in Java
-		\item Implements the GAE Advert server's protocol
+		\item Implements the Google App Engine Advert server's protocol
 		\begin{itemize}
 			\item Base64 encoding
-			\item JSON encoding
+			\item JSON encoding (XML alternative)
 			\item Error handling 
         \end{itemize}
         \item Establishes connections over HTTP(S)
@@ -196,44 +212,40 @@
 %\subsection{Server Functions}
 \frame
 {
-	\frametitle{Add()}
+	\frametitle{Adding Objects of Variable Size}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{add_obj.pdf} 
-	\caption{Adding Objects of Variable Size}
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=10cm]{add_obj.pdf} 
 	\end{center}
 	\end{figure}
 }
 
 \frame
 {
-	\frametitle{Add()}
+	\frametitle{Adding Objects with Variable Meta Data}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{add_md.pdf} 
-	\caption{Adding Objects with Variable Meta Data}
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=10cm]{add_md.pdf} 
 	\end{center}
 	\end{figure}
 }
 
 \frame
 {
-	\frametitle{Get()}
+	\frametitle{Retrieving Objects with Variable Meta Data}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{get_amt.pdf} 
-	\caption{Retrieving Objects with Variable Meta Data}
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=10cm]{get_amt.pdf} 
 	\end{center}
 	\end{figure}
 }
 
 \frame
 {
-	\frametitle{Find()}
+	\frametitle{Finding Meta Data}
 	\begin{figure}[t]
 	\begin{center}
-	\includegraphics[trim=4cm 4cm 4cm 5cm, width=8cm]{find_amt.pdf} 
-	\caption{Finding Meta Data}
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=10cm]{find_amt.pdf} 
 	\end{center}
 	\end{figure}
 }
@@ -241,27 +253,38 @@
 %\subsection{Clients in Parallel}
 \frame
 {
-	\frametitle{Parallel Benchmarks}
-	\textbf{TODO:} under construction!
+	\frametitle{Performing Operations in Parallel}
+	\begin{figure}[t]
+	\begin{center}
+	\includegraphics[trim=4cm 4cm 4cm 5cm, width=10cm]{parallel.pdf} 
+	\end{center}
+	\end{figure}
 }
 
 \frame
 {
 	\frametitle{Benchmark Evaluation}
 	\begin{itemize}
-    	\item Latency increases if object size/meta data size increases
-    	\item Latency remains same if number of objects in datastore increase
-    	\item Latency increases if multiple clients connect at the same time
-    	\item Server times out if too many items are present in datastore (latency
-    		$>$ 30 seconds)
-    	\item Server temporarily exceeds quota if over 5MB is submitted within
-    		60 seconds
-    	\item Server fails if over 500 data items are manipulated in one call
-    	\item ClientLogin fails if 100 clients try to authenticate in parallel
+    	\item Completion time depends on object size/meta data size, and on number
+    		of clients connecting simultaneously
+    	\item Completion time is independent on the datastore size
+    	\item Google has some restrictions
+		\begin{itemize}
+    		\item Response time cannot be over 30\,seconds
+    		\item Quota temporarily exceeds with requests larger than 5\,MB
+    		\item No more than 500 data items can be manipulated in one call
+    		\item No more than 100 clients can use ClientLogin simultaneously
+    	\end{itemize}
     \end{itemize}
 }
 
 \section{Applications}
+\frame
+{
+	\frametitle{Outline}
+	\tableofcontents[currentsection]
+}
+
 %\subsection{JavaGAT}
 \frame
 {
@@ -272,10 +295,9 @@
 	\end{quote}
 	
 	\begin{itemize}
-		\item File operations (File, LogicalFile, RandomAccessFile, Endpoint)
-		\item File stream operations (FileInputStream, FileOutputStream)
-		\item Job submission (ResourceBroker)
-		\item Monitoring (Monitorable)
+		\item File operations
+		\item Job submission
+		\item Monitoring
 		\item Access to information services (AdvertService)
 	\end{itemize}
 }
@@ -286,18 +308,16 @@
 	\begin{figure}[t]
 	\begin{center}
 	\includegraphics[width=7cm]{gat-design.png} 
-	\caption{Current JavaGAT Design}
 	\end{center}
 	\end{figure}
 }
 
 \frame[t]
 {
-	\frametitle{JavaGAT structure}
+	\frametitle{JavaGAT structure with App Engine AdvertService Adaptor}
 	\begin{figure}[t]
 	\begin{center}
 	\includegraphics[width=7cm]{gat-mydesign.png} 
-	\caption{JavaGAT with App Engine AdvertService Adaptor}
 	\end{center}
 	\end{figure}
 }
@@ -306,7 +326,7 @@
 {
 	\frametitle{App Engine AdvertService Adaptor}
 	\begin{itemize}
-		\item As of yet, only a local AdvertService existed
+		\item So far, only a local AdvertService existed
 		\item Scalable design (local AdvertService does not scale)
 		\item Completely transparent to user
 		\item Path handling is done locally
@@ -318,13 +338,13 @@
 {
 	\frametitle{IPL}
 	\begin{quote}
-		The IPL is a communication library is specifically designed for usage in a
-		grid environment.
+		``The IPL is a communication library which is specifically designed for usage
+		in a grid environment.''
 	\end{quote}
 	\begin{itemize}
     	\item Communication library for distributed applications
-    	\item All applications communicate through an IPL registry server
-    	\item IPL registry server address needs to be passed down to each Ibis
+    	\item All applications discover each other through an IPL registry server
+    	\item IPL registry server address needs to be passed to each Ibis
     		application
     \end{itemize}
 }
@@ -352,7 +372,7 @@
 
 \frame[t,containsverbatim]
 {
-	\frametitle{IPL Example Using Advert Server (Server)}
+	\frametitle{IPL Example Using Advert Server}
 	\begin{Verbatim}[fontsize=\small,gobble=2]
 		$ $IPL_HOME/bin/ipl-server --events \
 		--advert google://jondoe.appspot.com/identifier \
@@ -370,7 +390,7 @@
 
 \frame[t,containsverbatim]
 {
-	\frametitle{IPL Example Using Advert Server (Application)}
+	\frametitle{IPL Example Using Advert Server}
 	\begin{Verbatim}[fontsize=\small,gobble=2]
 		$ $IPL_HOME/bin/ipl-run \
 		-Dibis.advert.address=google://jondoe.appspot.com \
@@ -384,14 +404,13 @@
 
 \frame
 {
-	\frametitle{IPL Registry Bootstrap Server}
+	\frametitle{IPL Server Bootstrap Mechanism}
 	\begin{itemize}
-    	\item No server for bootstrapping IPL registries existed
-    	\item Large range of IPL registries can be started, whilst only remembering
+    	\item No mechanism for bootstrapping IPL servers existed
+    	\item Large range of IPL servers can be started, whilst only remembering
     		one (advert) address
-		\item Different groups of Ibis can be started without (manually) sharing the
-			server address
-		\item Advert address can be hard-coded in Ibis application 
+		\item Different groups of Ibises can be started without (manually) having to
+			configure each Ibis %Advert address can be hard-coded in Ibis application 
     \end{itemize}
 }
 
@@ -399,12 +418,12 @@
 %\subsection{Verdict}
 \frame{
 	\frametitle{Conclusion}
-	Achievements:
+	Contributions:
 	\begin{itemize}
       \item <1->A Google App Engine Advert server, written in Python
       \item <1->An Advert client library, written in Java
       \item <1->An App Engine AdvertService adaptor for JavaGAT
-      \item <1->A registry bootstrap server for IPL
+      \item <1->An IPL Server bootstrap mechanism
     \end{itemize}
 	
 	\uncover<2->{Properties:}
@@ -421,10 +440,10 @@
 }
 
 %\subsection{Questions}
-\frame{
-	\frametitle{Questions}
-	\begin{center}
-		\huge{Any questions?}
-	\end{center}
-}
+% \frame{
+% 	\frametitle{Questions}
+% 	\begin{center}
+% 		\huge{Any questions?}
+% 	\end{center}
+% }
 \end{document}
