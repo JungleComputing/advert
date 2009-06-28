@@ -1,5 +1,4 @@
 \section{Programmer's Manual}
-\subsection{Introduction}
 \label{introduction}
 This manual explains how to program applications using the Advert server running
 on the Google App Engine. For information on how to install the server, please
@@ -29,11 +28,11 @@ will come to encoding data into HTTP requests in subsection \ref{protocol}, when
 we discuss our protocol.
 
 Connecting to the Google App Engine is fairly simple, making use of the
-\texttt{java.net} package. Useful classes are the \texttt{texttt} and the
-\texttt{HttptextttConnection} classes, which are the most-used classes for making
+\texttt{java.net} package. Useful classes are the \texttt{URL} and the
+\texttt{HttpURLConnection} classes, which are the most-used classes for making
 HTTP connections through Java. For more information on how to connect to an
 HTTP server using Java, see
-\texttt{http://java.sun.com/docs/books/tutorial/networking/texttts/index.html}.
+\texttt{http://java.sun.com/docs/books/tutorial/networking/urls/index.html}.
 
 Note that sometimes it is required to make HTTPS connections over SSL
 (e.g. authentication). Before making an HTTPS connection, some system
@@ -120,7 +119,7 @@ Auth=DQAAAGgA...dk3fA5N
 \end{figure*}
 
 The second part of the authentication request is initiating an HTTP GET request
-to the following texttt:
+to the following URL:
 
 \begin{center}
 \begin{code}
@@ -131,9 +130,9 @@ http://jondoe.appspot.com/_ah/login?continue=
 
 Here, \texttt{jondoe.appspot.com} is the domain where the Advert server is
 running. Note that we append the authentication token we just received from the
-ClientLogin to this texttt. Once this texttt is requested, the App Engine will
+ClientLogin to this URL. Once this URL is requested, the App Engine will
 respond with an \texttt{HTTP/1.0 302 Found} response code, trying to redirect
-to the texttt stated in the \texttt{continue=} part of the texttt described above.
+to the URL stated in the \texttt{continue=} part of the URL described above.
 We, on the other hand, are only interested in the \emph{authentication cookie}
 of the response. Once we found the header field containing the
 \texttt{Set-Cookie} key, we know we have found our authentication cookie (see
@@ -159,7 +158,7 @@ ACSID=AJKiYcH9...29E6Qylx; expires=Sun, 17-May-2009 12:58:04 GMT;
 Once authenticated to the Google App Engine, the client can make use of the
 various functions provided by the Advert server. Currently, five functions are
 implemented, being \texttt{add}, \texttt{del}, \texttt{get}, \texttt{getmd},
-and \texttt{find}. All functions are addressed by requesting the following texttt:
+and \texttt{find}. All functions are addressed by requesting the following URL:
 
 \begin{center}
 \begin{code}
@@ -290,7 +289,7 @@ encoded as a JSON Object (in random order). Function-specific return values are:
   could not be found, \texttt{null} is returned
 \end{itemize}
 
-\subsection{Find}
+\subsubsection{Find}
 \label{find}
 The \texttt{find} function is used for retrieving meta data from the Advert
 server. This function uses a JSON Object for parameter encoding. This function
@@ -317,6 +316,45 @@ values are:
   found, \texttt{null} is returned
 \end{itemize}
 
+\subsection{User Functions}
+In addition to the protocol, we have also built a couple of user functions,
+which can be called directly from a web browser.
+
+\subsubsection{Login}
+\label{login}
+To manually log in, using your Google Account, one can visit the following URL
+in any web browser: \texttt{http://jondoe.appspot.com/login/}, where
+\texttt{jondoe.appspot.com} is the address of the Advert server. This generates
+a standard Google login page, which can be used as such. If logging in was
+successful (and the user is an administrator - see subsection \ref{admin-panel}),
+a message will appear: \texttt{Authenticated to the Advert Server.}.
+
+Logging in manually can be used for debug purposes (e.g. see what cookies look
+like, using authenticated functions, etc.), and is a requirement for purging
+the database (see subsection \ref{purge}).
+
+\subsubsection{Purge}
+\label{purge}
+Besides the login page, there's another user function which is accessible
+through the user's browser. If a user visits
+\texttt{http://jondoe.appspot.com/purge/}, where \texttt{jondoe.appspot.com} is the
+address of th e Advert server, a user can empty the database on one click. 
+
+Once this address is visited, a user will get a page, confirming to empty the
+database. This message only appears if the user is authenticated (using the
+login function of subsection \ref{login}). Once a user clicked the `Yes'-button, a
+function will commence purging the database. Note that if this function needs
+more than 30 seconds to purge all data, a time-out error will be returned
+(\texttt{Could not complete. Refresh this page to try again.}). If a user
+refreshes the page, no confirmation will be asked, and the purging will
+continue where it had left off. This continues until all items are purged, or
+the user navigates away from the page. When all items are purged, the message 
+\texttt{Done.} will appear, meaning purging has finished.
+
+Note that purging takes place in random order, and is solely ment to empty the
+database manually. Data items are purged in batches of 100 items. This funtion 
+could be useful when it takes too much time to empty the database via the
+administration panel, or the \texttt{del} function is too expensive to call fora large amount of times.
 \subsection{The Administration Panel}
 \label{admin-panel}
 Another non-programmer's feature we use for our Advert server is the
@@ -354,15 +392,14 @@ communications class is created,  \texttt{authenticate()} takes a user name
 \texttt{httpSend()} is called, the authentication cookie is used.
 
 The public functions of the Ibis Advert client library are exactly those
-functions as described in subsection \ref{protocol}. To pass any data from the public functions
-to the Advert server, JSON encoding is used. For Java, the most used JSON
-library is \emph{Json-lib} (\texttt{http://json-lib.sourceforge.net/}). First
-of all, we use pathnames as identifiers. Relative pathnames are stored
+functions as described in subsection \ref{protocol}. To pass any data from the
+public functions to the Advert server, JSON encoding is used. For Java, the most
+used JSON library is \emph{Json-lib} (\texttt{http://json-lib.sourceforge.net/}).
+First of all, we use pathnames as identifiers. Relative pathnames are stored
 locally by means of a \emph{PWD} (print working directory). Only absolute
-pathnames are given to the server. Also, since JSON does not support the
-notation of binary data, we encode all our binary data into \emph{base64
-encoding}, before encapsulating them in JSON. 
-
+pathnames are given to the server. Also, since JSON does not support the notation
+of binary data, we encode all our binary data into \emph{base64 encoding}, before
+encapsulating them in JSON.
 Finally, at the end of each function, \texttt{httpSend()} is called, with a
 specific server function and a JSON Array/Object (or just a single pathname) as
 function arguments. For more information on the implementation, we recommend

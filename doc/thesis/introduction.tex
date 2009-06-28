@@ -5,4 +5,18 @@ and hosting web applications on their infrastructure, called the \emph{Google Ap
 Engine} \cite{app-engine-www}. Based on cloud computing technology, Google App
 Engine uses multiple servers to run an application and store data. In addition,
 Google automatically adjusts the number of servers to handle requests
-simultaneously.
+simultaneously. All is offered for free by Google, provided that there are
+certain quotas (e.g. bandwidth, disk space, etc.). In addition, one could
+choose to sign up for a billable account, where one is billed after the quota
+is exceeded.
+
+As of yet, the Google App Engine is not used for scientific purposes. Therefore
+our research question is: \emph{``To what extent can we use the Google App Engine
+for scientific purposes?''}. Since the Google App Engine runs our applications in
+a sandbox (i.e. a secure environment that provides limited access to the
+underlying operating system) \cite{app-engine-sandbox}, one of the most usable
+parts of the App Engine is the distributed database, called the \emph{datastore}.
+The datatsore is a schemaless object datastore, with a query engine and atomic
+transactions. The Python interface includes a rich data modeling API and a
+SQL-like query language called GQL \cite{app-engine-datastore}.The Google App Engine Datastore could well serve as an \emph{Application
+Storage service}. 
