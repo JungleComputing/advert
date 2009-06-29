@@ -1,5 +1,9 @@
 \section{The App Engine}
-\ldots
+\label{appengine}
+April 7, 2008 Google launched a free-of-charge cloud computing service called
+the \emph{Google App Engine}. Google offers a platform for developing and
+hosting web applications at Google's data centers. Google virtualizes
+applications and distributes databases across multiple servers and data centers.
 
 \subsection{The Runtime Environment}
 As of April 8th 2009 \cite{app-engine-java} the Google App Engine provides two
@@ -7,7 +11,7 @@ programming languages to build and run web applications. Besides \emph{Python}
 \cite{python-www}, also the \emph{Java} \cite{java-www} programming language is
 featured to develop web applications and run them on Google's resources. Since
 the feature of running your applications in Java is still relatively new, we
-focused on writing our server in Python.
+focused on the Python runtime environment for scientific purposes.
 A Python web application interacts with the App Engine web server using the CGI
 protocol. An application can use a WSGI-compatible web application framework
 using a CGI adapter. App Engine includes a simple web application framework,
@@ -15,58 +19,80 @@ called \emph{webapp}, to make it easy to get started. For larger applications,
 mature third-party frameworks, such as \emph{Django} \cite{django-www}, workwell with App Engine.
 
 The App Engine currently only supports Python 2.5.3. The Python interpreter runs
-in a secured ``sandbox'' environment to isolate your application for service and
-security. The interpreter can run any Python code, including Python modules you
-include with your application, as well as the Python standard library. The
-interpreter cannot load Python modules with C code; it is a ``pure'' Python
-environment.
+in a secured \emph{sandbox} environment to isolate our application for service
+and security. The interpreter can run any Python code, including Python modules we
+want to  include with our application, as well as the Python standard library.
+The interpreter cannot load Python modules with C code; it is a `pure' Python
+environment \cite{app-engine-sandbox}.
+
+In addition, Google also provides a distributed database, called the
+\emph{datastore}. The datastore provides robust scalable data storage for our
+application. The datastore is designed with web applications in mind, and
+emphasizes on read and query performance. It stores data entities with
+properties, organized by application-defined kinds. It can perform queries over entities of
+the same kind, with filters and sort orders on property values and keys. All
+queries are pre-indexed for fast results over very large data sets. The datastore
+supports transactional updates, using entity groupings defined by the application
+as the unit of transactionality in the distributed data network\cite{app-engine-datastore}.
 \subsection{Limitations}
 Although the Google App Engine provides us with resources, it also has some
 limitations we should consider. All applications hosted on the App Engine
-servers, are run within a sandbox. An application can only access other computers
-on the Internet through the provided URL fetch and email services and APIs. Other
-computers can only connect to the application by making HTTP (or HTTPS) requests
-on the standard ports. An application cannot write to the file system. An app can
-read files, but only files uploaded with the application code. The app must use
-the App Engine \emph{datastore} for all data that persists between requests.
-Application code only runs in response to a web request, and must return response
-data within thirty seconds. A request handler cannot spawn a sub-process or
-execute code after the response has been sent.
-
+servers, are run within a sandbox. Spawning new processes using \texttt{fork()}
+or threads are not allowed. Application code only runs in response to a web
+request, and must return response data within thirty seconds. After the response
+is sent, no code execution can take place.
+An application can only access other computers on the Internet through the
+provided URL fetch and email services and APIs. No socket connections to other
+machines can be made. Other computers can only connect to the application by
+making HTTP (or HTTPS) requests on the standard ports.
+An application cannot write to the file system. An app can read files, but only
+files uploaded with the application code. The app must use the App Engine
+datastore for all data that persists between requests.
 \subsection{Quotas}
 \label{appengine-quotas}
 The Google App Engine is free of use up to a certain level of used resources,
 after which fees are charged for additional storage, bandwidth or CPU cycles
-required by the application. Currently the following quotas, for using the free
-version of the Google App Engine, are maintained:
-\begin{itemize}
-\item \textbf{CPU Time} - 46.30 hours/24h
-\item \textbf{Outgoing Bandwidth} - 10.00 Gbytes/24h
-\item \textbf{Incoming Bandwidth} - 10.00 Gbytes/24h
-\item \textbf{Data Storage} - 1.00 Gbytes
-\item \textbf{Secure Outgoing Bandwidth} - 2.00 Gbytes/24h
-\item \textbf{Secure Incoming Bandwidth} - 2.00 Gbytes/24h
-\item \textbf{Request size} - 10 MB per request
-\item \textbf{Response time} - 30 seconds per request
-\item \textbf{Data Sent to datastore} - 12.00 Gbytes/24h
-\item \textbf{Data Received from datastore} - 116.00 Gbytes /24h
-\item \textbf{Datastore CPU Time} - 62.11 hours/24h
-\end{itemize}
-From May 25th, new quotas will take effect \cite{app-engine-quotas}, which are:
-\begin{itemize} 
-\item \textbf{CPU Time} - 6.5 hours/24h (\$0.10 for every additional hour)
-\item \textbf{Bandwidth} - 1 Gbyte (in and out)/24h (\$0.10/\$0.12 for every additional
-GByte in/out)
-\item \textbf{Stored Data \& Email Recipients} - these quotas will remain
-unchanged (\$0.15 for every additional GB stored per month)
-\end{itemize}
+required by the application. As of June 29th, 2009, quotas that are enforced byGoogle are provided in Figure \ref{quota-table}. Note that the table below somequotas are billable, if the user provides payment information using \emph{GoogleCheckout} \cite{google-checkout-www}. When you enable billing for your app, theapp's fixed quotas increase and an optional maximum can be set by theapplication's administrator (the latter are called \emph{billable quotas})
+\cite{app-engine-quotas}.
+\begin{figure}[h,t]
+\begin{center}
+\begin{tabular}{| l | l | l | }
+\hline
+\multirow{2}{*}{Resource (*=billable)} & \multicolumn{2}{|l|}{Free Default
+Quota} \\
+\cline{2-3}
+& Daily Limit & Maximum Rate \\
+\hline
+Requests & 1,300,000 requests & 7,400 requests/minute \\\hline
+Outgoing Bandwidth* & 1 gigabyte & 56 megabytes/minute \\ 
+\hline
+Incoming Bandwidth* & 1 gigabyte & 56 megabytes/minute \\\hline
+CPU Time* & 6.5 CPU-hours & 15 CPU-minute/minute \\
+\hline
+Datastore API Calls & 10,000,000 calls & 57,000 calls/minute \\
+\hline
+Stored Data* & 1 gigabyte & None \\
+\hline
+\end{tabular}
+\caption{Google App Engine Free Default Quotas. \label{quota-table}}
+\end{center}
+\end{figure}
+
+Note that Google has the right and ability to change these quotas over time.
+During the development of our project, this has happened several times, both
+increasing and decreasing quotas.
 
 \subsection{Monitoring}
-For us to monitor the quota already used by the various Ibis services, we can
-login to the administration panel. All quotas as described above can be
-monitored from this website, and additionally, we can see when our quotas will be
-reset (being midnight, Pacific time). Historical note: The 24-hour replenishment
-cycle was introduced in December 2008. It replaced a more complicated system of
-``continuous'' replenishment, to make it easier to report and control resource
-usage. Besides the monitoring of quotas, also various logs are available (e.g.
-error logs, debug logs, and access logs).
+For the administrativor to monitor the quota already used by other users, one can
+login to the administration panel. All quotas as described above can be monitored
+from this website, and additionally, one can see when quotas will be reset (being
+midnight, Pacific time\footnote{Historical note: The 24-hour replenishment cycle
+was introduced in December 2008. It replaced a more complicated system of
+`continuous' replenishment, to make it easier to report and control resource
+usage.}).  Besides the monitoring of quotas, also various logs are available
+(e.g. error logs, debug logs, and access logs), and one can check the contents of
+the datastore as well. For more information on the administration panel, we
+suggest reading \cite{app-engine-admin}.
+\subsection{Scientific Purposes}
+As far as we know, the Google App Engine has not been used for scientific
+purposes, other than web services. Obviously, Google did not intend the AppEngine to be used for such purposes, hence the lack of spawning new processesor threads, or the limited response time of a request. The most usable featureto us is the distributed datastore, which could serve well as\texttt{application storage server}, as will be described in more detail below.
