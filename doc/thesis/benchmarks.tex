@@ -1,4 +1,5 @@
 \section{Benchmarks}
+\label{benchmarks}
 To measure the perfomance of our Advert service solution, we performed
 benchmarks on our Google App Engine Advert Service library. We executed a
 couple of tests to measure latency, bandwidth, and server-side performance.
@@ -239,7 +240,7 @@ latency, which means we received a timeout from Google. Note that we had ten
 objects in the database at all time, which means we effectively had ten times
 as much data to compare as suggested by the x-axis of the graph.
 
-\section{Bandwidth}
+\subsection{Bandwidth}
 In addition to latency, we also tried to measure the bandwidth between the
 Vrije Universiteit, Amsterdam, and the Google App Engine (located as stated in
 Figure \ref{tracert}).
@@ -275,9 +276,10 @@ of seconds, and divide it by 1024 to get the kB/sec. We can conclude that our
 upload bandwidth is 1360kB/sec, and our download bandwidth is 372kB/sec.
 \textbf{ToDo: explanation, Java read?}
 
-\section{Parellel Benchmarks}
+\subsection{Parellel Benchmarks}
 Finally, we tested what the server latency would be if multiple clients would
 connect at the sime time. To achieve parellelism, we made use of the VU's DAS-3
 cluster, which has 85 dual-core 2.4GHz nodes, with 4GB of memory and a Myri-10G
 and GbE network \cite{das3-www}.
 
+\subsection{Evaluation}

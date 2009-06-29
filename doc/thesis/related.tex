@@ -1,11 +1,30 @@
-\section{The App Engine}
-\label{appengine}
+\section{Related Work}
+\label{related}
+
+\subsection{Ibis}
+\label{related-ibis}
+\emph{Ibis} is an open source Java grid software project of the Computer Systems
+group, which is part of the Computer Science department of the Faculty of
+Sciences at the \emph{Vrije Universiteit}, Amsterdam, The Netherlands. The main
+goal of the Ibis project is to create an efficient Java-based platform for grid
+computing. The Ibis project currently consists of the IPL (a communication
+library), a variety of programming models, the Java Grid Application Toolkit, and
+the Zorilla peer-to-peer grid middleware. All components can be deployed on any
+grid platform, due to the use of Java \cite{ibis-www}.
+\subsubsection{JavaGAT}
+\ldots
+
+\subsubsection{IPL}
+\ldots
+
+\subsection{The Google App Engine}
+\label{related-appengine}
 April 7, 2008 Google launched a free-of-charge cloud computing service called
 the \emph{Google App Engine}. Google offers a platform for developing and
 hosting web applications at Google's data centers. Google virtualizes
 applications and distributes databases across multiple servers and data centers.
 
-\subsection{The Runtime Environment}
+\subsubsection{The Runtime Environment}
 As of April 8th 2009 \cite{app-engine-java} the Google App Engine provides two
 programming languages to build and run web applications. Besides \emph{Python}
 \cite{python-www}, also the \emph{Java} \cite{java-www} programming language is
@@ -34,7 +53,7 @@ the same kind, with filters and sort orders on property values and keys. All
 queries are pre-indexed for fast results over very large data sets. The datastore
 supports transactional updates, using entity groupings defined by the application
 as the unit of transactionality in the distributed data network\cite{app-engine-datastore}.
-\subsection{Limitations}
+\subsubsection{Limitations}
 Although the Google App Engine provides us with resources, it also has some
 limitations we should consider. All applications hosted on the App Engine
 servers, are run within a sandbox. Spawning new processes using \texttt{fork()}
@@ -48,7 +67,7 @@ making HTTP (or HTTPS) requests on the standard ports.
 An application cannot write to the file system. An app can read files, but only
 files uploaded with the application code. The app must use the App Engine
 datastore for all data that persists between requests.
-\subsection{Quotas}
+\subsubsection{Quotas}
 \label{appengine-quotas}
 The Google App Engine is free of use up to a certain level of used resources,
 after which fees are charged for additional storage, bandwidth or CPU cycles
@@ -82,7 +101,7 @@ Note that Google has the right and ability to change these quotas over time.
 During the development of our project, this has happened several times, both
 increasing and decreasing quotas.
 
-\subsection{Monitoring}
+\subsubsection{Monitoring}
 For the administrativor to monitor the quota already used by other users, one can
 login to the administration panel. All quotas as described above can be monitored
 from this website, and additionally, one can see when quotas will be reset (being
@@ -93,6 +112,20 @@ usage.}).  Besides the monitoring of quotas, also various logs are available
 (e.g. error logs, debug logs, and access logs), and one can check the contents of
 the datastore as well. For more information on the administration panel, we
 suggest reading \cite{app-engine-admin}.
-\subsection{Scientific Purposes}
-As far as we know, the Google App Engine has not been used for scientific
-purposes, other than web services. Obviously, Google did not intend the AppEngine to be used for such purposes, hence the lack of spawning new processesor threads, or the limited response time of a request. The most usable featureto us is the distributed datastore, which could serve well as\texttt{application storage server}, as will be described in more detail below.
+\subsection{Project Overview}
+As far as we know, the Google App Engine has not been used as an applicationstorage server. Obviously, Google did not intend the App Engine to be used for
+such purposes, hence the lack of spawning new processes or threads, or the
+limited response time of a request. The most usable feature to us is the
+distributed datastore, which could serve well as application storage
+server. In addition to this server, we will write a client to communicate to the
+server over HTTP(S), as can be seen from Figure \ref{related-overview}.
+Accordingly, applications can use the library to store their data items in the
+data store. Below we will describe our project design in more detail.
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[width=14cm]{./figures/project_design.pdf} 
+\caption{An Overview of our Project.\label{related-overview}}
+\end{center}
+\end{figure*}
+
+
