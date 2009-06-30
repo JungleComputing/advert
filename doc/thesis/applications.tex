@@ -13,26 +13,35 @@ hierarchical namespace attached \cite{javagat-javadoc}.
 For the actual implementation of our \emph{AppEngineAdvertServiceAdaptor}, we
 basically implemented all functionality provided by the JavaGAT API
 \cite{javagat-javadoc}. This makes our implementation very similar to the
-\emph{GenericAdvertServiceAdaptor}, with the major difference that we do not
+\emph{Generic AdvertService Adaptor}, with the major difference that we do not
 use a local database for storage. Instead, we make use of the \emph{Ibis Advert
 Client} library, which communicates with the App Engine (see subsection 
 \ref{clientimpl}). 
 
 In the adaptor's constructor we connect to the App Engine by creating a new
 \texttt{Advert} object (which in turn connects to the App Engine using the
-\texttt{Communications} class). The constructor only takes one argument, namely
-an \texttt{org.gridlab.gat.URI} of the Advert Server to connect to. This
-\texttt{URI} needs to be an \texttt{appspot.com} domain. Subsequently, the
-constructor tries to fetch the user's credentials from the \texttt{GATContext}. 
-If none is found, we will try to connect to the Advert server as a public
-server.
+\texttt{Communications} class, see Figure \ref{applications-gaeasa}). The
+constructor only takes one argument, namely an \texttt{org.gridlab.gat.URI} of
+the Advert Server to connect to. This \texttt{URI} needs to be an
+\texttt{appspot.com} domain. Subsequently, the constructor tries to fetch the
+user's credentials from the \texttt{GATContext}. If none is found, we will try to
+connect to the Advert server as a public server.
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[width=10cm]{./figures/gat-mydesign.png} 
+\caption{The Structure of JavaGAT using the App
+Engine AdvertService Adaptor.\label{related-gat-design}}
+\end{center}
+\end{figure*}
 
 Because of the fact that we do not implement our database locally, we cannot
 implement two of the public functions given by the API, called
 \texttt{importDataBase} and \texttt{exportDataBase}. Both functions are not
 feasible to implement, since this would mean we theoratically should be able to
-import/export 1 Gigabyte of data over HTTP, after which we would run out of
+import/export 1\,gigabyte of data over HTTP, after which we would run out of
 free quota too fast.
+
+As of yet, only a local implementation of the AdvertService exists (i.e. )
 
 \subsection{IPL Registry Bootstrap}
 \label{ipl}
@@ -154,3 +163,4 @@ property is set, so an application can connect to a suitable registry server as
 it would normally do, if \texttt{-Dibis.server.address} was set in the first
 place.
 
+At first, it seems that this solution introduces a lot more typing.
