@@ -12,12 +12,40 @@ library), a variety of programming models, the Java Grid Application Toolkit, an
 the Zorilla peer-to-peer grid middleware. All components can be deployed on any
 grid platform, due to the use of Java \cite{ibis-www}.
 \subsubsection{JavaGAT}
-\ldots
+\emph{Java Grid Application Toolkit} (JavaGAT) offers a set of coordinated,
+generic and flexible APIs for accessing grid services from application codes,
+portals, data managements systems, etc. \cite{javagat-www} JavaGAT sits between
+grid applications and numerous types of grid middleware, providing uniform
+interfaces for file operations, file stream operations, job submission,
+monitoring, and access to information services (see Figure\ref{related-gat-design}).
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[width=10cm]{./figures/gat-design.png} 
+\caption{The Structure of JavaGAT.\label{related-gat-design}}
+\end{center}
+\end{figure*}
+
+As a result, grid application programmers need only to learn a single API to
+obtain access to the entire grid. Due to its modular design, JavaGAT can easily
+be extended with support for other grid middleware layers \cite{javagat-www}.
+Grid applications do not use grid middleware directly. Instead, the
+applications calls methods of the GAT API. The GAT engine dynamically `routes'
+the API calls to the correct grid middleware. There are plugins (called
+\emph{adaptors}) for many different grid middleware systems \cite{javagat-www}.
 
 \subsubsection{IPL}
-\ldots
+The \emph{Ibis Portability layer} (IPL) is a communication library specifically
+designed for usage in a grid environment. It has a number of properties which
+help to achieve its goal of providing programmers with an easy to use, reliable
+grid communication infrastructure \cite{ibis-www}.
+The Ibis Portability Layer (IPL) acts as a common interface for the different
+programming models to the bottom implementation layer. Multiple implementations
+are available. Some, such as \emph{TcpIbis using} 100\% Java code to ensure
+portability, and some, such as the \emph{MPI} (Message Passing Interface) based
+Ibis implementation taking advantage of local high speed networks using native
+code \cite{ibis-www}.
 
-\subsection{The Google App Engine}
+As we will see in Section \ref{applications}, we will use our applicationstorage server for both Ibis projects mentioned above.\subsection{The Google App Engine}
 \label{related-appengine}
 April 7, 2008 Google launched a free-of-charge cloud computing service called
 the \emph{Google App Engine}. Google offers a platform for developing and
@@ -37,13 +65,13 @@ using a CGI adapter. App Engine includes a simple web application framework,
 called \emph{webapp}, to make it easy to get started. For larger applications,
 mature third-party frameworks, such as \emph{Django} \cite{django-www}, workwell with App Engine.
 
-The App Engine currently only supports Python 2.5.3. The Python interpreter runs
-in a secured \emph{sandbox} environment to isolate our application for service
-and security. The interpreter can run any Python code, including Python modules we
-want to  include with our application, as well as the Python standard library.
-The interpreter cannot load Python modules with C code; it is a `pure' Python
-environment \cite{app-engine-sandbox}.
-
+The App Engine currently only supports Python 2.5.2 (Python 3 is considered a
+future release). The Python interpreter runs in a secured \emph{sandbox}
+environment to isolate our application for service and security. The interpreter
+can run any Python code, including Python modules we want to  include with our
+application, as well as the Python standard library. The interpreter cannot load
+Python modules with C code; it is a `pure' Python environment
+\cite{app-engine-sandbox}.
 In addition, Google also provides a distributed database, called the
 \emph{datastore}. The datastore provides robust scalable data storage for our
 application. The datastore is designed with web applications in mind, and
@@ -117,15 +145,16 @@ As far as we know, the Google App Engine has not been used as an applicationsto
 such purposes, hence the lack of spawning new processes or threads, or the
 limited response time of a request. The most usable feature to us is the
 distributed datastore, which could serve well as application storage
-server. In addition to this server, we will write a client to communicate to the
-server over HTTP(S), as can be seen from Figure \ref{related-overview}.
-Accordingly, applications can use the library to store their data items in the
-data store. Below we will describe our project design in more detail.
+server (for Ibis). 
+
+In addition to this server, we will write a Java client to communicate to the
+server over HTTP(S), as can be seen from Figure \ref{related-overview}. Once
+this library is imported into Ibis, Ibis applications can use the
+library to store their data items in the data store. In the following sections
+we will describe our project design in more detail.
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
 \includegraphics[width=14cm]{./figures/project_design.pdf} 
 \caption{An Overview of our Project.\label{related-overview}}
 \end{center}
 \end{figure*}
-
-
