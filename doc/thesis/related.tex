@@ -140,21 +140,3 @@ usage.}).  Besides the monitoring of quotas, also various logs are available
 (e.g. error logs, debug logs, and access logs), and one can check the contents of
 the datastore as well. For more information on the administration panel, we
 suggest reading \cite{app-engine-admin}.
-\subsection{Project Overview}
-As far as we know, the Google App Engine has not been used as an applicationstorage server. Obviously, Google did not intend the App Engine to be used for
-such purposes, hence the lack of spawning new processes or threads, or the
-limited response time of a request. The most usable feature to us is the
-distributed datastore, which could serve well as application storage
-server (for Ibis). 
-
-In addition to this server, we will write a Java client to communicate to the
-server over HTTP(S), as can be seen from Figure \ref{related-overview}. Once
-this library is imported into Ibis, Ibis applications can use the
-library to store their data items in the data store. In the following sections
-we will describe our project design in more detail.
-\begin{figure*}[ht] %[placement] where placement is h,t,b,p
-\begin{center}
-\includegraphics[width=14cm]{./figures/project_design.pdf} 
-\caption{An Overview of our Project.\label{related-overview}}
-\end{center}
-\end{figure*}

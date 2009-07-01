@@ -10,16 +10,15 @@ certain quotas (e.g. bandwidth, disk space, etc.). In addition, one could
 choose to sign up for a billable account, where one is billed after the quota
 is exceeded.
 
-As far as we know, the Google App Engine has not been used for scientific
-purposes, similar to our project. Therefore our research question is: \emph{``To
-what extent can we use the Google App Engine for scientific purposes, with
-respect to Ibis?''}. Since the Google App Engine runs our applications in a
-sandbox (i.e. a secure environment that provides limited access to the underlying
-operating system) \cite{app-engine-sandbox}, one of the most usable parts of the
-App Engine is the distributed database, called the \emph{datastore}. The
-datatsore is a schemaless object datastore, with a query engine and atomic
-transactions. The Python interface includes a rich data modeling API and a
-SQL-like query language called GQL \cite{app-engine-datastore}.We found that The Google App Engine datastore could well serve as an
+Our research question is: \emph{``To what extent can we use the Google App Engine
+for scientific purposes, with respect to Ibis?''}. Since the Google App Engine
+runs our applications in a sandbox (i.e. a secure environment that provides
+limited access to the underlying operating system) \cite{app-engine-sandbox}, one
+of the most usable parts of the App Engine is the distributed database, called
+the \emph{datastore}. The datatsore is a schemaless object datastore, with a
+query engine and atomic transactions. The Python interface includes a rich data
+modeling API and a SQL-like query language called GQL
+\cite{app-engine-datastore}.We found that The Google App Engine datastore could well serve as an
 \emph{application storage service} (also known as \emph{Advert server} -- from
 now on we will use these two terms interchangeably). Its powerful query engine
 and its atomic transactions makes it well suitable for storing and retrieving
@@ -39,6 +38,13 @@ for. Real-world examples might be more complex.
 \end{center}
 \end{figure*}
 
+As far as we know, the Google App Engine has not been used as an application
+storage server. Obviously, Google did not intend the App Engine to be used for
+such purposes, hence the lack of spawning new processes or threads, or the
+limited response time of a request. The most usable feature to us is the
+distributed datastore, which could serve well as application storage
+server (for Ibis). 
+
 As an example for our application storage service, we took a closer look at
 the \emph{JavaGAT AdvertService} \cite{javagat-www}. This provided us with main
 functionality for our own Advert server, for adding, getting, deleting, and
@@ -46,6 +52,18 @@ finding objects in the Google datastore. Secondly we wrote a client library in
 the Java programming language, which communicates over HTTP with the Advert
 server, running at Google. Other Java programs can now use the client library
 to store and retrieve (binary) application data at the Google App Engine.
+
+In addition to this server, we wrote a Java client to communicate to the
+server over HTTP(S), as can be seen from Figure \ref{introduction-overview}.
+Once this library is imported into Ibis, Ibis applications can use the
+library to store their data items in the data store.
+
+\begin{figure*}[ht] %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[width=14cm]{./figures/project_design.pdf} 
+\caption{An Overview of our Project.\label{introduction-overview}}
+\end{center}
+\end{figure*}
 
 As a result from building our Advert server similar to JavaGAT's AdvertService,
 we could easily implement a JavaGAT AdvertService \emph{adaptor} for our

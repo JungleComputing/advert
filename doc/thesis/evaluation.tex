@@ -1,0 +1,340 @@
+\section{Evaluation}
+\label{evaluation}
+
+\subsection{Introduction}
+
+\subsection{Benchmarks}
+
+\subsection{Results}
+
+\subsection{Summary}
+
+% To measure the perfomance of our Advert service solution, we performed
+% benchmarks on our Google App Engine Advert Service library. We executed a
+% couple of tests to measure completion time, latency, bandwidth, and server-side
+% performance. Below we describe our benchmarks in more detail.
+% 
+% All measurements below were perfomed on a 2.16\,GHz Intel Core 2 Duo iMac, with
+% 1\,GB 667\,MHz DDR2 SDRAM. Network performance may vary, depending on your
+% bandwidth and network traffic. We did our measurements from the \emph{Vrije
+% Universiteit}, which owns a fibreglass internet connection provided by
+% \emph{SURFnet}.
+% 
+% Furthermore, we used the UNIX \texttt{traceroute} command to determine where our
+% App Engine application is hosted. The results can be found in Figure
+% \ref{tracert}. The last known IP address resides at Mountain View, California
+% (US), which is where Google Inc. is residing. It is safe to assume that all our
+% request go to Google US and back.
+% 
+% \begin{figure*} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \begin{code}
+% $ traceroute ibisadvert.appspot.com
+% traceroute to appspot.l.google.com (74.125.79.141), 64 hops max, 40 byte packets
+%  1  router-student1 (130.37.24.7)  0.641 ms  0.314 ms  0.293 ms
+%  2  hkae16-2-d02.backbone.vu.nl (130.37.5.54)  0.288 ms  0.257 ms  0.274 ms
+%  3  GE5-1-1.2090.JNR01.Asd002A.surf.net (145.145.20.57)  0.674 ms  0.665 ms  0.620 ms
+%  4  AE0.500.JNR02.Asd002A.surf.net (145.145.80.65)  0.690 ms  0.657 ms  0.745 ms
+%  5  core1.ams.net.google.com (195.69.144.247)  1.156 ms  0.993 ms  0.997 ms
+%  6  209.85.248.93  11.159 ms  1.353 ms  1.269 ms
+%  7  64.233.175.246  14.791 ms 72.14.233.114  6.209 ms 64.233.175.246  4.269 ms 
+%  8  72.14.239.199  5.749 ms 209.85.255.166  5.932 ms 72.14.239.197  4.606 ms 
+%  9  209.85.255.126  7.864 ms 209.85.255.122  6.025 ms  6.676 ms 
+%  10  * * *
+% \end{code}
+% \caption{Traceroute output of ibisadvert.appspot.com.\label{tracert}}
+% \end{center}
+% \end{figure*}
+% 
+% \subsection{Initialization}
+% Initializing our Advert library can be done in two different ways. First, we
+% have the public Advert server, which does not require any authentication 
+% whatsoever. Initializing this class takes a negligible amount of time (i.e.
+% less than 0ms).
+% 
+% Secondly, we have a private server model, which does require authentication.
+% Authenticating to a private Advert server can be divided in three parts:
+% 
+% \begin{itemize}
+%   \item Authenticating to Google using ClientLogin
+%   \item Retrieving a authentication cookie from the Google App Engine
+%   \item Initializing and starting up `Persistent Authentication' thread
+% \end{itemize}
+% 
+% We measured the total time of initializing the Advert library (client-side),
+% which has an average of 190\,ms (179\,ms minimum, 229\,ms maximum). In addition
+% we measured each of the parts above individually, after which we can conclude
+% that authenticating using ClientLogin takes up one-third of the completion time
+% stated above, and retriving the authentication cookie takes up two-third of the
+% time measured above. Initializing and starting up our `Persistent Authentication'
+% thread takes a negligible amount of time (i.e. less than 1\,ms).
+% 
+% Note that it is impossible to measure server-side performance/completion time,
+% because ClientLogin and the process of retrieving a authentication cookie from the
+% Google App Engine, are both closed source procedures at Google, in which we
+% cannot place any timers.
+% 
+% As from now, all measurements will be done with respect to the authenticated
+% server, because we expect it will be used most in practice.
+% 
+% \subsection{Client Functions}
+% Another interesting thing to measure is the completion time of various client
+% functions, and how this time increases when we process greater amounts data. We
+% conducted measurements of calling all client functions with variable amounts of
+% data. Results can be viewed below:
+% 
+% \subsubsection{Add}
+% The process of adding an object to the datastore consists of four parts.
+% 
+% \begin{itemize}
+%   \item Processing the object (encoding to Base64 and JSON) and meta data
+%   \item Sending the object to the advert server
+%   \item Storing (possibly overwriting) the object and meta data
+%   \item Receiving a response
+% \end{itemize}
+% 
+% Notably, completion time will increase as data-to-process increases. That is why
+% we conducted measurements with a variable object and meta data size. Note that
+% Google's datastore API has a maximum call size of 1\,MB, and since we are
+% encoding all our objects in Base64, the objects to add should be roughly 1.4
+% times smaller than what we really want to store. Therefore, we stored objects 
+% of size 730\,bytes, 7\,300\,bytes, 73\,000\,bytes, and 730\,000\,bytes (being
+% 1\,kB, 10\,kB, 100\,kB, and 1\,000\,kB of data stored, respectively).
+% 
+% \paragraph{Variable Object Size}
+% Below we state the results of the measurements we did client-side. Note that
+% the client-side measurements are network latency dependent, where the
+% server-side measurements are not (see Figure \ref{add-obj-size}). We added an
+% object (without meta data), of variable size, to the datastore ten times.
+% 
+% If we look at the subdivision of adding an object to the datastore, client
+% side, we see that for all results that encoding the data to Base64 takes a
+% negligible amount of time (less than 1\% of the total time, except when we add
+% 730\,000\,bytes, this takes 2.6\% of the total time). 
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/add_obj.pdf}
+% \caption{Adding Objects of Variable Size. \label{add-obj-size}}
+% \end{center}
+% \end{figure}
+% 
+% \paragraph{Variable Meta Data Size}
+% In addition to varying object sizes, we also added an object (of size 730\,bytes)
+% to the datastore, with a variable number of key-value pairs. We chose sending 0
+% pairs, 5 pairs, 25 pairs, 50 pairs, and 100 pairs. For results, see figure
+% \ref{add-md-size}.
+% 
+% Also the time to convert a \texttt{MetaData} object to JSON takes a negligible
+% amount of time (less than 1\% of the total time), even when adding large numbers
+% of key-value pairs (e.g. 100 pairs).
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/add_md.pdf}
+% \caption{Adding Objects with Variable Meta Data. \label{add-md-size}}
+% \end{center}
+% \end{figure}
+% 
+% \paragraph{Overwrite}
+% Note that two occasions can occur server-side: an entry does not exist yet; the
+% object is stored in the datstore. An object does already exits; the object is
+% overwritten. We tested the completion time at the server side by sending a
+% various number of bytes, with and without any meta data to see how the completion
+% time increases. Ideally the maximum completion time would not exceed the sum of
+% the completion times of a \texttt{del()} and an \texttt{add()} statement (that is
+% what overwrite does locally). The results of our measurements can be found in
+% Figures \ref{ovw-obj-size} and \ref{ovw-md-size}.
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/ovw_obj.pdf}
+% \caption{Overwriting Objects of Variable Size. \label{ovw-obj-size}}
+% \end{center}
+% \end{figure}
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/ovw_md.pdf}
+% \caption{Overwriting Objects with Variable Meta Data. \label{ovw-md-size}}
+% \end{center}
+% \end{figure}
+% 
+% As expected, overwriting data takes more time than just adding data to the
+% datastore. We also expected meta data to take longer to overwrite, since every
+% key-value pair is deleted seperately (by using a \texttt{for()} loop). 
+% 
+% \subsubsection{Get}
+% After an element is stored in the datastore, it can be retrieved by a client.
+% In this case, we tested the 10 elements residing in the datstore, all of the
+% same size. Next, we retrieved every element from the datastore sequentially and
+% measured the time to do so client and server-side (see Figure
+% \ref{get-obj-size}). Note that we will not vary the number of Meta Data items,
+% because those are not fetched using the \texttt{get()} function.
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_obj.pdf}
+% \caption{Receiving Objects of Variable Size. \label{get-obj-size}}
+% \end{center}
+% \end{figure}
+% 
+% As for client-side measurements. Decoding from Base64 to the actual binary
+% object takes a negligible amount of time (less than or equal to 1\,ms).
+% 
+% Finally, we will see if server-side completion time increases, if the number of
+% entries in the datatore increase. We measured server-side completion time with a
+% varialbe number of entries in the datastore (10, 100, 1000), where all objects
+% are the same size (for results, see Figure \ref{get-obj-amt}). According to
+% Google, the completion time should stay consistent, and as we can see from
+% Figure \ref{get-obj-amt}, its average stays around 25\,ms to 30\,ms.
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_amt.pdf}
+% \caption{Receiving Objects With Different Amounts in Datastore.
+% \label{get-obj-amt}}
+% \end{center}
+% \end{figure}
+% 
+% \subsubsection{Delete}
+% Deleting an item from the datastore should not be an issue at the client side
+% (the client sends the pathname of the object to be deleted, and \texttt{OK} or
+% \texttt{Not Found} is returned accordingly). Hence, we only measured the
+% \texttt{delete()} function at the server side. 
+% 
+% Again, we are curious to see if the server needs more time to delete an item
+% when the datastore is full of data or almost empty (it should not make any
+% difference, since the functionality is much alike the \texttt{get()} function).
+% Similar to \texttt{get()}, we timed the \texttt{delete()} statement for a
+% varialbe number of entries in the datastore (10, 100, 1000), where all objects
+% are the same size (for results, see Figure \ref{del-obj-amt}).
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/del_amt.pdf}
+% \caption{Deleting Objects With Different Amounts in Datastore.
+% \label{del-obj-amt}}
+% \end{center}
+% \end{figure}
+% 
+% \subsubsection{Get Meta Data}
+% This function was not significant to benchmark. The data sent by the client
+% does not vary that much (it is just a relatively short String, as path name),
+% and the return value is not very large either. The only thing that is interesting
+% to see is what would happen if we would actually have a lot of meta data in the
+% databse. That is exactly what we benchmarked in the next section.
+% 
+% \subsubsection{Find}
+% Finally, an interesting function to benchmark is the find function. Because the
+% GQL does not support wildcard nor \texttt{LIKE}-statements in queries (see
+% Section \ref{serverdesign-structure}), we had to build a comprehensive find
+% function which executes a GQL query for every two key-value pairs, in order to
+% match them. By increasing the number of data items, our performance would
+% decrease exponentially. In Figure \ref{find-md-amt} we show some measure points
+% we obtained from comparing various number of key-value pairs to various number
+% of key-value pairs present in the datastore.
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/find_amt.pdf}
+% \caption{Finding Meta Data With Different Amounts in Datastore.
+% \label{find-md-amt}}
+% \end{center}
+% \end{figure}
+% 
+% As we can see from Figure \ref{find-md-amt}, the completion time does increase
+% exponentially. For some measuring points the data points are beyond 30\,seconds
+% completion time, which means we received a timeout from Google. Note that we had
+% ten objects in the database at all time, which means we effectively had ten times
+% as much data to compare as suggested by the x-axis of the graph.
+% 
+% \subsection{Bandwidth}
+% In addition to latency and completion time, we also tried to measure the
+% bandwidth between the Vrije Universiteit, Amsterdam, and the Google App Engine
+% (located as stated in Figure \ref{tracert}).
+% 
+% First of all, we measured the round-trip delay, by creating a dummy server
+% which would instantly reply the shortest possible message to the client. Also,
+% the client would only send a GET request and wait for a response code. We
+% measured the round-trip delay to be 120\,ms on average.
+% 
+% Next we measured the upload bandwidth (of the client), by sending the maximum
+% request size (10\,MB) to the server, and letting the server send an empty message
+% back as minimum response. Now we noted that the maximum request size actually is
+% smaller than 10\,MB. We regularly got an error message which indicated that the
+% bandwidth was temporarily exceeded. By trial-and-error we figured that the
+% maximum amount we could send (without recieving such an error) lies around 5MB,
+% after which we have to wait 60\,seconds, before sending the next batch,
+% otherwise our subsequent requests would still get the error messages. We measured
+% sending 5\,MB to the App Engine to be 3.7\,seconds on average.
+% 
+% Finally, we measured the download bandwidth (client-side), by doing a GET
+% request of 10\,MB. The server would actually have to read a 10\,MB file and
+% return it to the client. Reading this file also has a little overhead (approximately
+% 130\,ms), so we substract that form our measured results, which gives us a
+% round-trip delay of 26.4\,seconds on average. Our download fluctuated quite a
+% bit, this might be the cause of multiple users using the same internet connection
+% for various purposes.
+% 
+% Finally, we want to know our bandwith in kB/sec. This we calculate by
+% substracting the round-trip delay from the upload and download round-trip delays
+% measured. Which gives us 3.6\,seconds and 26.3\,seconds respectively. Now, we
+% divide the number of bytes sent (5\,000\,000 and 10\,000\,000\,bytes
+% respectively), by the number of seconds, and divide it by 1024 to get the kB/sec.
+% We can conclude that our upload bandwidth is 1360\,kB/sec, and our download
+% bandwidth is 372\,kB/sec. We suspect Google from limiting the download
+% bandwidth, since there is such a significant difference between upload and
+% download bandwidth.
+% 
+% \subsection{Parellel Benchmarks}
+% Finally, we tested what the server completion time would be if multiple clients
+% would connect at the sime time. To achieve parellelism, we made use of the VU's DAS-3
+% cluster, which has 85 dual-core 2.4\,GHz nodes, with 4\,GB of memory and a
+% Myri-10G and GbE network \cite{das3-www}.
+% 
+% We started a different number of clients simultaneously (ranging from 2 to 75
+% clients), and compared the completion time with the completion time of a single
+% client, doing the exact same operation. All measurements were done client-side
+% and the results can be found in Figure \ref{benchmarks-parallel-fig}.
+% 
+% \begin{figure} %[placement] where placement is h,t,b,p
+% \begin{center}
+% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/parallel.pdf}
+% \caption{Connecting to the App Engine Using a Various Number of Clients in
+% Parallel. \label{benchmarks-parallel-fig}}
+% \end{center}
+% \end{figure}
+% 
+% First of all we would like to state that connecting with 75 clients or more in
+% parallel, the App Engine often generates a \emph{Quota Temporarily Exceeded}
+% error. Also, calling the ClientLogin function shows this behavior, once we try
+% to connect with more than 75 (identical) clients to the App Server. 
+% 
+% As we can see, the completion time does increase if more clients connect in
+% parallel, but not significantly. If 75 clients would connect in parallel, the
+% completion only increases by 300\,ms on average. This can be explained by the
+% fact that Google needs to replicate our application in order to handle all the
+% requests, hence a delay in response time. The only exception is the
+% \texttt{find()} function, of which its completion time triples if 75 clients
+% connect in parallel, compared to 1 client. This is probably because the
+% \texttt{find()} function is the most complex function we benchmarked.
+% 
+% \subsection{Evaluation}
+% As we can conclude from our benchmark results, Google applies some restrictions
+% for connecting to the App Engine. The most obvious one is that the
+% server response time cannot be over 30\,seconds (which is stated in the App
+% Engine Documentation \cite{app-engine-quotas}). More subtle restrictions we
+% discovered whilst benchmarking our application are that quota temporarily exceeds
+% with requests larger than 5\,MB, or when multiple clients, connecting
+% simultaneously, generate enough traffic to reach the 5\,MB per minute limit.
+% In addition, no more than 100 clients can use ClientLogin simultaneously (i.e.
+% within a 60 second time span). Finally, no more than 500 data items can be
+% manipulated in one call. Adding over 500 data items to the datastore -- in one
+% call -- is possible, but removing them all at once is not.
+% 
+% Second thing we found is that completion time increases (both client and server
+% side) if the number of data sent or requested increases. Completion time also
+% increases if the number of clients connecting increases. However, when there is
+% more data in the datastore (i.e. more data items to be searched from), the
+% completion time does not increase.
