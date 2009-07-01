@@ -32,7 +32,7 @@ Connecting to the Google App Engine is fairly simple, making use of the
 \texttt{HttpURLConnection} classes, which are the most-used classes for making
 HTTP connections through Java. For more information on how to connect to an
 HTTP server using Java, see
-\texttt{http://java.sun.com/docs/books/tutorial/networking/urls/index.html}.
+\url{http://java.sun.com/docs/books/tutorial/networking/urls/index.html}.
 
 Note that sometimes it is required to make HTTPS connections over SSL
 (e.g. authentication). Before making an HTTPS connection, some system
@@ -58,7 +58,7 @@ reading subsection \ref{protocol}.
 
 Authenticating with the Google App Engine is done through Google's
 \emph{ClientLogin}
-(\texttt{http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html}).
+(\url{http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html}).
 This is an API to programmatically log into a user's Google account. After
 collecting login information from the user, call ClientLogin to request access
 to
@@ -139,9 +139,7 @@ of the response. Once we found the header field containing the
 Figure \ref{auth-cookie}) and we will store it in a variable so it can be used
 in subsequent requests. For more information about using cookies in Java,
 please see
-\texttt{
-http://java.sun.com/j2se/1.5.0/docs/guide/deployment/deployment-guide/cookie
-\_support.html}.
+\url{http://java.sun.com/j2se/1.5.0/docs/guide/deployment/deployment-guide/cookie\_support.html}.
 
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
@@ -178,7 +176,7 @@ in the HTTP (POST) request. Encoding the parameters is done by using the
 \emph{JSON} (JavaScript Object Notation) data-interchange format. At the
 client-side we used \texttt{json-lib} and at the server-side we used
 \texttt{simplejson} for encoding/decoding data to/from JSON. More information
-on JSON and various JSON libraries can be found at \texttt{http://www.json.org/}.
+on JSON and various JSON libraries can be found at \url{http://www.json.org/}.
 
 Next, we will describe each function in more detail.
 
@@ -323,7 +321,7 @@ which can be called directly from a web browser.
 \subsubsection{Login}
 \label{login}
 To manually log in, using your Google Account, one can visit the following URL
-in any web browser: \texttt{http://jondoe.appspot.com/login/}, where
+in any web browser: \url{http://jondoe.appspot.com/login/}, where
 \texttt{jondoe.appspot.com} is the address of the Advert server. This generates
 a standard Google login page, which can be used as such. If logging in was
 successful (and the user is an administrator - see subsection \ref{admin-panel}),
@@ -337,7 +335,7 @@ the database (see subsection \ref{purge}).
 \label{purge}
 Besides the login page, there's another user function which is accessible
 through the user's browser. If a user visits
-\texttt{http://jondoe.appspot.com/purge/}, where \texttt{jondoe.appspot.com} is the
+\url{http://jondoe.appspot.com/purge/}, where \texttt{jondoe.appspot.com} is the
 address of th e Advert server, a user can empty the database on one click. 
 
 Once this address is visited, a user will get a page, confirming to empty the
@@ -358,7 +356,7 @@ administration panel, or the \texttt{del} function is too expensive to call for
 \subsection{The Administration Panel}
 \label{admin-panel}
 Another non-programmer's feature we use for our Advert server is the
-administration panel, provided by Google (\texttt{http://appengine.google.com/}).
+administration panel, provided by Google (\url{http://appengine.google.com/}).
 At this panel we can take a look behind the curtains of our Advert server.
 
 First of all it is possible to view the contents of the database (a.k.a. the
@@ -372,7 +370,7 @@ the \emph{Developers} panel. At this panel one can add multiple developers to
 the project. This way, more different clients (i.e. different Google Accounts)
 are able to use the authenticated version of the advert server (as described in
 subsection \ref{auth}). For more information on adding developers to the project,
-please read \texttt{http://code.google.com/appengine/kb/status.html}.
+please read \texttt{url://code.google.com/appengine/kb/status.html}.
 
 \subsection{Example: The Ibis Advert Client Library}
 \label{advert-lib}
@@ -394,7 +392,7 @@ communications class is created,  \texttt{authenticate()} takes a user name
 The public functions of the Ibis Advert client library are exactly those
 functions as described in subsection \ref{protocol}. To pass any data from the
 public functions to the Advert server, JSON encoding is used. For Java, the most
-used JSON library is \emph{Json-lib} (\texttt{http://json-lib.sourceforge.net/}).
+used JSON library is \emph{Json-lib} (\url{http://json-lib.sourceforge.net/}).
 First of all, we use pathnames as identifiers. Relative pathnames are stored
 locally by means of a \emph{PWD} (print working directory). Only absolute
 pathnames are given to the server. Also, since JSON does not support the notation
@@ -408,14 +406,14 @@ reading the \texttt{javadoc} at \texttt{??}. %TODO: place javadoc
 \subsection{Further Reading}
 \label{further}
 For more information on a general Advert server, we suggest looking at the
-\emph{JavaGAT AdvertService} (\texttt{http://www.cs.vu.nl/ibis/javagat.html}),
+\emph{JavaGAT AdvertService} (\url{http://www.cs.vu.nl/ibis/javagat.html}),
 which is one of the services which uses the Advert server.
 
 Another implementation is the \emph{Ibis IPL Registry Bootstrap}, which also
 makes use of the Advert server (via the Ibis Advert client library). For more
-information, please visit \texttt{http://www.cs.vu.nl/ibis/ipl.html}.
+information, please visit \url{http://www.cs.vu.nl/ibis/ipl.html}.
 
 Finally, more information about the Advert server can be found at the Google
-App Engine documentation (\texttt{http://code.google.com/appengine/docs/}). The
+App Engine documentation (\url{http://code.google.com/appengine/docs/}). The
 main developer's guide can be found here, which can be useful for modifying and
 improving the server's code.
