@@ -287,13 +287,13 @@ class Download(webapp.RequestHandler):
 \end{figure*}
       
 \paragraph{Combination of Binary Data and Strings}
-Although meta data will be stored in a different class, we won't apply a
+Although meta data will be stored in a different class, we will not apply a
 different function to store meta data objects, for the simple reason that if one
 of these transfers would fail, it could lead to inconsistencies (see Section
 \ref{serverimpl-transactions}).
 
 When receiving our binary object as a combination of both binary data and
-unicode Strings, it will be received as one stream of bytes (assuming we're not
+unicode Strings, it will be received as one stream of bytes (assuming we are not
 using the multipart/formdata method of Section \ref{serverdesign-encoding}.
 This means that we will have to dismember the message ourselves, which is
 not as straightforward as it seems. The Google App Engine currently only
@@ -389,9 +389,9 @@ message body.
 % sent.
 
 \subsubsection{Returning Data From the Datastore}
-As long as we only have to send one item from the datastore to the user, we don't
-need to do much encoding. We just have to setup the content-type, which is plain
-text (i.e. unicode String), and send the actual data (see Figure
+As long as we only have to send one item from the datastore to the user, we do
+not need to do much encoding. We just have to setup the content-type, which is
+plain text (i.e. unicode String), and send the actual data (see Figure
 \ref{serverimpl-general-response}. This is the case when the user calls the
 \texttt{get()} function. Of Course, we first need to fetch the requested object
 from the datastore, which will be done using GQL Queries.

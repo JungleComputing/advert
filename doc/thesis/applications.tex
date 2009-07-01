@@ -1,6 +1,9 @@
 \section{Applications}
 \label{applications}
-Now we take a look at two practical applications of the Advert server.
+Now we take a look at two practical applications of the Advert server. Both
+applications are part of the Ibis project (as mentioned earlier in Section
+\ref{related}). First we made an application in JavaGAT, and second we made an
+application in the IPL.
 
 \subsection{AdvertService Adaptor}
 \label{applications-advertservice}
@@ -15,7 +18,7 @@ basically implemented all functionality provided by the JavaGAT API
 \cite{javagat-javadoc}. This makes our implementation very similar to the
 \emph{Generic AdvertService Adaptor}, with the major difference that we do not
 use a local database for storage. Instead, we make use of the \emph{Ibis Advert
-Client} library, which communicates with the App Engine (see subsection 
+Client} library, which communicates with the App Engine (see Section 
 \ref{clientimpl}). 
 
 In the adaptor's constructor we connect to the App Engine by creating a new
@@ -30,7 +33,7 @@ connect to the Advert server as a public server.
 \begin{center}
 \includegraphics[width=10cm]{./figures/gat-mydesign.png} 
 \caption{The Structure of JavaGAT using the App
-Engine AdvertService Adaptor.\label{related-gat-design}}
+Engine AdvertService Adaptor.\label{applications-gaeasa}}
 \end{center}
 \end{figure*}
 
@@ -41,13 +44,16 @@ feasible to implement, since this would mean we theoratically should be able to
 import/export 1\,gigabyte of data over HTTP, after which we would run out of
 free quota too fast.
 
-As of yet, only a local implementation of the AdvertService exists (i.e. )
+So far, only a local implementation of the AdvertService existed (i.e. a hash
+map in main memory). This implementation, called the Generic AdvertService
+Adaptor, does not scale, since it is only stored locally, and can only be
+accessed by the current JavaGAT.
 
-\subsection{IPL Registry Bootstrap}
+\subsection{IPL Server Bootstrap Mechanism}
 \label{ipl}
 Besides implementing a AdvertService adaptor for the Google App Engine, we
 found another use for our advert service library, within Ibis. Our advert
-server could very well function as a bootstrap server for an \texttt{IPL} (Ibis
+server could very well function as a bootstrap mechanism for an \emph{IPL} (Ibis
 Portability Layer) \cite{ipl-www} registry.
 
 \subsubsection{IPL Server}
@@ -163,4 +169,7 @@ property is set, so an application can connect to a suitable registry server as
 it would normally do, if \texttt{-Dibis.server.address} was set in the first
 place.
 
-At first, it seems that this solution introduces a lot more typing.
+At first, it seems that this solution introduces a lot more typing, when one
+would like to start an IPL server or an Ibis application. However, it is always
+the same lines of code, which means that you are able to hard-code the Advert
+server address in your Ibis application, preventing configuration problems.

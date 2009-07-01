@@ -242,8 +242,8 @@ Server: gws
 \end{figure*}
 
 \paragraph{Message Body}
-Once we've received all headers and parsed them accordingly, we are able to get
-the actual body. As we can see from Figure \ref{clientimpl-body}, the most
+Once we have received all headers and parsed them accordingly, we are able to
+get the actual body. As we can see from Figure \ref{clientimpl-body}, the most
 important thing is getting the stream, provided by the \texttt{getInputStream()}
 function. After we have done this, we can basically do anything with our
 InputStream. In this case we print it to the console, but we could also save it
@@ -464,7 +464,7 @@ If the Advert service is used on a frequent basis, it could occur that by using
 one of the Advert server's functions, a new (i.e. refreshed) cookie is sent
 alongside the server response. If this is the case, the library will
 automatically update the cookie present in the Persistent Authentication class,
-so the daemon thread won't have to perform unnecessary \texttt{NOOP} calls.
+so the daemon thread will not have to perform unnecessary \texttt{NOOP} calls.
 
 The Persistent Authentication class is the only class where the authentication
 cookie is stored. If another function wants to reference or update the
