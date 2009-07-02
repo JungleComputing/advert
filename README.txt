@@ -8,17 +8,14 @@ platform for grid computing.
 
 This Ibis distribution contains the Ibis advert library and and
 implementations of the advert server (written in Python), provided
-in "server". Also some test files are included in "ibis.advert.test".
+in "server". Also some test and benchmark files are included in 
+"ibis.advert.test".
 
 Ibis is free software. See the file "LICENSE.txt" for copying permissions.
 
 See the file INSTALL.txt for a description of how to install ibis.
-
-	The users's guide in the docs directory ("docs/usersguide.pdf") explains
-	how to compile and run your Ibis application.
-	
-	The programmer's manual ("docs/progman.pdf") contains a detailed
-	description of the Ibis Application Programmer's interface (API),
+	The programmer's manual ("docs/progman.tex") contains a detailed
+	description of the Advert server Programmer's interface,
 	illustrated with example code fragments.
 
 The javadoc of Ibis is available in "javadoc/index.html".
@@ -27,16 +24,12 @@ Ibis has its own web-site: http://www.cs.vu.nl/ibis/.  There, you can
 find more Ibis documentation, papers, application sources.
 
 The latest Ibis source repository tree is accessible through SVN at
-"https://gforge.cs.vu.nl/svn/ibis/ibis/trunk".  You need an account on
+"https://gforge.cs.vu.nl/svn/ibis/advert/trunk".  You need an account on
 https://gforge.cs.vu.nl/ to access the repositories there. You can
 create an account by clicking the 'New Account' button on the
 https://gforge.cs.vu.nl/ page.
 
 The file BUGS.txt contains information for filing bug reports.
-
-There is some dispute about the pronounciation of the word "Ibis". The
-file "docs/rob.mp3" shows how one of the Ibis designers feels about this
-issue.
 
 ** Third party libraries included with Ibis **
 
@@ -60,3 +53,12 @@ lives in "notices/LICENSE.trilead.txt".
 This product includes software developed by TouchGraph LLC
 (http://www.touchgraph.com/). Its license lives in
 "notices/LICENSE.TG.txt".
+
+Other included third party libraries are:
+  Json-lib (http://json-lib.sourceforge.net/)
+  commons-lang (http://commons.apache.org/lang/)
+  commons-beanutils (http://commons.apache.org/beanutils/)
+  commons-collections (http://commons.apache.org/collections/)
+  EZMorph (http://ezmorph.sourceforge.net/)
+  commons-codec (http://commons.apache.org/codec/)
+  
