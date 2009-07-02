@@ -1,51 +1,54 @@
 \section{Evaluation}
 \label{evaluation}
+Now that we have shown the design, implementation, and application of our Advert
+server, we would like to evaluate its performance. More specifc, how does the
+system behaves under various circumstances? Therefore, we designed a couple of
+benchmarks to measure its performance, expressed in completion time, latency,
+and bandwidth.
 
-\subsection{Introduction}
+Before starting our benchmarks, we used the UNIX \texttt{traceroute} command to
+determine where our App Engine application is hosted. The results can be found in
+Figure \ref{tracert}. The last known IP address resides at Mountain View,
+California (US), which is where Google Inc. is residing. It is safe to assume
+that all our request go to Google US and back.
+
+\begin{figure*} %[placement] where placement is h,t,b,p
+\begin{center}
+\begin{code}
+$ traceroute ibisadvert.appspot.com
+traceroute to appspot.l.google.com (74.125.79.141), 64 hops max, 40 byte packets
+ 1  router-student1 (130.37.24.7)  0.641 ms  0.314 ms  0.293 ms
+ 2  hkae16-2-d02.backbone.vu.nl (130.37.5.54)  0.288 ms  0.257 ms  0.274 ms
+ 3  GE5-1-1.2090.JNR01.Asd002A.surf.net (145.145.20.57)  0.674 ms  0.665 ms  0.620 ms
+ 4  AE0.500.JNR02.Asd002A.surf.net (145.145.80.65)  0.690 ms  0.657 ms  0.745 ms
+ 5  core1.ams.net.google.com (195.69.144.247)  1.156 ms  0.993 ms  0.997 ms
+ 6  209.85.248.93  11.159 ms  1.353 ms  1.269 ms
+ 7  64.233.175.246  14.791 ms 72.14.233.114  6.209 ms 64.233.175.246  4.269 ms
+ 8  72.14.239.199  5.749 ms 209.85.255.166  5.932 ms 72.14.239.197  4.606 ms
+ 9  209.85.255.126  7.864 ms 209.85.255.122  6.025 ms  6.676 ms
+ 10  * * *
+\end{code}
+\caption{Traceroute output of ibisadvert.appspot.com.\label{tracert}}
+\end{center}
+\end{figure*}
 
 \subsection{Benchmarks}
+The benchmarks designed can be divided in three categorees: completion time of
+client and server functions, bandwidth, and parallel benchmarks. All measurements
+below were perfomed on a 2.16\,GHz Intel Core 2 Duo iMac, with 1\,GB 667\,MHz
+DDR2 SDRAM. Network performance may vary, depending on your bandwidth and network
+traffic. We did our measurements from the \emph{Vrije Universiteit}, which owns a
+fibreglass internet connection provided by \emph{SURFnet}. For or parallel
+benchmarks we made use of the VU's \emph{DAS-3 cluster}, which has 85 dual-core
+2.4\,GHz nodes, with 4\,GB of memory and a Myri-10G and GbE network \cite{das3-www}.
+
+\subsubsection{Completion Time}
+
 
 \subsection{Results}
 
 \subsection{Summary}
 
-% To measure the perfomance of our Advert service solution, we performed
-% benchmarks on our Google App Engine Advert Service library. We executed a
-% couple of tests to measure completion time, latency, bandwidth, and server-side
-% performance. Below we describe our benchmarks in more detail.
-% 
-% All measurements below were perfomed on a 2.16\,GHz Intel Core 2 Duo iMac, with
-% 1\,GB 667\,MHz DDR2 SDRAM. Network performance may vary, depending on your
-% bandwidth and network traffic. We did our measurements from the \emph{Vrije
-% Universiteit}, which owns a fibreglass internet connection provided by
-% \emph{SURFnet}.
-% 
-% Furthermore, we used the UNIX \texttt{traceroute} command to determine where our
-% App Engine application is hosted. The results can be found in Figure
-% \ref{tracert}. The last known IP address resides at Mountain View, California
-% (US), which is where Google Inc. is residing. It is safe to assume that all our
-% request go to Google US and back.
-% 
-% \begin{figure*} %[placement] where placement is h,t,b,p
-% \begin{center}
-% \begin{code}
-% $ traceroute ibisadvert.appspot.com
-% traceroute to appspot.l.google.com (74.125.79.141), 64 hops max, 40 byte packets
-%  1  router-student1 (130.37.24.7)  0.641 ms  0.314 ms  0.293 ms
-%  2  hkae16-2-d02.backbone.vu.nl (130.37.5.54)  0.288 ms  0.257 ms  0.274 ms
-%  3  GE5-1-1.2090.JNR01.Asd002A.surf.net (145.145.20.57)  0.674 ms  0.665 ms  0.620 ms
-%  4  AE0.500.JNR02.Asd002A.surf.net (145.145.80.65)  0.690 ms  0.657 ms  0.745 ms
-%  5  core1.ams.net.google.com (195.69.144.247)  1.156 ms  0.993 ms  0.997 ms
-%  6  209.85.248.93  11.159 ms  1.353 ms  1.269 ms
-%  7  64.233.175.246  14.791 ms 72.14.233.114  6.209 ms 64.233.175.246  4.269 ms 
-%  8  72.14.239.199  5.749 ms 209.85.255.166  5.932 ms 72.14.239.197  4.606 ms 
-%  9  209.85.255.126  7.864 ms 209.85.255.122  6.025 ms  6.676 ms 
-%  10  * * *
-% \end{code}
-% \caption{Traceroute output of ibisadvert.appspot.com.\label{tracert}}
-% \end{center}
-% \end{figure*}
-% 
 % \subsection{Initialization}
 % Initializing our Advert library can be done in two different ways. First, we
 % have the public Advert server, which does not require any authentication 
@@ -288,10 +291,7 @@
 % download bandwidth.
 % 
 % \subsection{Parellel Benchmarks}
-% Finally, we tested what the server completion time would be if multiple clients
-% would connect at the sime time. To achieve parellelism, we made use of the VU's DAS-3
-% cluster, which has 85 dual-core 2.4\,GHz nodes, with 4\,GB of memory and a
-% Myri-10G and GbE network \cite{das3-www}.
+
 % 
 % We started a different number of clients simultaneously (ranging from 2 to 75
 % clients), and compared the completion time with the completion time of a single

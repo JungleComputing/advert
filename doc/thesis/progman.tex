@@ -4,22 +4,21 @@ This manual explains how to program applications using the Advert server running
 on the Google App Engine. All source files for the Advert server can be found at:
 \url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/server/}, the source file for
 the Java client can be fount at:
-\url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/src/}.For information on how to install the server, please
-see the \texttt{INSTALL.txt}, located in the \texttt{server} directory.
-
+\url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/src/}. For information on how
+to install the server, please see the \texttt{INSTALL.txt}, located in the
+\texttt{server} directory.
 In this manual, we will focus mainly on the protocol used between the Advert
 client library and the Advert server, as run on the Google App Engine. Also, we
-mostly refer to Java as the language of the client-side. This manual is split up into
-several different subsections. First, we will explain how connections are made
-between a client and the Advert server (subsection \ref{http-java}). Second, we
-will
-discuss how authentication is done, between a client and the Google App Engine
-(subsection \ref{auth}). Third we will discuss the various different functions
-provided by the Advert server, and how they are addressed (subsection
+mostly refer to Java as the language of the client-side. This manual is split up
+into several different subsections. First, we will explain how connections are
+made between a client and the Advert server (subsection \ref{http-java}). Second,
+we will discuss how authentication is done, between a client and the Google App
+Engine (subsection \ref{auth}). Third we will discuss the various different
+functions provided by the Advert server, and how they are addressed (subsection
 \ref{protocol}). Fourth we will take a look at the administration panel of the
 Google App Engine (subsection \ref{admin-panel}). Last we will take a look at an
-example of a client implementation, by looking at the \emph{Ibis Advert
-client library} (subsection \ref{advert-lib}).
+example of a client implementation, by looking at the \emph{Ibis Advert client
+library} (subsection \ref{advert-lib}).
 
 \subsection{Connecting to the Google App Engine}
 \label{http-java}
@@ -404,7 +403,7 @@ encapsulating them in JSON.
 Finally, at the end of each function, \texttt{httpSend()} is called, with a
 specific server function and a JSON Array/Object (or just a single pathname) as
 function arguments. For more information on the implementation, we recommend
-reading the \texttt{javadoc} at \texttt{??}. %TODO: place javadoc
+reading the Javadoc.
  
 \subsection{Further Reading}
 \label{further}
@@ -413,7 +412,6 @@ For more information on a generic Advert server, we suggest looking at the
 which is one of the services which uses the Advert server. Our implementation
 of the Google App Engine AdvertService Adaptor can be found at: 
 \url{https://gforge.cs.vu.nl/svn/javagat/branches/bas/adaptors/AppEngine/src/}. 
-
 
 Another implementation is the \emph{Ibis IPL Server Bootstrap Mechanism}, which
 also makes use of the Advert server (via the Ibis Advert client library). For more

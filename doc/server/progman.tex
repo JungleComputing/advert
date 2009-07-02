@@ -22,8 +22,12 @@
 \section{Introduction}
 \label{introduction}
 This manual explains how to program applications using the Advert server running
-on the Google App Engine. For information on how to install the server, please
-see the \texttt{INSTALL.txt}, located in the \texttt{server} directory.
+on the Google App Engine. All source files for the Advert server can be found at:
+\url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/server/}, the source file for
+the Java client can be fount at:
+\url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/src/}. For information on how
+to install the server, please see the \texttt{INSTALL.txt}, located in the
+\texttt{server} directory.
 
 In this manual, we will focus mainly on the protocol used between the Advert
 client library and the Advert server, as run on the Google App Engine. Also, we
@@ -424,21 +428,23 @@ encapsulating them in JSON.
 Finally, at the end of each function, \texttt{httpSend()} is called, with a
 specific server function and a JSON Array/Object (or just a single pathname) as
 function arguments. For more information on the implementation, we recommend
-reading the \texttt{javadoc} at \url{??}. %TODO: place javadoc
+reading the Javadoc.
  
 \section{Further Reading}
 \label{further}
-For more information on a general Advert server, we suggest looking at the
+For more information on a generic Advert server, we suggest looking at the
 \emph{JavaGAT AdvertService} (\url{http://www.cs.vu.nl/ibis/javagat.html}),
-which is one of the services which uses the Advert server.
+which is one of the services which uses the Advert server. Our implementation
+of the Google App Engine AdvertService Adaptor can be found at: 
+\url{https://gforge.cs.vu.nl/svn/javagat/branches/bas/adaptors/AppEngine/src/}. 
 
-Another implementation is the \emph{Ibis IPL Registry Bootstrap}, which also
-makes use of the Advert server (via the Ibis Advert client library). For more
-information, please visit \url{http://www.cs.vu.nl/ibis/ipl.html}.
+Another implementation is the \emph{Ibis IPL Server Bootstrap Mechanism}, which
+also makes use of the Advert server (via the Ibis Advert client library). For more
+information, please visit \url{http://www.cs.vu.nl/ibis/ipl.html}. Our
+implementation of an the Ibis IPL Server Bootstrap Mechanism can be found at 
+\url{https://gforge.cs.vu.nl/svn/ibis/branches/bas/src/}. 
 
 Finally, more information about the Advert server can be found at the Google
 App Engine documentation (\url{http://code.google.com/appengine/docs/}). The
 main developer's guide can be found here, which can be useful for modifying and
 improving the server's code.
-\end{document}
-
