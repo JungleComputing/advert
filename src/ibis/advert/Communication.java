@@ -42,7 +42,7 @@ class Communication {
 	 * Constructor of Communications class for connecting to a public server.
 	 * 
 	 * @param server
-	 * 		Location of server to make connections to.
+	 * 		{@link String} containing the location of Advert server to connect to.
 	 */
 	Communication(String server) {
 		this.server = server;
@@ -55,11 +55,11 @@ class Communication {
 	 * server.
 	 * 
 	 * @param server
-	 * 		Location of server to make connections to.
+	 * 		{@link String} containing the location of Advert server to connect to.
 	 * @param user
-	 * 		Username to authenticate with.
+	 * 		{@link String} containing the Google Account to be authenticated with.
 	 * @param passwd
-	 * 		Corresponding password.
+	 * 		{@link String} containing the corresponding password.
 	 * @throws MalformedURLException
 	 * 		URL is malformed.
 	 * @throws ProtocolException
@@ -79,16 +79,20 @@ class Communication {
 	}
 	
 	/**
-	 * Function to authenticate to the Google App Engine.
-	 * @param server
-	 * 				Server to connect to.
+	 * Function to authenticate to the Google App Engine, and starting the 
+	 * cookie daemon at the {@link PersistentAuthentication} class.
 	 * @param user
-	 * 				User's email address for identification.
+	 * 		{@link String} containing the Google Account to be authenticated with.
 	 * @param passwd
-	 * 				User's password for identification.
-	 * @return a {@link String} which contains a cookie with a session ID.
-	 * @throws Exception
-	 * 				Failed to authenticate to the App Engine.
+	 * 		{@link String} containing the corresponding password.
+	 * @throws MalformedURLException
+	 * 		URL is malformed.
+	 * @throws ProtocolException
+	 * 		Wrong protocol is applied.
+	 * @throws IOException
+	 * 		I/O to server failed.
+	 * @throws AuthenticationException
+	 * 		Authentication to server failed.
 	 */
 	void authenticate(String user, String passwd) 
 	  throws MalformedURLException, ProtocolException, IOException, 
@@ -206,17 +210,30 @@ class Communication {
 	}
 	
 	/**
-	 * Function to send an object over HTTP.
-	 * @param server
-	 * 				Server to send the object to.
-	 * @param cookie
-	 * 				Cookie for identification.
-	 * @param object
-	 * 				Object to be send to the server.
+	 * Function to send a payload {@link String} to a certain function, 
+	 * specified by {@link ext}.
+	 * @param ext
+	 * 		{@link String} containing the server path to send the payload to.
+	 * @param payload
+	 * 		Message body to be sent as {@link String}.
 	 * @return
-	 * 				Returns the response body in {@link String} format.
+	 * 		A {@link String} returning the server response (if any), or 
+	 * 		otherwise an error message, if things went wrong.
+	 * @throws MalformedURLException
+	 * 		URL is malformed.
+	 * @throws IOException
+	 * 		I/O to server failed.
+	 * @throws AuthenticationException
+	 * 		Authentication to server failed.
+	 * @throws AppEngineResourcesException
+	 * 		The Advert server ran out of resources. Try again in 24H.
+	 * @throws NoSuchElementException
+	 * 		The Advert Server could not find the element requested.
+	 * @throws RequestTooLargeException
+	 * 		The Request sent was too large.
 	 * @throws Exception
-	 * 				Failed to send object to server.
+	 * 		Another Server error than the above is returned. Details are in 
+	 * 		the error message.
 	 */
 	String httpSend(String ext, String payload) 
 	  throws MalformedURLException, IOException, AuthenticationException,
@@ -316,7 +333,7 @@ class Communication {
 
 
 	/**
-	 * Function to call when communication class is destroyed. Daemon 
+	 * Function to call when communication class is destroyed. Cookie Daemon 
 	 * thread will be interrupted accordingly.
 	 */
 	public void end() {

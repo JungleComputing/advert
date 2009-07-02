@@ -41,7 +41,7 @@ public class Advert {
 	 * the functions below are called. This approach saves startup time.
 	 * 
 	 * @param server
-	 *      Location of Advert server to connect to.
+	 * 		{@link URI} containing the location of Advert server to connect to.
 	 * @throws AuthenticationException 
 	 * 		Authentication to Advert server failed.
 	 * @throws IOException
@@ -82,11 +82,11 @@ public class Advert {
 	 * server with authentication) Advert server.
 	 * 
 	 * @param server
-	 * 		Location of Advert server to connect to.
+	 * 		{@link URI} containing the location of Advert server to connect to.
 	 * @param user
-	 * 		Username to be authenticated with.
+	 * 		{@link String} containing the Google Account to be authenticated with.
 	 * @param passwd
-	 * 		Corresponding password.
+	 * 		{@link String} containing the corresponding password.
 	 * @throws AuthenticationException 
 	 * 		Authentication to Advert server failed.
 	 * @throws IOException
@@ -117,16 +117,16 @@ public class Advert {
 	}
 	
 	/**
-	 * Add a {@link byte}[] to the App Engine, at an absolute path, with
+	 * Add a {@link byte[]} to the App Engine, at an absolute path, with
 	 * {@link MetaData} included, to the datastore. If an entry exists at the
 	 * specified path, that entry gets overwritten, and a warning is issued.
 	 * 
 	 * @param bytes
-	 *            {@link byte}[] to be stored.
+	 *            {@link byte[]} to be stored.
 	 * @param metaData
 	 *            {@link MetaData} to be associated with the passed bytes.
 	 * @param path
-	 *            Absolute path of the new entry.
+	 *            {@link String} containing the absolute path of the new entry.
 	 * @throws AppEngineResourcesException
 	 *             This exception is thrown when the App Engine runs out of
 	 *             resources.
@@ -175,10 +175,6 @@ public class Advert {
 		
 		logger.info("Calling httpSend() /add...");
 		comm.httpSend("/add", jsonarr.toString());
-		
-        /*
-         * TODO: return TTL of data stored at server (optional)?
-         */
 	}
 	
 
@@ -187,7 +183,7 @@ public class Advert {
 	 * absolute path.
 	 * 
 	 * @param path
-	 *            Path is an absolute entry to be deleted.
+	 *            {@link String} containing the path (an absolute entry to be deleted).
 	 * @throws NoSuchElementException
 	 *             The path is incorrect.
 	 */
@@ -212,7 +208,7 @@ public class Advert {
 	 * Gets an instance from the datastore at a given (absolute) path.
 	 * 
 	 * @param path
-	 *            Absolute path of the entry.
+	 *            {@link String} containing the absolute path of the entry.
 	 * @return The instance at the given path.
 	 * @throws NoSuchElementException
 	 *             The path is incorrect.
@@ -240,7 +236,7 @@ public class Advert {
 	 * Gets the {@link MetaData} of an instance from the given (absolute) path.
 	 * 
 	 * @param path
-	 *            Absolute path of the entry.
+	 *            {@link String} containing the absolute path of the entry.
 	 * @return A {@link MetaData} object containing the meta data.
 	 * @throws NoSuchElementException
 	 *             The path is incorrect.
