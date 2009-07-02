@@ -19,6 +19,14 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Class to test the various functions present at the Advert server. Note that
+ * the constant variables still need to be adapted to the new locations and 
+ * credentials. 
+ * 
+ * @author Bas
+ */
+
 public class AdvertTests {
 
 	private static final String SERVER = "google://jondoe.appspot.com/";
@@ -26,11 +34,29 @@ public class AdvertTests {
 
 	final static Logger logger = LoggerFactory.getLogger(AdvertTests.class);
 	
+	/***
+	 * Tests delete() function.
+	 * 
+	 * @param advert
+	 * 		Advert server to connect to.
+	 * @param path
+	 * 		Pathname of object to be deleted.
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void testDelete(Advert advert, String path) throws Exception {
 		logger.info("Calling advert.delete()");
 		advert.delete(path);
 	}
 	
+	/***
+	 * Tests find() function.
+	 * 
+	 * @param advert
+	 * 		Advert server to connect to.
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void testFind(Advert advert) throws Exception {
 		MetaData metaData = new MetaData();
 		String[] result   = null;
@@ -46,6 +72,16 @@ public class AdvertTests {
 		}
 	}
 	
+	/***
+	 * Tests getMD() function.
+	 * 
+	 * @param advert
+	 * 		Advert server to connect to.
+	 * @param path
+	 * 		Pathname of meta data to be fetched.
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void testGetMD(Advert advert, String path) throws Exception {
 		MetaData metaData = null;
 		
@@ -66,6 +102,16 @@ public class AdvertTests {
 		}
 	}
 	
+	/***
+	 * Tests get() function.
+	 * 
+	 * @param advert
+	 * 		Advert server to connect to.
+	 * @param path
+	 * 		Pathname of object to be retrieved.
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void testGet(Advert advert, String path) throws Exception {
 		byte[] b = null;
 		
@@ -75,6 +121,18 @@ public class AdvertTests {
 		logger.debug("Get result: {}", b.toString());
 	}
 	
+	/***
+	 * Tests add() function.
+	 * 
+	 * @param advert
+	 * 		Advert server to connect to.
+	 * @param path
+	 * 		Pathname where the object should be added.
+	 * @param filename
+	 * 		Filename of object to add to the datastore.
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void testAdd(Advert advert, String path, String filename) throws Exception {
 		MetaData metaData = new MetaData();
 		File file = new File(filename);;
@@ -109,6 +167,14 @@ public class AdvertTests {
 		advert.add(b, metaData, path);
 	}
 	
+	/**
+	 * Main function for starting AdvertTests. 
+	 * 
+	 * @param argv
+	 * 		Usage: AdvertTests passwd pathname filename
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	public static void main(String argv[]) throws Exception {
 		logger.info("Starting test class...");
 		Advert advert   = null;

@@ -5,9 +5,12 @@
 package ibis.advert.test;
 
 /**
- * Test classes to make HTTP(S) connections to the App Engine.
+ * Test class for testing trivial Java stuff, whilst developing the Advert
+ * server. The code below is for personal testing only, and does not contain
+ * relevant code for the end user. Matching server test code can be found in
+ * the server.test folder.
  * 
- * @author bbn230
+ * @author jondoe
  */
 
 import java.io.BufferedReader;
@@ -43,15 +46,23 @@ import org.slf4j.LoggerFactory;
 public class SimpleTests {
 	final static Logger logger = LoggerFactory.getLogger(SimpleTests.class);
 	
+	/**
+	 * Function to read data from a binary file.
+	 * @return
+	 * 		A {@link File} object to read from.
+	 */
 	private static File readFile() {
-		String filename = "/Volumes/Users/bbn230/Documents/workspace/app-engine/app-engine/src/client/appengine.gif"; /* OSX location */
-		//String filename = "E:/Documents/Documents/Eclipse/workspace/app-engine/app-engine/src/client/appengine.gif";  /* Win location */
+		String filename = "/Volumes/Users/jondoe/appengine.gif"; /* OSX location */
+		//String filename = "C:/Documents and Settings/Jon Doe/My Documents/appengine.gif";  /* Win location */
 		
 		File result = new File(filename);
 		
 		return result;
 	}
 	
+	/**
+	 * Function to setup SSL; <b>DEPRECATED</b>!
+	 */
 	private static void setupSsl() {
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 
@@ -70,21 +81,27 @@ public class SimpleTests {
 		System.setProperties(properties); 	
 	}
 	
+	/**
+	 * Function to test the parsing of dates using {@link SimpleDateFormat}.
+	 */
 	private static void testDateFormat() {
 		Date date = new Date();
-//		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d-MMMMM-yyyy HH:mm:ss z");
-//				
-//		try {
-//			date = sdf.parse("Tue, 26-May-2009 10:02:33 GMT");
-//			System.out.println(date);
-//		}
-//		catch (ParseException pe) {
-//			System.out.println(pe);
-//		}
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d-MMMMM-yyyy HH:mm:ss z");
+				
+		try {
+			date = sdf.parse("Tue, 26-May-2009 10:02:33 GMT");
+			System.out.println(date);
+		}
+		catch (ParseException pe) {
+			System.out.println(pe);
+		}
 		System.out.println(date.getTime());
 
 	}
 	
+	/**
+	 * Function to test the behaviour of parsing {@link URI}s.
+	 */
 	private static void testURI() {
 //		try {
 //			URI uri = new URI("google://jondoe%40gmail.com:pass@jondoe.appspot.com/home/jondoe");
@@ -108,11 +125,18 @@ public class SimpleTests {
 			
 	}
 	
+	/**
+	 * Function which returns a <code>null</code> String. 
+	 * @return
+	 * 		<code>null</code>
+	 */
 	private static String returnNull() {
-		// TODO Auto-generated method stub
-		return "string";
+		return null;
 	}
 
+	/**
+	 * Function to test how JSON-lib works.
+	 */
 	private static void testJSON() {
 		String[] roseindia = null;
 		
@@ -146,6 +170,9 @@ public class SimpleTests {
 		}
 	}
 	
+	/**
+	 * Function to test SLF4J.
+	 */
 	private static void testLogger() {
 		String[] roseindia = {"chanan","tapan","Amar","santosh","deepak"};
 		
@@ -161,6 +188,14 @@ public class SimpleTests {
 		logger.debug("User Home {}", System.getProperty("user.home"));
 	}
 	
+	/**
+	 * Function to test functions at server.
+	 * 
+	 * @param uri
+	 * 		URI of server to connect to 
+	 * @throws Exception
+	 * 		Somthing went wrong.
+	 */
 	private static void testFunc(String uri) throws Exception {
 		File file = readFile();
 		JSONObject jsonobj = new JSONObject();
@@ -245,6 +280,14 @@ public class SimpleTests {
 		in.close();						
 	}
 	
+	/**
+	 * Function to test find() functionality at server.
+	 * 
+	 * @param uri
+	 * 		URI to connect to
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void testFind(String uri) throws Exception {
 		JSONObject jsonobj = new JSONObject();
 
@@ -303,6 +346,12 @@ public class SimpleTests {
 		
 	}
 	
+	/**
+	 * Function to test Base64 encoding.
+	 * 
+	 * @throws Exception
+	 * 		Something went wrong.s
+	 */
 	private static void base64test() throws Exception {
 //		byte[] b = new byte[5000];
 //		
@@ -330,6 +379,13 @@ public class SimpleTests {
 		System.out.println(new String(b));
 	}
 
+	/**
+	 * This function sends a JSON object to the server and vice-versa.
+	 * @param uri
+	 * 		URI to send to
+	 * @throws Exception
+	 * 		Something went wrong.
+	 */
 	private static void makeHttpJson(String uri) throws Exception {
 		File file = readFile();
 		JSONObject jsonobj = new JSONObject();
@@ -528,7 +584,7 @@ public class SimpleTests {
 		
 		System.out.println("----Calling Auth Page----");
 		
-		url = new URL("http://bbn230.appspot.com/_ah/login?continue=https://bbn230.appspot.com/cookies/&auth=" + authid[1]);
+		url = new URL("http://jondoe.appspot.com/_ah/login?continue=https://jondoe.appspot.com/cookies/&auth=" + authid[1]);
 		urlConnection = (HttpURLConnection) url.openConnection();
 		
 	    urlConnection.setRequestMethod("GET");
@@ -553,7 +609,7 @@ public class SimpleTests {
 		
 		System.out.println("----Logging in----");
 		
-		url = new URL("http://bbn230.appspot.com/cookies/");
+		url = new URL("http://jondoe.appspot.com/cookies/");
 		urlConnection = (HttpURLConnection) url.openConnection();
 		
 	    urlConnection.setRequestMethod("GET");
@@ -898,7 +954,7 @@ public class SimpleTests {
 			new OutputStreamWriter(urlc.getOutputStream());
 		
 		/* Writing POST data. */
-		out.write("author=bbn230&content=test");
+		out.write("author=jondoe&content=test");
 		out.close();
 		
 		/* Retrieving body. */	
@@ -992,37 +1048,37 @@ public class SimpleTests {
 	 * Main function; calls various local functions.
 	 * 
 	 * @param argv
-	 *     Not used.
+	 *     Used for password.
 	 * @throws Exception
 	 *     The connection can't be established. 
 	 */
 	public static void main(String argv[]) throws Exception {
-//		String server = "bbn230.appspot.com/";
-		String server = "localhost:8080/";
+//		String server = "jondoe.appspot.com/";
+		String server = "localhost:8080/"; //location of SDK dev appserver.
 		String uri = null;
 		
 		/* Making a standard connection in HTTP(S). */
 		uri = server.concat("helloworld/");
-//		makeHttpConnection(uri);
-//		makeHttpsConnection(uri);
+		makeHttpConnection(uri);
+		makeHttpsConnection(uri);
 		
 		/* Making a connection using POST forms in HTTP(S). */
 		uri = server.concat("forms/sign");
-//		makeHttpPost(uri);
+		makeHttpPost(uri);
 		uri = server.concat("binary/get");
-//		makeHttpBinaryPost(uri);
+		makeHttpBinaryPost(uri);
 		uri = server.concat("binary/multipart");
-//		makeHttpMultipartPost(uri);
+		makeHttpMultipartPost(uri);
 		uri = server.concat("binary/get");
-//		makeOwnPost(uri);
+		makeOwnPost(uri);
 		
 		/* Making a connection using cookes. */
 		uri = server.concat("cookies/");
-//		makeHttpCookies(uri, null, null, null);
+		makeHttpCookies(uri, null, null, null);
 		
 		/* Logging in on a Google login page (using HTTP). */
 		uri = server.concat("_ah/login?email=test@example.com&action=Login");
-//		makeHttpLogin(uri);
+		makeHttpLogin(uri);
 		
 		/* Logging in to Google's ClientLogin. */
 		uri = "https://www.google.com/accounts/ClientLogin";
@@ -1030,32 +1086,31 @@ public class SimpleTests {
 			System.out.println("***Usage: provide password as first and only argument!");
 		}
 		else {
-//			makeHttpsClientLogin(uri, argv[0]);
+			makeHttpsClientLogin(uri, argv[0]);
 		}
 		
 		/* Getting a binary response. */
 		uri = server.concat("binary/display");
-//		makeHttpBinaryResponse(uri);
+		makeHttpBinaryResponse(uri);
 		
 		/* Tests with JSON. */
 		uri = server.concat("json/get");
-//		makeHttpJson(uri);
+		makeHttpJson(uri);
+		testJSON();
 		
 		/* Base64 tests. */
-//		base64test();
+		base64test();
 		
+		/* Other Server-side Tests */
 		uri = server.concat("queries/find");
-//		testFind(uri);
+		testFind(uri);
 		
 		uri = server.concat("func/");
-//		testFunc(uri);
+		testFunc(uri);
 		
-//		testLogger();
-		
-//		testJSON();
-		
+		/* Misc. Tets */
+		testLogger();
 		testURI();
-		
-//		testDateFormat();
+		testDateFormat();
 	}
 }

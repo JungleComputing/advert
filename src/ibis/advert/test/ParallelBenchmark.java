@@ -12,13 +12,36 @@ import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class contains 4 advert server functions which can be tested for
+ * parallel benchmarking purposes. The function that are called can be altered
+ * by setting the constant variables below. Also, you should alter the location
+ * and username of your advert server. Password is given on the command line for
+ * security purposes.
+ * 
+ * @author Bas
+ *
+ */
+
 public class ParallelBenchmark {
-	private static final String SERVER = "google://bbn230.appspot.com/";
-	private static final String USER   = "ibisadvert@gmail.com";
-	private static final int    TRIES  = 10;
+	private static final String  SERVER    = "google://jondoe.appspot.com/";
+	private static final String  USER      = "jondoe@gmail.com";
+	private static final int     TRIES     = 10;
+	private static final boolean TEST_ADD  = true;
+	private static final boolean TEST_GET  = true;
+	private static final boolean TEST_FIND = true;
+	private static final boolean TEST_DEL  = true;
 
 	final static Logger logger = LoggerFactory.getLogger(ParallelBenchmark.class);
 
+	/**
+	 * Find matching {@link MetaData} from the datastore <code>TRIES</code>
+	 * number of times. And time each individual action. The results are printed
+	 * to a file in the form <code>min,avg,max</code>.
+	 *  
+	 * @param advert
+	 * 		The advert server to connect to.
+	 */
 	private static void find(Advert advert) {
 		String host = null;
 		String  pid = null;
@@ -79,7 +102,15 @@ public class ParallelBenchmark {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Delete a 1kB {@link Advert} object from the datastore <code>TRIES</code>
+	 * number of times. And time each individual action. The results are printed
+	 * to a file in the form <code>min,avg,max</code>.
+	 *  
+	 * @param advert
+	 * 		The advert server to connect to.
+	 */
 	private static void del(Advert advert) {
 		String host = null;
 		String  pid = null;
@@ -138,6 +169,14 @@ public class ParallelBenchmark {
 		}
 	}
 	
+	/**
+	 * Get a 1kB {@link Advert} object from the datastore <code>TRIES</code>
+	 * number of times. And time each individual action. The results are printed
+	 * to a file in the form <code>min,avg,max</code>.
+	 *  
+	 * @param advert
+	 * 		The advert server to connect to.
+	 */
 	private static void get(Advert advert) {
 		String host = null;
 		String  pid = null;
@@ -196,6 +235,14 @@ public class ParallelBenchmark {
 		}
 	}
 	
+	/**
+	 * Add a 1kB {@link Advert} object to the datastore <code>TRIES</code>
+	 * number of times. And time each individual action. The results are printed
+	 * to a file in the form <code>min,avg,max</code>.
+	 *  
+	 * @param advert
+	 * 		The advert server to connect to.
+	 */
 	private static void add(Advert advert) {
 		byte[]    b = new byte[73000];
 		MetaData md = new MetaData();
@@ -250,20 +297,25 @@ public class ParallelBenchmark {
 		}
 		
 		/* Calculate max, min, avg. */
-//		try {
-//			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
-//			BufferedWriter bw = new BufferedWriter(fw);
-////			bw.write("min,avg,max\n");
-//			bw.write(min + "," + tot/TRIES + "," + max + "\n");
-//			bw.close();
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try {
+			FileWriter fw = new FileWriter(host + "." + pid + ".txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+//			bw.write("min,avg,max\n");
+			bw.write(min + "," + tot/TRIES + "," + max + "\n");
+			bw.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
+	 * Main function which starts a class performing parallel benchmarks. This
+	 * should be started in parallel, and preferable call only one function at
+	 * the time (depending on what you would like to measure.
+	 * 
 	 * @param args
+	 * 		Arguments that should be parsed: <code>password</code>
 	 */
 	public static void main(String[] args) {
 		if (args.length != 1) {
@@ -282,10 +334,17 @@ public class ParallelBenchmark {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
-//		add(advert);
-//		get(advert);
-//		del(advert);
-		find(advert);
+		if (TEST_ADD) {
+			add(advert);
+		}
+		if (TEST_GET) {
+			get(advert);
+		}
+		if (TEST_FIND) {
+			find(advert);
+		}
+		if (TEST_DEL) {
+			del(advert);
+		}
 	}
 }
