@@ -19,7 +19,7 @@ the \emph{datastore}. The datatsore is a schemaless object datastore, with a
 query engine and atomic transactions. The Python interface includes a rich data
 modeling API and a SQL-like query language called GQL
 \cite{app-engine-datastore}.We found that The Google App Engine datastore could well serve as an
-\emph{application storage service} (also known as \emph{Advert server} -- from
+\emph{application storage service} (also known as \emph{advert server} -- from
 now on we will use these two terms interchangeably). Its powerful query engine
 and its atomic transactions makes it well suitable for storing and retrieving
 Application data. For example, imagine us to have some sort of computational
@@ -27,7 +27,7 @@ workflow, where the output of each unit is the input of the next unit (see Figur
 \ref{img-workflow}). Now suppose we want to store the output of the first unit,
 in our example the Gaussian Blur, in order for another to find it, and continue
 processing. To achieve this we will set up a central application storage service
-(called the Advert server), at which we can store intermediate workflow output,
+(called the advert server), at which we can store intermediate workflow output,
 in order for other units (i.e. the Photocopy FX) to find and process it again.
 This is just a basic example of what an application storage service could be used
 for. Real-world examples might be more complex.
@@ -47,9 +47,9 @@ server (for Ibis).
 
 As an example for our application storage service, we took a closer look at
 the \emph{JavaGAT AdvertService} \cite{javagat-www}. This provided us with main
-functionality for our own Advert server, for adding, getting, deleting, and
+functionality for our own advert server, for adding, getting, deleting, and
 finding objects in the Google datastore. Secondly we wrote a client library in
-the Java programming language, which communicates over HTTP with the Advert
+the Java programming language, which communicates over HTTP with the advert
 server, running at Google. Other Java programs can now use the client library
 to store and retrieve (binary) application data at the Google App Engine.
 
@@ -65,15 +65,15 @@ library to store their data items in the data store.
 \end{center}
 \end{figure*}
 
-As a result from building our Advert server similar to JavaGAT's AdvertService,
+As a result from building our advert server similar to JavaGAT's AdvertService,
 we could easily implement a JavaGAT AdvertService \emph{adaptor} for our
-Google App Engine Advert server. Also we implemented a \emph{IPL server
+Google App Engine advert server. Also we implemented a \emph{IPL server
 bootstrap mechanism} for Ibis \cite{ipl-www}, where IPL servers can register
 themselves in order to be found by other Ibis applications.
 
 The rest of this paper is organized as follows. In Section \ref{related}
 we look at related work, concerning \emph{Ibis} and the Google App Engine. In
-Sections \ref{serverdesign} and \ref{serverimpl} we describe our Advert server
+Sections \ref{serverdesign} and \ref{serverimpl} we describe our advert server
 design and implementation, respectively, followed by the implementation of our
 Advert client library in Section \ref{clientimpl}. Next we look at two
 applications of Ibis in Section \ref{applications}. Finally we

@@ -39,5 +39,18 @@ parallel, which takes extra time. Finally we noticed that the completion time
 does not increase if the number of items stored in the datastore increases
 (i.e. more items need to be searched in order to return the correct item).
 
+Last, we want to state that we can't give any guarantees to the users using the
+advert server. Google can change quotas, APIs, and other functionality at any
+time. This means that theoretically it is possible for the advert server or the
+client library to stop working as soon as Google changes a feature.
+Nonetheless, it is likely that Google will provide backward compatibility when
+applying such changes.
+
 \subsection{Future Work}
 \label{conclusion-future}
+Recently, Google introduced Java as a second programming language for the
+Google App Engine \cite{app-engine-java}. Since Java offers more functionality
+than Python does (especially Python 2.5), it might be useful to also write a
+server in Java to create better function perfomance. In addition, Google
+mentions that Python 3.0 might be introduced in a future release. This means
+more Python functionality will be available and functions could be improved.

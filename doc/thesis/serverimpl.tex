@@ -44,7 +44,7 @@ explain both functions next.
 \label{serverimpl-find}
 When the meta data has been stored in the datastore, we should be able to process
 \texttt{find()} requests by clients. This is the most complex function of the
-advert Advert server. First a meta data object is received, which is then tried
+advert advert server. First a meta data object is received, which is then tried
 to be matched with meta data already present in the datastore. For this purpose
 we will use the GQL as described in Section \ref{serverdesign-gql}.
 To process the \texttt{find()} request, we have to check all the key-value pairs
@@ -258,7 +258,7 @@ itself is deleted and the garbage collection process is finished.
 Below we describe our transfer protocol in more details, starting with 
       
 \subsubsection{Receiving and Storing Binary Data}
-An important function of the Advert Service is to accept and store binary data.
+An important function of the advert server is to accept and store binary data.
 
 \paragraph{Binary Data Only}
 For accepting just binary data, we can receive the entire message body and write
@@ -432,7 +432,7 @@ self.response.out.write(simplejson.dumps(jsonObject))
 \end{figure*}
 
 \subsubsection{Programmer's Manual}
-For more information on how the Advert server is implmented, we suggest reading
+For more information on how the advert server is implmented, we suggest reading
 the \emph{Programmer's Manual} (Appendix \ref{progman}).
 
 \subsection{Authentication and Privacy}

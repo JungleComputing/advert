@@ -1,6 +1,6 @@
 \section{Evaluation}
 \label{evaluation}
-Now that we have shown the design, implementation, and application of our Advert
+Now that we have shown the design, implementation, and application of our advert
 server, we would like to evaluate its performance. More specifc, how does the
 system behaves under various circumstances? Therefore, we designed a couple of
 benchmarks to measure its performance, expressed in completion time, latency,
@@ -56,28 +56,28 @@ data, ranging from 730\,bytes, to 730\,000\,bytes (since we still have to encode
 everything in Base64, the actual data being sent ranges from 1\,kB to 1\,000\,kB,
 respectively, the latter being the maximum call size of the Google datastore
 API). In addition, we will also send various number of meta data items to the
-server, ranging from 0 to 1\,000 key-value pairs. Also we tested how long the
-search for a particular data item in the datastore would take, if different
+server, ranging from 0 to 1\,000 key-value pairs. Also we will test how long
+the search for a particular data item in the datastore would take, if different
 amounts of data are present in the datastore. These amounts range from 10 to
 1\,000 items.
 
 All measurements will be done with respect to the authenticated server (unless
-stated otherwise), because we expect it will be used most in practice. We
-repeated every measurement 10 times, and took the minimum, average, and maximum
-from the set of completion times. Where applicable, we also look at individual
-completion times of various function components.
+stated otherwise), because we expect it will be used most in practice. We will
+repeat every measurement 10 times, and take the minimum, average, and maximum
+from the set of completion times. Where applicable, we will also look at
+individual completion times of various function components.
 
 \subsubsection{Bandwidth}
 In addition to the completion time, we will benchmark the bandwidth between the
 Vrije Universiteit, Amsterdam, and the Google App Engine (located as stated in
-Figure \ref{tracert}). To get an idea of the latency, we first measure the
+Figure \ref{tracert}). To get an idea of the latency, we will first measure the
 round trip delay, which is done by setting up a dummy server, which just
 instantly sends a response as soon as it receives a request. 
 
-Second we measure our upload speed by sending the maximum request size (10\,MB
-according to Google) to the server, and have the server responding instantly.
-Finally we measure our download speed by requesting the maximum response size
-(also 10\,MB).
+Second, we will measure our upload speed by sending the maximum request size
+(10\,MB according to Google) to the server, and have the server responding instantly.
+Finally we will measure our download speed by requesting the maximum response
+size (also 10\,MB).
 
 \subsubsection{Parallel}
 Last, we would like to know how the server performs if multiple clients would
@@ -95,12 +95,12 @@ Below we show the results of the measurements, as described above.
 
 \subsubsection{Initialization}
 Initializing our Advert library can be done in two different ways. First, we
-have the public Advert server, which does not require any authentication
+have the public advert server, which does not require any authentication
 whatsoever. Initializing this class takes a negligible amount of time (i.e.
 less than 0ms).
 
 Secondly, we have a private server model, which does require authentication.
-Authenticating to a private Advert server can be divided in three parts:
+Authenticating to a private advert server can be divided in three parts:
 
 \begin{itemize}
   \item Authenticating to Google using ClientLogin
@@ -304,4 +304,4 @@ more data present in the datastore (i.e. more data items to be searched from),
 the completion time does not increase.
 
 Finally, we suspect Google from limiting the download bandwidth, since there is
-such a significant difference between upload and download bandwidth.
+a significant difference between upload and download speed.

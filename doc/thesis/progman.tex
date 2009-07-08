@@ -1,20 +1,20 @@
 \section{Programmer's Manual}
 \label{progman}
-This manual explains how to program applications using the Advert server running
-on the Google App Engine. All source files for the Advert server can be found at:
+This manual explains how to program applications using the advert server running
+on the Google App Engine. All source files for the advert server can be found at:
 \url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/server/}, the source file for
 the Java client can be fount at:
 \url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/src/}. For information on how
 to install the server, please see the \texttt{INSTALL.txt}, located in the
 \texttt{server} directory.
-In this manual, we will focus mainly on the protocol used between the Advert
-client library and the Advert server, as run on the Google App Engine. Also, we
+In this manual, we will focus mainly on the protocol used advertn the Advert
+client library and the advert server, as run on the Google App Engine. Also, we
 mostly refer to Java as the language of the client-side. This manual is split up
 into several different subsections. First, we will explain how connections are
-made between a client and the Advert server (subsection \ref{http-java}). Second,
+made between a client and the advert server (subsection \ref{http-java}). Second,
 we will discuss how authentication is done, between a client and the Google App
 Engine (subsection \ref{auth}). Third we will discuss the various different
-functions provided by the Advert server, and how they are addressed (subsection
+functions provided by the advert server, and how they are addressed (subsection
 \ref{protocol}). Fourth we will take a look at the administration panel of the
 Google App Engine (subsection \ref{admin-panel}). Last we will take a look at an
 example of a client implementation, by looking at the \emph{Ibis Advert client
@@ -130,7 +130,7 @@ http://jondoe.appspot.com/_ah/login?continue=
 \end{code}
 \end{center}
 
-Here, \texttt{jondoe.appspot.com} is the domain where the Advert server is
+Here, \texttt{jondoe.appspot.com} is the domain where the advert server is
 running. Note that we append the authentication token we just received from the
 ClientLogin to this URL. Once this URL is requested, the App Engine will
 respond with an \texttt{HTTP/1.0 302 Found} response code, trying to redirect
@@ -156,7 +156,7 @@ ACSID=AJKiYcH9...29E6Qylx; expires=Sun, 17-May-2009 12:58:04 GMT;
 \subsection{The Advert Service Protocol}
 \label{protocol}
 Once authenticated to the Google App Engine, the client can make use of the
-various functions provided by the Advert server. Currently, five functions are
+various functions provided by the advert server. Currently, five functions are
 implemented, being \texttt{add}, \texttt{del}, \texttt{get}, \texttt{getmd},
 and \texttt{find}. All functions are addressed by requesting the following URL:
 
@@ -185,7 +185,7 @@ Next, we will describe each function in more detail.
 \subsubsection{Add}
 \label{add}
 The \texttt{add} function is used for adding an \emph{Advert object} to the
-Advert server (i.e. the database). This function takes three parameters:
+advert server (i.e. the database). This function takes three parameters:
 
 \begin{itemize}
   \item \texttt{pathname}: the location where the object should be stored
@@ -222,7 +222,7 @@ Server Error} HTTP response codes. The function-specific return values of
 
 \subsubsection{Del}
 \label{del}
-The \texttt{del} function is used for deleting an object from the Advert
+The \texttt{del} function is used for deleting an object from the advert
 server. This function does not use JSON for parameter encoding since it only
 has one parameter:
 
@@ -236,7 +236,7 @@ atomically remove the object and all meta data associated to that path name.
 Function-specific return values are:
 
 \begin{itemize}
-  \item \texttt{200 OK}: the data was removed successfully from the Advert
+  \item \texttt{200 OK}: the data was removed successfully from the advert
   server
   \item \texttt{404 Not Found}: the data associated with \texttt{pathname}
   could not be found
@@ -246,7 +246,7 @@ Function-specific return values are:
 
 \subsubsection{Get}
 \label{get}
-The \texttt{get} function is used for retrieving data from the Advert server.
+The \texttt{get} function is used for retrieving data from the advert server.
 This function does not use JSON for parameter encoding since it only has one
 parameter:
 
@@ -268,7 +268,7 @@ are:
 
 \subsubsection{GetMD}
 \label{getmd}
-The \texttt{getmd} function is used for retrieving meta data from the Advert
+The \texttt{getmd} function is used for retrieving meta data from the advert
 server. This function does not use JSON for parameter encoding since it only has
 one
 parameter:
@@ -291,7 +291,7 @@ encoded as a JSON Object (in random order). Function-specific return values are:
 
 \subsubsection{Find}
 \label{find}
-The \texttt{find} function is used for retrieving meta data from the Advert
+The \texttt{find} function is used for retrieving meta data from the advert
 server. This function uses a JSON Object for parameter encoding. This function
 has one parameter:
 
@@ -302,13 +302,13 @@ has one parameter:
 The \texttt{metadata} should be a serialized form of a JSON Object, not being
 \texttt{null}. Once the serialized JSON Object is retrieved from the body, it
 is deserialized and all key-value pairs are checked with the key-value pairs
-present in the Advert server. The server then returns an array of
+present in the advert server. The server then returns an array of
 pathnames of all objects which have at least the meta data specified by the
 client. If none were found, \texttt{null} is returned. Function-specific return
 values are:
 
 \begin{itemize}
-  \item \texttt{200 OK}: the Advert server found matching entries, which are
+  \item \texttt{200 OK}: the advert server found matching entries, which are
   returned as pathnames in a serialized JSON Array
   \item \texttt{400 Bad Request}: the JSON Object containing \texttt{metadata}
   was not properly structured or could not be read
@@ -324,7 +324,7 @@ which can be called directly from a web browser.
 \label{login}
 To manually log in, using your Google Account, one can visit the following URL
 in any web browser: \url{http://jondoe.appspot.com/login/}, where
-\texttt{jondoe.appspot.com} is the address of the Advert server. This generates
+\texttt{jondoe.appspot.com} is the address of the advert server. This generates
 a standard Google login page, which can be used as such. If logging in was
 successful (and the user is an administrator - see subsection \ref{admin-panel}),
 a message will appear: \texttt{Authenticated to the Advert Server.}.
@@ -338,7 +338,7 @@ the database (see subsection \ref{purge}).
 Besides the login page, there's another user function which is accessible
 through the user's browser. If a user visits
 \url{http://jondoe.appspot.com/purge/}, where \texttt{jondoe.appspot.com} is the
-address of th e Advert server, a user can empty the database on one click. 
+address of the advert server, a user can empty the database on one click. 
 
 Once this address is visited, a user will get a page, confirming to empty the
 database. This message only appears if the user is authenticated (using the
@@ -357,9 +357,9 @@ could be useful when it takes too much time to empty the database via the
 administration panel, or the \texttt{del} function is too expensive to call fora large amount of times.
 \subsection{The Administration Panel}
 \label{admin-panel}
-Another non-programmer's feature we use for our Advert server is the
+Another non-programmer's feature we use for our advert server is the
 administration panel, provided by Google (\url{http://appengine.google.com/}).
-At this panel we can take a look behind the curtains of our Advert server.
+At this panel we can take a look behind the curtains of our advert server.
 
 First of all it is possible to view the contents of the database (a.k.a. the
 datastore), mainly for debugging purposes. Data can be altered here, but this
@@ -376,15 +376,15 @@ please read \texttt{url://code.google.com/appengine/kb/status.html}.
 
 \subsection{Example: The Ibis Advert Client Library}
 \label{advert-lib}
-As an example of how the Advert server can be used, we wrote a Java client
+As an example of how the advert server can be used, we wrote a Java client
 application called the \emph{Ibis Advert client library}. This library makes use
-of the functionality of the Advert server, in such a way that other clients can
-call this library to store (binary) Objects in the Advert server's database
+of the functionality of the advert server, in such a way that other clients can
+call this library to store (binary) Objects in the advert server's database
 with meta data attached to it.
 
-This library is almost a one to one mapping of the Advert server. Notable is
+This library is almost a one to one mapping of the advert server. Notable is
 that the library uses a separate communications class for authentication and
-keeping authenticated with the Advert server. This is done by two major
+keeping authenticated with the advert server. This is done by two major
 functions called \texttt{authenticate()} and \texttt{httpSend()}. Once the
 communications class is created,  \texttt{authenticate()} takes a user name
 (i.e. a Google Account) and a password to retrieve the authentication cookie
@@ -393,7 +393,7 @@ communications class is created,  \texttt{authenticate()} takes a user name
 
 The public functions of the Ibis Advert client library are exactly those
 functions as described in subsection \ref{protocol}. To pass any data from the
-public functions to the Advert server, JSON encoding is used. For Java, the most
+public functions to the advert server, JSON encoding is used. For Java, the most
 used JSON library is \emph{Json-lib} (\url{http://json-lib.sourceforge.net/}).
 First of all, we use pathnames as identifiers. Relative pathnames are stored
 locally by means of a \emph{PWD} (print working directory). Only absolute
@@ -407,19 +407,19 @@ reading the Javadoc.
  
 \subsection{Further Reading}
 \label{further}
-For more information on a generic Advert server, we suggest looking at the
+For more information on a generic advert server, we suggest looking at the
 \emph{JavaGAT AdvertService} (\url{http://www.cs.vu.nl/ibis/javagat.html}),
-which is one of the services which uses the Advert server. Our implementation
+which is one of the services which uses the advert server. Our implementation
 of the Google App Engine AdvertService Adaptor can be found at: 
 \url{https://gforge.cs.vu.nl/svn/javagat/branches/bas/adaptors/AppEngine/src/}. 
 
 Another implementation is the \emph{Ibis IPL Server Bootstrap Mechanism}, which
-also makes use of the Advert server (via the Ibis Advert client library). For more
+also makes use of the advert server (via the Ibis Advert client library). For more
 information, please visit \url{http://www.cs.vu.nl/ibis/ipl.html}. Our
 implementation of an the Ibis IPL Server Bootstrap Mechanism can be found at 
 \url{https://gforge.cs.vu.nl/svn/ibis/branches/bas/src/}. 
 
-Finally, more information about the Advert server can be found at the Google
+Finally, more information about the advert server can be found at the Google
 App Engine documentation (\url{http://code.google.com/appengine/docs/}). The
 main developer's guide can be found here, which can be useful for modifying and
 improving the server's code.
