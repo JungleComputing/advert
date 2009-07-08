@@ -1,5 +1,43 @@
 \section{Conclusion}
 \label{conclusion}
+In this thesis we have tried to use the Google App Engine, which is a platform
+for developing and hosting web applications, for scientific purposes. We
+attempted to build an application storage server (also known as advert server)
+for Ibis. We designed such a server and implemented it in the Python programming
+language, which is the main programming language of the Google App Engine. In
+addition we designed a transfer protocol over HTTP, making use of JSON
+\cite{json-www}, and a client library which we implemented in Java.
 
-%\subsection{Future Work}
-%\label{conclusion-future}
+The client library creates a transparent interface for the user, implementing
+all server functionality. The client library does the authentication, parameter
+encoding, sending/receiving over HTTP, and error handling for the user. This
+library can now be used by other applications to store application data at the
+Google App Engine.
+
+We also used our client library in two Ibis applications; the JavaGAT
+\cite{javagat-www}, and the IPL \cite{ipl-www}. We made a Google App Engine
+AdvertService Adaptor for JavaGAT. The advantage of our solution is that it is
+much more scalable, compared to the generic AdvertService Adaptor, due to
+Google's distributed datastore and replication of the web application.
+
+The second application of our advert server is a bootstrap mechanism for the
+IPL server. So far, no such mechanism existed. Our IPL server bootstrap
+mechanism stores locations of IPL servers at a fixed address (i.e. the address
+of our advert server), after which clients can easily discover the IPL server
+by looking up an IPL server address at our advert server. Our addition to the
+IPL server and applications solves configuration problems, since a user can now
+hard code the advert server address in his/her Ibis application.
+
+We evaluated our solution by benchmarking various parts of the system. From our
+benchmarks we can conclude that Google has various limitations with respect to
+bandwidth, response time, and number of bytes sent in one call. Also the
+completion time of various functions of the system increases as the size of
+objects to be sent/received increases, because of the internet latency. In
+addition, the completion time increases if more clients connect in parallel,
+because Google needs to replicate our server in order to process all requests in
+parallel, which takes extra time. Finally we noticed that the completion time
+does not increase if the number of items stored in the datastore increases
+(i.e. more items need to be searched in order to return the correct item).
+
+\subsection{Future Work}
+\label{conclusion-future}

@@ -84,7 +84,11 @@ Last, we would like to know how the server performs if multiple clients would
 connect at the same time. To test this, we used the Vrije Universiteit's DAS-3
 cluster to spawn multiple clients at the same time. 
 
-\ldots
+We will start a different number of clients simultaneously (ranging from 2 to 75
+clients), and compare the completion time with the completion time of a single
+client, doing the exact same operation. To ensure that all clients are doing
+the same operation in parallel, we will repeat every operation ten times. All
+measurements will be done client-side.
 
 \subsection{Results}
 Below we show the results of the measurements, as described above.
@@ -179,159 +183,107 @@ our measurements can be found in Figures \ref{ovw-obj-size} and
 As expected, overwriting data takes more time than just adding data to the
 datastore. We also expected meta data to take longer to overwrite, since every
 key-value pair is deleted seperately (by using a \texttt{for()} loop).
-% 
-% \subsubsection{Get}
-% After an element is stored in the datastore, it can be retrieved by a client.
-% In this case, we tested the 10 elements residing in the datstore, all of the
-% same size. Next, we retrieved every element from the datastore sequentially and
-% measured the time to do so client and server-side (see Figure
-% \ref{get-obj-size}). Note that we will not vary the number of Meta Data items,
-% because those are not fetched using the \texttt{get()} function.
-% 
-% \begin{figure} %[placement] where placement is h,t,b,p
-% \begin{center}
-% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_obj.pdf}
-% \caption{Receiving Objects of Variable Size. \label{get-obj-size}}
-% \end{center}
-% \end{figure}
-% 
-% As for client-side measurements. Decoding from Base64 to the actual binary
-% object takes a negligible amount of time (less than or equal to 1\,ms).
-% 
-% Finally, we will see if server-side completion time increases, if the number of
-% entries in the datatore increase. We measured server-side completion time with a
-% varialbe number of entries in the datastore (10, 100, 1000), where all objects
-% are the same size (for results, see Figure \ref{get-obj-amt}). According to
-% Google, the completion time should stay consistent, and as we can see from
-% Figure \ref{get-obj-amt}, its average stays around 25\,ms to 30\,ms.
-% 
-% \begin{figure} %[placement] where placement is h,t,b,p
-% \begin{center}
-% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_amt.pdf}
-% \caption{Receiving Objects With Different Amounts in Datastore.
-% \label{get-obj-amt}}
-% \end{center}
-% \end{figure}
-% 
-% \subsubsection{Delete}
-% Deleting an item from the datastore should not be an issue at the client side
-% (the client sends the pathname of the object to be deleted, and \texttt{OK} or
-% \texttt{Not Found} is returned accordingly). Hence, we only measured the
-% \texttt{delete()} function at the server side. 
-% 
-% Again, we are curious to see if the server needs more time to delete an item
-% when the datastore is full of data or almost empty (it should not make any
-% difference, since the functionality is much alike the \texttt{get()} function).
-% Similar to \texttt{get()}, we timed the \texttt{delete()} statement for a
-% varialbe number of entries in the datastore (10, 100, 1000), where all objects
-% are the same size (for results, see Figure \ref{del-obj-amt}).
-% 
-% \begin{figure} %[placement] where placement is h,t,b,p
-% \begin{center}
-% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/del_amt.pdf}
-% \caption{Deleting Objects With Different Amounts in Datastore.
-% \label{del-obj-amt}}
-% \end{center}
-% \end{figure}
-% 
-% \subsubsection{Get Meta Data}
-% This function was not significant to benchmark. The data sent by the client
-% does not vary that much (it is just a relatively short String, as path name),
-% and the return value is not very large either. The only thing that is interesting
-% to see is what would happen if we would actually have a lot of meta data in the
-% databse. That is exactly what we benchmarked in the next section.
-% 
-% \subsubsection{Find}
-% Finally, an interesting function to benchmark is the find function. Because the
-% GQL does not support wildcard nor \texttt{LIKE}-statements in queries (see
-% Section \ref{serverdesign-structure}), we had to build a comprehensive find
-% function which executes a GQL query for every two key-value pairs, in order to
-% match them. By increasing the number of data items, our performance would
-% decrease exponentially. In Figure \ref{find-md-amt} we show some measure points
-% we obtained from comparing various number of key-value pairs to various number
-% of key-value pairs present in the datastore.
-% 
-% \begin{figure} %[placement] where placement is h,t,b,p
-% \begin{center}
-% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/find_amt.pdf}
-% \caption{Finding Meta Data With Different Amounts in Datastore.
-% \label{find-md-amt}}
-% \end{center}
-% \end{figure}
-% 
-% As we can see from Figure \ref{find-md-amt}, the completion time does increase
-% exponentially. For some measuring points the data points are beyond 30\,seconds
-% completion time, which means we received a timeout from Google. Note that we had
-% ten objects in the database at all time, which means we effectively had ten times
-% as much data to compare as suggested by the x-axis of the graph.
-% 
-% \subsection{Bandwidth}
-% In addition to latency and completion time, we also tried to measure the
-% bandwidth 
-% 
-% First of all, we measured the round-trip delay, by creating a dummy server
-% which would instantly reply the shortest possible message to the client. Also,
-% the client would only send a GET request and wait for a response code. We
-% measured the round-trip delay to be 120\,ms on average.
-% 
-% Next we measured the upload bandwidth (of the client), by sending the maximum
-% request size (10\,MB) to the server, and letting the server send an empty message
-% back as minimum response. Now we noted that the maximum request size actually is
-% smaller than 10\,MB. We regularly got an error message which indicated that the
-% bandwidth was temporarily exceeded. By trial-and-error we figured that the
-% maximum amount we could send (without recieving such an error) lies around 5MB,
-% after which we have to wait 60\,seconds, before sending the next batch,
-% otherwise our subsequent requests would still get the error messages. We measured
-% sending 5\,MB to the App Engine to be 3.7\,seconds on average.
-% 
-% Finally, we measured the download bandwidth (client-side), by doing a GET
-% request of 10\,MB. The server would actually have to read a 10\,MB file and
-% return it to the client. Reading this file also has a little overhead (approximately
-% 130\,ms), so we substract that form our measured results, which gives us a
-% round-trip delay of 26.4\,seconds on average. Our download fluctuated quite a
-% bit, this might be the cause of multiple users using the same internet connection
-% for various purposes.
-% 
-% Finally, we want to know our bandwith in kB/sec. This we calculate by
-% substracting the round-trip delay from the upload and download round-trip delays
-% measured. Which gives us 3.6\,seconds and 26.3\,seconds respectively. Now, we
-% divide the number of bytes sent (5\,000\,000 and 10\,000\,000\,bytes
-% respectively), by the number of seconds, and divide it by 1024 to get the kB/sec.
-% We can conclude that our upload bandwidth is 1360\,kB/sec, and our download
-% bandwidth is 372\,kB/sec. We suspect Google from limiting the download
-% bandwidth, since there is such a significant difference between upload and
-% download bandwidth.
-% 
-% \subsection{Parellel Benchmarks}
+ 
+\subsubsection{Get}
+In Figures \ref{get-obj-size} and \ref{get-obj-amt} we show our measurment
+results of the \texttt{get()} function. For client-side measurements, the
+completion time increases if the object size increases. Decoding from Base64 to
+the actual binary object takes a negligible amount of time (less than or equal to
+1\,ms). Also, according to Google, the completion time should stay consistent,
+independent from the number of data items present in the datastore. As we can see
+from Figure \ref{get-obj-amt}, its average stays around 25\,ms to 30\,ms.
 
-% 
-% We started a different number of clients simultaneously (ranging from 2 to 75
-% clients), and compared the completion time with the completion time of a single
-% client, doing the exact same operation. All measurements were done client-side
-% and the results can be found in Figure \ref{benchmarks-parallel-fig}.
-% 
-% \begin{figure} %[placement] where placement is h,t,b,p
-% \begin{center}
-% \includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/parallel.pdf}
-% \caption{Connecting to the App Engine Using a Various Number of Clients in
-% Parallel. \label{benchmarks-parallel-fig}}
-% \end{center}
-% \end{figure}
-% 
-% First of all we would like to state that connecting with 75 clients or more in
-% parallel, the App Engine often generates a \emph{Quota Temporarily Exceeded}
-% error. Also, calling the ClientLogin function shows this behavior, once we try
-% to connect with more than 75 (identical) clients to the App Server. 
-% 
-% As we can see, the completion time does increase if more clients connect in
-% parallel, but not significantly. If 75 clients would connect in parallel, the
-% completion only increases by 300\,ms on average. This can be explained by the
-% fact that Google needs to replicate our application in order to handle all the
-% requests, hence a delay in response time. The only exception is the
-% \texttt{find()} function, of which its completion time triples if 75 clients
-% connect in parallel, compared to 1 client. This is probably because the
-% \texttt{find()} function is the most complex function we benchmarked.
-% 
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_obj.pdf}
+\caption{Receiving Objects of Variable Size. \label{get-obj-size}}
+\end{center}
+\end{figure}
+
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/get_amt.pdf}
+\caption{Receiving Objects With Different Amounts in Datastore.
+\label{get-obj-amt}}
+\end{center}
+\end{figure}
+ 
+\subsubsection{Delete}
+Deleting an item from the datastore should not be an issue at the client side
+(the client sends the pathname of the object to be deleted, and \texttt{OK} or
+\texttt{Not Found} is returned accordingly). Hence, we only measured the
+\texttt{delete()} function at the server side (for results, see Figure
+\ref{del-obj-amt}). Again, the server-side completion time remains the same.
+ 
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/del_amt.pdf}
+\caption{Deleting Objects With Different Amounts in Datastore.
+\label{del-obj-amt}}
+\end{center}
+\end{figure}
+ 
+\subsubsection{Find}
+Finally, an interesting function to benchmark is the find function, which is the
+most compresehensive function, as stated in Section \label{serverimpl-find}. In
+Figure \ref{find-md-amt} we show some measure points we obtained from comparing
+various number of key-value pairs to various number of key-value pairs present in
+the datastore.
+
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/find_amt.pdf}
+\caption{Finding Meta Data With Different Amounts in Datastore.
+\label{find-md-amt}}
+\end{center}
+\end{figure}
+
+As we can see from Figure \ref{find-md-amt}, the completion time does increase
+exponentially. For some measuring points the data points are beyond 30\,seconds
+completion time, which means we received a timeout from Google. Note that we had
+ten objects in the database at all time, which means we effectively had ten times
+as much data to compare as suggested by the x-axis of the graph.
+
+\subsection{Bandwidth}
+First of all, we measured the round-trip delay, being to be 120\,ms on average.
+Next we measured the upload bandwidth, by sending 5\,MB to the App Engine, which
+takes 3.7\,seconds on average. Finally, we measured the download bandwidth
+(client-side), by receiving 10\,MB. This gives us a round-trip delay of
+26.4\,seconds on average. To let the server generate a 10\,MB response, it has to
+read 10\,MB of data from a file, which has a little overhead (approximately
+130\,ms).
+ 
+Using these results, we can calculate our bandwidth in kB/sec. This is done by
+substracting the round-trip delay from the upload and download round-trip delays
+measured, and then divide the number of bytes sent by the number of seconds.
+We can conclude that our upload bandwidth is 1360\,kB/sec, and our download
+bandwidth is 372\,kB/sec.
+
+\subsection{Parellel Benchmarks}
+The results of our parallel benchmarks can be found in Figure
+\ref{benchmarks-parallel-fig}. First of all we would like to state that
+connecting with 75 clients or more in parallel, the App Engine often generates a
+\emph{Quota Temporarily Exceeded} error. Also, calling the ClientLogin function
+shows this behavior, once we try to connect with more than 75 (identical) clients
+to the App Server.
+ 
+\begin{figure} %[placement] where placement is h,t,b,p
+\begin{center}
+\includegraphics[trim=5cm 4cm 5cm 5cm,width=10cm]{./figures/parallel.pdf}
+\caption{Connecting to the App Engine Using a Various Number of Clients in
+Parallel. \label{benchmarks-parallel-fig}}
+\end{center}
+\end{figure}
+ 
+As we can see, the completion time does increase if more clients connect in
+parallel, but not significantly. If 75 clients would connect in parallel, the
+completion only increases by 300\,ms on average. This can be explained by the
+fact that Google needs to replicate our application in order to handle all the
+requests, hence a delay in response time. The only exception is the
+\texttt{find()} function, of which its completion time triples if 75 clients
+connect in parallel, compared to 1 client. This is probably because the
+\texttt{find()} function is the most complex function we benchmarked.
+
 \subsection{Summary}
 As we can conclude from our benchmark results, Google applies some restrictions
 for connecting to the App Engine. The most obvious one is that the
@@ -348,6 +300,8 @@ call -- is possible, but removing them all at once is not.
 Second thing we found is that completion time increases (both client and server
 side) if the number of data sent or requested increases. Completion time also
 increases if the number of clients connecting increases. However, when there is
-more data in the datastore (i.e. more data items to be searched from), the
-completion time does not increase.
+more data present in the datastore (i.e. more data items to be searched from),
+the completion time does not increase.
 
+Finally, we suspect Google from limiting the download bandwidth, since there is
+such a significant difference between upload and download bandwidth.
