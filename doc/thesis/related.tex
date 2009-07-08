@@ -33,6 +33,9 @@ applications calls methods of the GAT API. The GAT engine dynamically `routes'
 the API calls to the correct grid middleware. There are plugins (called
 \emph{adaptors}) for many different grid middleware systems \cite{javagat-www}.
 
+As we will see in Section \ref{applications-advertservice}, we will write an
+adaptor that communicates with our advert server.
+
 \subsubsection{IPL}
 The \emph{Ibis Portability layer} (IPL) is a communication library specifically
 designed for usage in a grid environment. It has a number of properties which
@@ -40,12 +43,12 @@ help to achieve its goal of providing programmers with an easy to use, reliable
 grid communication infrastructure \cite{ibis-www}.
 The Ibis Portability Layer (IPL) acts as a common interface for the different
 programming models to the bottom implementation layer. Multiple implementations
-are available. Some, such as \emph{TcpIbis using} 100\% Java code to ensure
+are available. Some, such as \emph{TcpIbis} using 100\% Java code to ensure
 portability, and some, such as the \emph{MPI} (Message Passing Interface) based
 Ibis implementation taking advantage of local high speed networks using native
 code \cite{ibis-www}.
 
-As we will see in Section \ref{applications}, we will use our applicationstorage server for both Ibis projects mentioned above.\subsection{The Google App Engine}
+As we will see in Section \ref{applications-ipl}, we will use our applicationstorage server as a boostrap mechanism for IPL servers.\subsection{The Google App Engine}
 \label{related-appengine}
 April 7, 2008 Google launched a free-of-charge cloud computing service called
 the \emph{Google App Engine}. Google offers a platform for developing and
@@ -59,12 +62,16 @@ programming languages to build and run web applications. Besides \emph{Python}
 featured to develop web applications and run them on Google's resources. Since
 the feature of running your applications in Java is still relatively new, we
 focused on the Python runtime environment for scientific purposes.
-A Python web application interacts with the App Engine web server using the CGI
-protocol. An application can use a WSGI-compatible web application framework
-using a CGI adapter. App Engine includes a simple web application framework,
-called \emph{webapp}, to make it easy to get started. For larger applications,
-mature third-party frameworks, such as \emph{Django} \cite{django-www}, workwell with App Engine.
-
+A Python web application interacts with the App Engine web server using the
+\emph{CGI}(Common Gateway Interface) protocol. An application can use a
+\emph{WSGI}-compatible\footnote{\emph{WSGI} is the Web Server Gateway Interface.
+It is a specification for web servers and application servers to communicate with
+web applications (though it can also be used for more than that). It is a Python
+standard, described in detail in \emph{PEP 333} \cite{wsgi-www, pep333-www}.} web
+application framework using a CGI adapter. The App Engine includes a simple web
+application framework, called \emph{webapp}, to get started easily. For larger
+applications, mature third-party frameworks, such as \emph{Django}
+\cite{django-www}, work well with the App Engine.
 The App Engine currently only supports Python 2.5.2 (Python 3 is considered a
 future release). The Python interpreter runs in a secured \emph{sandbox}
 environment to isolate our application for service and security. The interpreter
@@ -76,18 +83,19 @@ In addition, Google also provides a distributed database, called the
 \emph{datastore}. The datastore provides robust scalable data storage for our
 application. The datastore is designed with web applications in mind, and
 emphasizes on read and query performance. It stores data entities with
-properties, organized by application-defined kinds. It can perform queries over entities of
-the same kind, with filters and sort orders on property values and keys. All
-queries are pre-indexed for fast results over very large data sets. The datastore
-supports transactional updates, using entity groupings defined by the application
-as the unit of transactionality in the distributed data network\cite{app-engine-datastore}.
+properties, organized by application-defined kinds. It can perform queries over
+entities of the same kind, with filters and sort orders on property values and
+keys. All queries are pre-indexed for fast results over very large data sets. The
+datastore supports transactional updates, using entity groupings defined by the
+application as the unit of transactionality in the distributed data network
+\cite{app-engine-datastore}.
 \subsubsection{Limitations}
 Although the Google App Engine provides us with resources, it also has some
 limitations we should consider. All applications hosted on the App Engine
 servers, are run within a sandbox. Spawning new processes using \texttt{fork()}
 or threads are not allowed. Application code only runs in response to a web
-request, and must return response data within thirty seconds. After the response
-is sent, no code execution can take place.
+request, and must return a response within thirty seconds. After the
+response is sent, no code execution can take place.
 An application can only access other computers on the Internet through the
 provided URL fetch and email services and APIs. No socket connections to other
 machines can be made. Other computers can only connect to the application by
@@ -99,7 +107,7 @@ datastore for all data that persists between requests.
 \label{appengine-quotas}
 The Google App Engine is free of use up to a certain level of used resources,
 after which fees are charged for additional storage, bandwidth or CPU cycles
-required by the application. As of June 29th, 2009, quotas that are enforced byGoogle are provided in Figure \ref{quota-table}. Note that the table below somequotas are billable, if the user provides payment information using \emph{GoogleCheckout} \cite{google-checkout-www}. When you enable billing for your app, theapp's fixed quotas increase and an optional maximum can be set by theapplication's administrator (the latter are called \emph{billable quotas})
+required by the application. As of June 29th, 2009, quotas that are enforced byGoogle are provided in Figure \ref{quota-table}. Note that in the figure belowsome quotas are billable, if the user provides payment information using \emph{GoogleCheckout} \cite{google-checkout-www}. When you enable billing for your app, theapp's fixed quotas increase and an optional maximum can be set by theapplication's administrator (the latter are called \emph{billable quotas})
 \cite{app-engine-quotas}.
 \begin{figure}[h,t]
 \begin{center}
@@ -130,13 +138,13 @@ During the development of our project, this has happened several times, both
 increasing and decreasing quotas.
 
 \subsubsection{Monitoring}
-For the administrativor to monitor the quota already used by other users, one can
+For the administrator to monitor the quota already used by other users, one can
 login to the administration panel. All quotas as described above can be monitored
-from this website, and additionally, one can see when quotas will be reset (being
+from this website, and additionally one can see when quotas will be reset (being
 midnight, Pacific time\footnote{Historical note: The 24-hour replenishment cycle
 was introduced in December 2008. It replaced a more complicated system of
 `continuous' replenishment, to make it easier to report and control resource
-usage.}).  Besides the monitoring of quotas, also various logs are available
-(e.g. error logs, debug logs, and access logs), and one can check the contents of
-the datastore as well. For more information on the administration panel, we
-suggest reading \cite{app-engine-admin}.
+usage. \cite{app-engine-quotas}}).  Besides the monitoring of quotas, also
+various logs are available (e.g. error logs, debug logs, and access logs), and
+one can check the contents of the datastore as well. For more information on the
+administration panel, we suggest reading \cite{app-engine-admin}.

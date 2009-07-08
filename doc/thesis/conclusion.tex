@@ -14,7 +14,7 @@ encoding, sending/receiving over HTTP, and error handling for the user. This
 library can now be used by other applications to store application data at the
 Google App Engine.
 
-We also used our client library in two Ibis applications; the JavaGAT
+We also used our client library in two Ibis projects; the JavaGAT
 \cite{javagat-www}, and the IPL \cite{ipl-www}. We made a Google App Engine
 AdvertService Adaptor for JavaGAT. The advantage of our solution is that it is
 much more scalable, compared to the generic AdvertService Adaptor, due to
@@ -32,12 +32,12 @@ We evaluated our solution by benchmarking various parts of the system. From our
 benchmarks we can conclude that Google has various limitations with respect to
 bandwidth, response time, and number of bytes sent in one call. Also the
 completion time of various functions of the system increases as the size of
-objects to be sent/received increases, because of the internet latency. In
-addition, the completion time increases if more clients connect in parallel,
+objects to be sent/received increases, because of the internet latency.
+Furthermore, the completion time increases if more clients connect in parallel,
 because Google needs to replicate our server in order to process all requests in
 parallel, which takes extra time. Finally we noticed that the completion time
-does not increase if the number of items stored in the datastore increases
-(i.e. more items need to be searched in order to return the correct item).
+does not increase if the number of items stored in the datastore increases (i.e.
+more items need to be searched in order to return the correct item).
 
 Last, we want to state that we can't give any guarantees to the users using the
 advert server. Google can change quotas, APIs, and other functionality at any
@@ -51,6 +51,6 @@ applying such changes.
 Recently, Google introduced Java as a second programming language for the
 Google App Engine \cite{app-engine-java}. Since Java offers more functionality
 than Python does (especially Python 2.5), it might be useful to also write a
-server in Java to create better function perfomance. In addition, Google
+server in Java to create better function performance. In addition, Google
 mentions that Python 3.0 might be introduced in a future release. This means
 more Python functionality will be available and functions could be improved.

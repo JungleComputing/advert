@@ -107,15 +107,15 @@ the same for the second key-value pair and accordingly take the intersection
 between the two search results. This process should be repeated until all
 key-value pairs have been checked. The downside of this approach is that there is
 no obvious method to perform the intersection between two search results at the
-Google App Engine. This approach requires a \emph{for()}-loop to iterate through
-all items in the first search result and check them with the second.
+Google App Engine. This approach requires a \texttt{for()}-loop to iterate
+through all items in the first search result and check them with the second.
 \subsubsection{Delete}
 To remove an (Advert) object from the datastore, a user calls the
 \texttt{delete()} function, with a pathname as argument. Obviously, the most
 straightforward way to remove an item from the datastore is to query all objects
 and meta data that match the pathname given. Naturally, we want to perform the
 removal of the object and associated meta data in transaction (see Section
-\ref{serverimpl-transactions}, because we do not want inconsistencies in our
+\ref{serverimpl-transactions}), because we do not want inconsistencies in our
 datastore (i.e. querying meta data of which the associated object does not exist
 anymore).
 The only problem we have now is that we cannot perform queries inside a
@@ -154,8 +154,8 @@ transaction, except for GQL functions.
 
 Another prequisite of transactions is that all data operated on must be in the
 same entity group (this includes retrieving entities by key, updating entities, and
-deleting entities). Entity group relationships tell App Engine to store several
-entities in the same part of the distributed network. When the application
+deleting entities). Entity group relationships tell the App Engine to store
+several entities in the same part of the distributed network. When the application
 creates an entity, it can assign another entity as the parent of the new entity,
 using the parent argument in the Model constructor. Assigning a parent to a new
 entity puts the new entity in the same entity group as the parent entity. This is
@@ -233,8 +233,13 @@ def gc(): #garbage collector
                       datetime.datetime.today() + datetime.timedelta(days=-10))
   
   for advert in query: #all entities that can be deleted
-    advert.delmd()     #delete all associated metadata
     advert.delete()    #delete the object itself
+    
+  query = db.GqlQuery("SELECT * FROM MetaData WHERE ttl < :1", 
+                      datetime.datetime.today() + datetime.timedelta(days=-10))
+  
+  for md in query: #all entities that can be deleted
+    md.delete()    #delete the object itself
 \end{code}
 \caption{The Garbage Collector.\label{serverimpl-gc}}
 \end{center}
@@ -255,7 +260,8 @@ that automatically deletes all its metadata. Once this is done, the object
 itself is deleted and the garbage collection process is finished.
 
 \subsection{Transfer Protocol}
-Below we describe our transfer protocol in more details, starting with 
+Below we describe our transfer protocol in more details, starting with
+receiving (binary) data, followed by returning (binary) data.
       
 \subsubsection{Receiving and Storing Binary Data}
 An important function of the advert server is to accept and store binary data.
@@ -294,7 +300,7 @@ of these transfers would fail, it could lead to inconsistencies (see Section
 
 When receiving our binary object as a combination of both binary data and
 unicode Strings, it will be received as one stream of bytes (assuming we are not
-using the multipart/formdata method of Section \ref{serverdesign-encoding}.
+using the multipart/formdata method of Section \ref{serverdesign-encoding}).
 This means that we will have to dismember the message ourselves, which is
 not as straightforward as it seems. The Google App Engine currently only
 supports Python 2.5, which does not support bytes or byte arrays for data
@@ -379,7 +385,7 @@ message body.
 \begin{code}
 [ string , { string : string , string : string , ... } | null , string | null ]
 \end{code}
-\caption{Advert syntax of a JSON object.\label{serverimpl-json-syntax}}
+\caption{Advert Syntax of a JSON Object.\label{serverimpl-json-syntax}}
 \end{center}
 \end{figure*}
 
@@ -392,7 +398,7 @@ message body.
 As long as we only have to send one item from the datastore to the user, we do
 not need to do much encoding. We just have to setup the content-type, which is
 plain text (i.e. unicode String), and send the actual data (see Figure
-\ref{serverimpl-general-response}. This is the case when the user calls the
+\ref{serverimpl-general-response}). This is the case when the user calls the
 \texttt{get()} function. Of Course, we first need to fetch the requested object
 from the datastore, which will be done using GQL Queries.
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
@@ -432,7 +438,7 @@ self.response.out.write(simplejson.dumps(jsonObject))
 \end{figure*}
 
 \subsubsection{Programmer's Manual}
-For more information on how the advert server is implmented, we suggest reading
+For more information on how the advert server is implemented, we suggest reading
 the \emph{Programmer's Manual} (Appendix \ref{progman}).
 
 \subsection{Authentication and Privacy}

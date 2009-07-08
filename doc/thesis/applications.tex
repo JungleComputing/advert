@@ -11,7 +11,7 @@ Our first implementation of our advert server is probably the most obvious use
 of the advert server; the \emph{JavaGAT AdvertService}. The AdvertService
 allows \emph{Advertisable} instances to get published to and queried in an
 advert directory. Such an advert directory is a meta data directory with an
-hierarchical namespace attached \cite{javagat-javadoc}.
+hierarchical name space attached \cite{javagat-javadoc}.
 \subsubsection{Adaptor Implementation}
 For the actual implementation of our \emph{AppEngineAdvertServiceAdaptor}, we
 basically implemented all functionality provided by the JavaGAT API
@@ -39,7 +39,7 @@ Engine AdvertService Adaptor.\label{applications-gaeasa}}
 Because of the fact that we do not implement our database locally, we cannot
 implement two of the public functions given by the API, called
 \texttt{importDataBase} and \texttt{exportDataBase}. Both functions are not
-feasible to implement, since this would mean we theoratically should be able to
+feasible to implement, since this would mean we theoretically should be able to
 import/export 1\,gigabyte of data over HTTP, after which we would run out of
 free quota too fast.
 
@@ -49,11 +49,11 @@ Adaptor, does not scale, since it is only stored locally, and can only be
 accessed by the current JavaGAT.
 
 \subsection{IPL Server Bootstrap Mechanism}
-\label{ipl}
+\label{applications-ipl}
 Besides implementing a AdvertService adaptor for the Google App Engine, we
 found another use for our advert service library, within Ibis. Our advert
 server could very well function as a bootstrap mechanism for an \emph{IPL} (Ibis
-Portability Layer) \cite{ipl-www} registry.
+Portability Layer) \cite{ipl-www} server.
 
 \subsubsection{IPL Server}
 The Ibis Portability layer is a communication library is specifically
@@ -66,7 +66,7 @@ instances, usually running on different machines. Each pool is generally made up
 of Ibises running a single distributed application. Ibises in a pool can
 communicate with each other, and, using the registry mechanism present in Ibis,
 can search for other Ibises in the same pool, get notified of Ibises joining the
-pool, etc. To coordinate Ibis pools a socalled \emph{Ibis server} is used
+pool, etc. To coordinate Ibis pools a so-called \emph{Ibis server} is used
 \cite{ipl-usersguide}.
 
 Services can be dynamically added to the server. By default, the Ibis
@@ -95,24 +95,23 @@ google://jondoe\%40gmail.com:password@jondoe.appspot.com/some_identifier
 \end{code}
 \end{center}
 
-In this schema \texttt{google://} refers to the Goole App Engine. Next we can
-optionally add the user's credentials (there are two ways to do this, as we
-will see below). To authenticate to the advert server, a Google Account (in
-the form of an email address is required). Since the \texttt{@} symbol is
-reserved as identifier for the URI (RFC 2396), we have to use an URI-encoded
-\texttt{@} symbol, which is \texttt{\%40}. After the actual \texttt{@}
-symbol, the hostname is presented. The server does not necessarily need to run
-on Google's \texttt{appspot.com} domain, but for now, we assume it will.
-Everyting from the trailing \texttt{/} and after is considered the identifier at
-which the IPL Registry is stored.
-
+In this schema \texttt{google://} refers to the Google App Engine. Next we can
+optionally add the user's credentials (there are two ways to do this, as we will
+see below). To authenticate to the advert server, a Google Account (in the form
+of an email address is required). Since the \texttt{@} symbol is reserved as
+identifier for the URI (\emph{RFC 2396} \cite{rfc-2396}), we have to use an
+URI-encoded \texttt{@} symbol, which is \texttt{\%40}. After the actual
+\texttt{@} symbol, the host name is presented. The server does not necessarily
+need to run on Google's \texttt{appspot.com} domain, but for now, we assume it
+will. Everything from the trailing \texttt{/} and after is considered the
+identifier at which the IPL Registry is stored.
 Alternatively, it is also possible for the user to provide its credentials
-using a seperate commandline command. The user can specify both \texttt{--user
-USERNAME} and \texttt{--pass PASSWORD}, followed by its username and password
+using a separate command line command. The user can specify both \texttt{--user
+USERNAME} and \texttt{--pass PASSWORD}, followed by its user name and password
 respectively. If the credentials are specified twice (i.e. using both the
 \texttt{ADVERT\_URI} and the \texttt{--user} and \texttt{--pass} to specify
-username and password), preference is given to the second pair of
-username/password, and a warning is issued.
+user name and password), preference is given to the second pair of
+user name/password, and a warning is issued.
 
 Secondly, we have to find a useful way to make use of meta data. Storing
 key-value pairs can be really useful, if structured properly. Some examples
@@ -137,7 +136,7 @@ file parser of some kind. This is a future feature to implement.
 
 Once a server is started using the \texttt{--advert} suffix, the server is added
 to the advert server (using the \texttt{add()} functionality already present).
-Once a server is stopped, it will be removed (using the \texttt{del()}
+Once a server is stopped, it will be removed (using the \texttt{delete()}
 function).
 
 \subsubsection{Ibis Application (Client)}
@@ -148,7 +147,7 @@ are not aware of the server address, we could specify
 \texttt{-Dibis.server.address}. Other properties that can be specified are:
 
 \begin{itemize}
-  \item \texttt{-Dibis.advert.username}; Username, if preferred above
+  \item \texttt{-Dibis.advert.username}; User name, if preferred above
   	\texttt{ibis.advert.address}
   \item \texttt{-Dibis.advert.password}; Password, if preferred above
   	\texttt{ibis.advert.address} 
@@ -169,6 +168,6 @@ it would normally do, if \texttt{-Dibis.server.address} was set in the first
 place.
 
 At first, it seems that this solution introduces a lot more typing, when one
-would like to start an IPL server or an Ibis application. However, it is always
+would like to start an IPL server or an Ibis application. However, it are always
 the same lines of code, which means that you are able to hard-code the advert
 server address in your Ibis application, preventing configuration problems.

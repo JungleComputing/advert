@@ -3,7 +3,8 @@
 Now that we have designed and implemented our application storage server, it is
 time to build a client library, which communicates to the application storage
 server, in order to create transparency for the user. Our client library is
-completely written in Java and needs Java version 1.5 to compile.
+completely written in \emph{Java} \cite{java-www} and needs at least Java
+version 1.5 to compile.
 
 \subsection{Public Functions}
 Similar to the public functions specified in the server design (Section
@@ -59,7 +60,7 @@ this when we discuss the AdvertService in Section
 \ref{applications-advertservice}.
 \subsection{Transfer Protocol}
 Below we will describe the transfer protocol in more detail, as from a client
-point of view. All our communication is done by our \texttt{Communication}
+point of view. All our communication is done by the \texttt{Communication}
 class, which is called by the public functions stated above. 
 
 First we will describe some basics of how Java manages HTTP connections. After
@@ -84,7 +85,7 @@ all information needed; like status-codes, HTTP Headers, and the message body.
 This we will discuss below when we talk about the HTTP response.
 In addition to HTTP connections, it is also possible in Java to make HTTPS
 connections. This is done automatically by the \texttt{HttpURLConnection}
-class, when a URL with scheme \texttt{https} is opened.
+class, when a URL with scheme \texttt{https://} is opened.
 
 % however, this is not as straightforward as making HTTP connections.
 % To make an HTTPS connection we will need to import the
@@ -118,15 +119,15 @@ class, when a URL with scheme \texttt{https} is opened.
 % \end{figure*}
 
 \subsubsection{HTTP POST Method}
-Secondly it is of great importance to create an HTTP POST request for both
+Secondly, it is of great importance to create an HTTP POST request for both
 authentication and sending data to the App Engine. The simplest option is to send
 a various number of URL encoded strings. An example of making such an HTTP POST
 request can be seen in Figure \ref{clientimpl-post}. We enable sending output to
 the connection just created, calling \texttt{urlc.setDoOutput(true);}. After
 making this call we are able to open an OutputStreamWriter to which we can write
-our POST data. Multiple fields are separated by an ampersand, and variable names
-and values are separated by the equal sign. In this example we write the author's
-name and content to an HTTP POST request.
+our POST data. Multiple fields are separated by an ampersand (`\texttt{\&}'),
+and variable names and values are separated by the equal sign. In this example we
+write the author's name and content to an HTTP POST request.
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
 \begin{code}
@@ -168,11 +169,11 @@ begin with, we will download the response headers sent by the web server, after
 which we can retrieve the body.
 
 \paragraph{Headers}
-How to recieve the headers of an HTTP response is shown in Figure
+How to receive the headers of an HTTP response is shown in Figure
 \ref{clientimpl-headers}. Already, by receiving the response code, we can
-distinguish errors from successful requests. Response codes starting with a 1 are
-informational and those starting with a 2xx mean success. If the response code
-is starting with a 3xx are used for redirection, and 4xx and 5xx are used for
+distinguish errors from successful requests. Response codes of the form 1xx
+are informational and those of the form 2xx mean success. Response codes
+of the form 3xx are used for redirection, and 4xx and 5xx are used for
 errors (client and server respectively). For example: 200 stands for success, 403 for
 authentication required, and 404 for not found.
 
@@ -192,7 +193,7 @@ for (int i = 0; httpc.getHeaderField(i) != null; i++) {
 
 After checking the response code, we can retrieve additional headers. In our case
 (using the App Engine as our web server), we have listed an example of receiving
-a succesful response (Figure \ref{clientimpl-200}). Again, a status header is
+a successful response (Figure \ref{clientimpl-200}). Again, a status header is
 sent, followed by the server type, the date, and some other info. Note that
 ``Content-Length'' can be really useful to determine our buffer size in the next
 step.
@@ -352,13 +353,13 @@ comes in two forms. One form for installed \emph{Google Apps}
 Typically, ClientLogin is used for Installed applications that need to access
 Google services protected by a user's Google or Google Apps. To make use of this
 API, we will make a HTTP POST request to
-\texttt{https://www.google.com/accounts/ClientLogin}, to which we send our
+\url{https://www.google.com/accounts/ClientLogin}, to which we send our
 credentials as shown in Figure \ref{clientimpl-clientlogin}.
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
 \begin{code}
 StringBuilder content = new StringBuilder();
-content.append("Email=").append(URLEncoder.encode("johndoe@gmail.com", 
+content.append("Email=").append(URLEncoder.encode("jondoe@gmail.com", 
   "UTF-8"));
 content.append("&Passwd=").append(URLEncoder.encode("north23AZ", "UTF-8"));
 content.append("&service=").append(URLEncoder.encode("ah", "UTF-8"));
@@ -424,8 +425,7 @@ the web application to get access without ever handling their users' account
 login information. Before using, verify that the Google service to be accessed
 supports the Authentication service. Some Google services may allow access only
 to web applications that are registered and use secure tokens. We have not tried
-AuthSub to authenticate ourselves at the App Engine. If the ClientLogin remains
-to fail, we could consider AuthSub as our backup. We will not use it as our
+AuthSub to authenticate ourselves at the App Engine. We will not use it as our
 primary authentication mechanism because if our users would want to install an
 advert server, it would require extra effort, because they need to register
 themselves first before this service can be used.

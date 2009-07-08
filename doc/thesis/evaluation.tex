@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{evaluation}
 Now that we have shown the design, implementation, and application of our advert
-server, we would like to evaluate its performance. More specifc, how does the
+server, we would like to evaluate its performance. More specific; how does the
 system behaves under various circumstances? Therefore, we designed a couple of
 benchmarks to measure its performance, expressed in completion time, latency,
 and bandwidth.
@@ -12,7 +12,7 @@ Figure \ref{tracert}. The last known IP address resides at Mountain View,
 California (US), which is where Google Inc. is residing. It is safe to assume
 that all our request go to Google US and back.
 
-\begin{figure*} %[placement] where placement is h,t,b,p
+\begin{figure*}[h,b] %[placement] where placement is h,t,b,p
 \begin{center}
 \begin{code}
 $ traceroute ibisadvert.appspot.com
@@ -43,15 +43,15 @@ benchmarks we made use of the VU's \emph{DAS-3 cluster}, which has 85 dual-core
 2.4\,GHz nodes, with 4\,GB of memory and a Myri-10G and GbE network \cite{das3-www}.
 
 \subsubsection{Completion Time}
-To measure our performance we first of all measure the completion time of
-various parts of the system. The completion time will be measured client side
-and server side (when relevant and possible), whilst sending and receiving
+To measure our performance we first of all will measure the completion time of
+various parts of the system. The completion time will be measured client-side
+and server-side (if relevant and possible), whilst sending and receiving
 different amounts of data to and from the server. 
 
 We will measure each client function individually, as well as starting up the
 client library (authentication). The client and server functions which we are
 most interested in are \texttt{add()}, \texttt{get()}, \texttt{delete()}, and
-\texttt{find()}. All functions will be started with different amounts of (meta)
+\texttt{find()}. All functions will be started with different amounts of 
 data, ranging from 730\,bytes, to 730\,000\,bytes (since we still have to encode
 everything in Base64, the actual data being sent ranges from 1\,kB to 1\,000\,kB,
 respectively, the latter being the maximum call size of the Google datastore
@@ -225,7 +225,7 @@ Deleting an item from the datastore should not be an issue at the client side
  
 \subsubsection{Find}
 Finally, an interesting function to benchmark is the find function, which is the
-most compresehensive function, as stated in Section \label{serverimpl-find}. In
+most compresehensive function, as stated in Section \ref{serverimpl-find}. In
 Figure \ref{find-md-amt} we show some measure points we obtained from comparing
 various number of key-value pairs to various number of key-value pairs present in
 the datastore.
@@ -242,7 +242,7 @@ As we can see from Figure \ref{find-md-amt}, the completion time does increase
 exponentially. For some measuring points the data points are beyond 30\,seconds
 completion time, which means we received a timeout from Google. Note that we had
 ten objects in the database at all time, which means we effectively had ten times
-as much data to compare as suggested by the x-axis of the graph.
+as much data to compare as suggested by the $x$-axis of the graph.
 
 \subsection{Bandwidth}
 First of all, we measured the round-trip delay, being to be 120\,ms on average.
@@ -261,7 +261,7 @@ bandwidth is 372\,kB/sec.
 
 \subsection{Parellel Benchmarks}
 The results of our parallel benchmarks can be found in Figure
-\ref{benchmarks-parallel-fig}. First of all we would like to state that
+\ref{benchmarks-parallel-fig}. First of all we would like to state that when
 connecting with 75 clients or more in parallel, the App Engine often generates a
 \emph{Quota Temporarily Exceeded} error. Also, calling the ClientLogin function
 shows this behavior, once we try to connect with more than 75 (identical) clients

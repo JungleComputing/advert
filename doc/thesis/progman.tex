@@ -7,26 +7,26 @@ the Java client can be fount at:
 \url{https://gforge.cs.vu.nl/svn/ibis/advert/trunk/src/}. For information on how
 to install the server, please see the \texttt{INSTALL.txt}, located in the
 \texttt{server} directory.
-In this manual, we will focus mainly on the protocol used advertn the Advert
+In this manual, we will focus mainly on the protocol used between the Advert
 client library and the advert server, as run on the Google App Engine. Also, we
 mostly refer to Java as the language of the client-side. This manual is split up
 into several different subsections. First, we will explain how connections are
-made between a client and the advert server (subsection \ref{http-java}). Second,
+made between a client and the advert server (Section \ref{http-java}). Second,
 we will discuss how authentication is done, between a client and the Google App
-Engine (subsection \ref{auth}). Third we will discuss the various different
-functions provided by the advert server, and how they are addressed (subsection
+Engine (Section \ref{auth}). Third we will discuss the various different
+functions provided by the advert server, and how they are addressed (Section
 \ref{protocol}). Fourth we will take a look at the administration panel of the
-Google App Engine (subsection \ref{admin-panel}). Last we will take a look at an
+Google App Engine (Section \ref{admin-panel}). Last we will take a look at an
 example of a client implementation, by looking at the \emph{Ibis Advert client
-library} (subsection \ref{advert-lib}).
+library} (Section \ref{advert-lib}).
 
 \subsection{Connecting to the Google App Engine}
 \label{http-java}
-This subsection will give a general idea of how connections are established
+This section will give a general idea of how connections are established
 between a Java client and the Google App Engine. As of yet, the Google App
 Engine only supports HTTP(S) connections over port 80. This means that all our
 requests and responses must be encoded to fit in an HTTP request/response. We
-will come to encoding data into HTTP requests in subsection \ref{protocol}, when
+will come to encoding data into HTTP requests in Section \ref{protocol}, when
 we discuss our protocol.
 
 Connecting to the Google App Engine is fairly simple, making use of the
@@ -54,25 +54,21 @@ Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 
 \subsection{Authenticating to the Google App Engine}
 \label{auth}
-This subsection describes how authentication to the Google App Engine is done. If
+This section describes how authentication to the Google App Engine is done. If
 you are using a public sever, no authentication is needed and you can proceed
-reading subsection \ref{protocol}.
+reading Section \ref{protocol}.
 
 Authenticating with the Google App Engine is done through Google's
 \emph{ClientLogin}
 (\url{http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html}).
 This is an API to programmatically log into a user's Google account. After
-collecting login information from the user, call ClientLogin to request access
-to
-the user's account. Once the login information has been successfully
-authenticated, Google returns a token, which your application will reference
-each
-time it requests access to the user's account, such as to get or post data. The
-token remains valid for a set length of time, defined by whichever Google
-service
+collecting login information from the user, one can call ClientLogin to request
+access to the user's account. Once the login information has been successfully
+authenticated, Google returns a token, which your application will reference each
+time it requests access to the user's account, such as to GET or POST data. The
+token remains valid for a set length of time, defined by whichever Google service
 you are working with. To authenticate with the Google App Engine in specific,
-please follow the steps as described below.
-
+please follow the steps as described below.
 First step is to perform an HTTP POST request to the Google ClientLogin page at
 \texttt{https://www.google.com/accounts/ClientLogin}. In this request we POST
 some parameters which are necessary for authentication (see Figure
@@ -170,8 +166,7 @@ Where \texttt{function\_name} should be replaced by the function name as
 described above. Note, when using a authenticated server, for each function
 authentication will be required. Not only by using a Google Account, but
 the user is also required to be an administrator of this App Engine project.
-This
-is described in more detail in subsection \ref{admin-panel}.
+This is described in more detail in Section \ref{admin-panel}.
 
 Since all function calls are HTTP requests, the function parameters are encoded
 in the HTTP (POST) request. Encoding the parameters is done by using the
@@ -326,12 +321,12 @@ To manually log in, using your Google Account, one can visit the following URL
 in any web browser: \url{http://jondoe.appspot.com/login/}, where
 \texttt{jondoe.appspot.com} is the address of the advert server. This generates
 a standard Google login page, which can be used as such. If logging in was
-successful (and the user is an administrator - see subsection \ref{admin-panel}),
+successful (and the user is an administrator - see Section \ref{admin-panel}),
 a message will appear: \texttt{Authenticated to the Advert Server.}.
 
 Logging in manually can be used for debug purposes (e.g. see what cookies look
 like, using authenticated functions, etc.), and is a requirement for purging
-the database (see subsection \ref{purge}).
+the database (see Section \ref{purge}).
 
 \subsubsection{Purge}
 \label{purge}
@@ -342,7 +337,7 @@ address of the advert server, a user can empty the database on one click.
 
 Once this address is visited, a user will get a page, confirming to empty the
 database. This message only appears if the user is authenticated (using the
-login function of subsection \ref{login}). Once a user clicked the `Yes'-button, a
+login function of Section \ref{login}). Once a user clicked the `Yes'-button, a
 function will commence purging the database. Note that if this function needs
 more than 30 seconds to purge all data, a time-out error will be returned
 (\texttt{Could not complete. Refresh this page to try again.}). If a user
@@ -371,7 +366,7 @@ In addition there is another feature which we would like to point out, which is
 the \emph{Developers} panel. At this panel one can add multiple developers to
 the project. This way, more different clients (i.e. different Google Accounts)
 are able to use the authenticated version of the advert server (as described in
-subsection \ref{auth}). For more information on adding developers to the project,
+Section \ref{auth}). For more information on adding developers to the project,
 please read \texttt{url://code.google.com/appengine/kb/status.html}.
 
 \subsection{Example: The Ibis Advert Client Library}
@@ -388,11 +383,11 @@ keeping authenticated with the advert server. This is done by two major
 functions called \texttt{authenticate()} and \texttt{httpSend()}. Once the
 communications class is created,  \texttt{authenticate()} takes a user name
 (i.e. a Google Account) and a password to retrieve the authentication cookie
-(as described in subsection \ref{auth}), and store this gobally. Every time
+(as described in Section \ref{auth}), and store this gobally. Every time
 \texttt{httpSend()} is called, the authentication cookie is used.
 
 The public functions of the Ibis Advert client library are exactly those
-functions as described in subsection \ref{protocol}. To pass any data from the
+functions as described in Section \ref{protocol}. To pass any data from the
 public functions to the advert server, JSON encoding is used. For Java, the most
 used JSON library is \emph{Json-lib} (\url{http://json-lib.sourceforge.net/}).
 First of all, we use pathnames as identifiers. Relative pathnames are stored

@@ -7,9 +7,10 @@ implementing our application storage server at the Google App Engine.
 \label{serverdesign-structure}
 The application storage server will have an iterative structure, where clients
 are served on a one-thread-per-client basis; it will receive a client request,
-process it and return a reply (all in HTTP as described below). Since the App
-Engine distributes each request to possibly a different server, concurrency can
-occur, so a form of synchronization is needed (see Section\ref{serverdesign-transactions}).
+process it and return a reply (all is done over HTTP, as described below). Since
+the App Engine distributes each request to possibly a different server,
+concurrency can occur, so a form of synchronization is needed (see Section
+\ref{serverdesign-transactions}).
 \subsection{Public Functions}
 \label{serverdesign-pub}
 The server provides some generic functions as an interface to its clients. These
@@ -29,7 +30,7 @@ Note that not all functions provided by the JavaGAT AdvertService, are
 implemented, but only the most useful and necessary functions will be
 available. This way, we offer a more generic advert server which might be
 used for other purposes than an AdvertService Adaptor (e.g. see Section
-\ref{ipl}).
+\ref{applications-ipl}).
 
 % \subsubsection{Functions to Implement} 
 % Looking at the javadoc of the JavaGAT \cite{javagat-javadoc}(the AdvertService in
@@ -47,8 +48,8 @@ used for other purposes than an AdvertService Adaptor (e.g. see Section
 
 \subsection{Datastore Layout}
 \label{serverdesign-datastore}
-The App Engine scalable datastore stores and performs queries over data objects,
-known as entities. An entity has one or more properties, named values of one of
+The App Engine's scalable datastore stores and performs queries over data
+objects, known as entities. An entity has one or more properties, named values of one of
 several supported data types. A property can be a reference to another entity, to
 create one-to-many or many-to-many relationships. Below we will describe which
 datatypes we designed for the datastore.
@@ -58,10 +59,10 @@ From our user functions as specified above, we can specify our data types,
 needed to store the Advert objects with associated meta data.
 
 \paragraph{Advert Object}
-In general, Advert object are structured as shown in Figure
+In general, Advert objects are structured as shown in Figure
 \ref{serverdesign-advert-obj}. Objects added to the datastore are stored as
 unicode text, which is a decision we made over time. Although the Google App
-Engine supports a so called \emph{BlobProperty} for storing binary data, it is
+Engine supports a so-called \emph{BlobProperty} for storing binary data, it is
 more useful to store objects as unicode text, as we will see in Section
 \ref{serverdesign-transfer-protocol}.
 
@@ -100,18 +101,17 @@ class MetaData(db.Model):
 \end{center}
 \end{figure*}
 
-We had various options in implementing the meta data object. First We tried to
-make an array of a custom key-value pair objects, which did not work in Python.
+We had various options of implementing a meta data object. First we tried to
+make an array of custom key-value pair objects, which did not work in Python.
 Another option would be to maintain two lists of strings, where the indexes of
-the lists link the key and the value of the meta data. However, we are not sure
-of those lists maintain order (which could mess up the meta data).
+the lists link the key and the value of the meta data. However, there is noguarantee that those lists maintain order (which could mess up the meta data).
 Second, we could also append all data in two strings and have them separated by
 special delimiter. Downside of this method is that we could run out of the
-maximum length of strings (which is 500\,bytes) and this solution does not make
+maximum length of Strings (which is 500\,bytes) and this solution does not make
 the meta data objects searchable. 
 
 The most obvious solution is to store every key-value pair seperately in the
-datastore and add an identifier to them (in this case the pathname), to group
+datastore and add an identifier to them (in this case the path name), to group
 them together eventually. Note that there is redundant information inside this
 object, being the \texttt{path} value. We did this to simplify our GQL queries as
 described in Section \ref{serverimpl-find}. 
@@ -139,18 +139,19 @@ data. Also we could make something like a LRU list (Least Recently Used), after
 which we update the timestamp as soon as a data item was referenced or edited.
 This way, only the data items that are least referenced are deleted, as soon as
 we run out of storage. A disadvantage of this scheme is that this could lead to
-clients referencing them only the keep them alive in the datastore, and
+clients referencing them only to keep them alive in the datastore, and
 unnecessarily using bandwidth as a consequence. Our main purpose for the TTL is
 to prevent clients from storing data in the datastore and forgetting to delete it
 (which would result in an overfull datastore).
-\paragraph{Frequency}Once every request (or once every x requests), we could query the datastore for
+\paragraph{Frequency}Another design decision is how often we should run our garbage collector. Once
+every request (or once every $x$ requests), we could query the datastore for
 expired items and delete them from the datastore accordingly. Another option
 would be to remove the items which are expired as soon as we run out of free
-storage space. We chose to implement the latter, becuase this gives less
-overhead than starting a garbage collector every request. When the datastore is
-full and there is no data to be evicted, we return an error to the client, which
-throws an \texttt{AppEngineResourcesException}. The client can then try again at
-a later moment in time, or use another server.
+storage space. We chose to implement the latter, because this generates less
+overhead than starting a garbage collector every request. When the datastore is full and
+there is no data to be evicted, we return an error to the client, which throws an
+\texttt{AppEngineResourcesException}. The client can then try again at a later
+moment in time, or use another server.
 \subsubsection{GQL Queries}
 \label{serverdesign-gql}
 Google provides us with the \emph{Google Query Language} (GQL), which is similar
@@ -198,15 +199,14 @@ a time can be executed and there is no support for nested queries also.
 
 \subsubsection{Concurrency Control}
 \label{serverdesign-transactions}
-The datastore uses \emph{optimistic locking}\footnote{Optimistic locking (also
-known as optimistic concurrency control) is based on the assumption that most
-database transactions do not conflict with other transactions.} for concurrency
-control. An update of an entity occurs in a transaction that is retried a fixed
-number of times if other processes are trying to update the same entity
-simultaneously. Our application can execute multiple datastore operations in a
-single transaction, which either all succeed or all fail, ensuring the integrity
-of data. 
-
+The datastore uses \emph{optimistic locking}\footnote{In \emph{optimistic
+concurrency control}, also known as \emph{validation} or \emph{certification
+techniques}, no checking is done while the transaction is executing
+\cite{fundamentals-db}.} for concurrency control. An update of an entity occurs
+in a transaction that is retried a fixed number of times if other processes are
+trying to update the same entity simultaneously. Our application can execute
+multiple datastore operations in a single transaction, which either all succeed
+or all fail, ensuring the integrity of data.
 \subsection{Transfer Protocol}
 \label{serverdesign-transfer-protocol}
 Since the Google App Engine only offers functions in a sandbox, as stated above,
@@ -217,17 +217,15 @@ specified above we designed our own protocol of sending and receiving data to
 and from the Google App Engine.
 
 \subsubsection{HTTP Requests}
-Google offers an URL Fetch function, which supports five HTTP methods: GET, POST,
-HEAD, PUT and DELETE. For the functions described below, it would be useful to
-have an HTTP method that would allow us to send some (binary) data (i.e. POST or
-GET), after which we do not only get a success return value; but also data as a
-return value. This would be especially useful for the \texttt{find()} function.
-The HTTP POST function servers our needs best, since the GET function translates
-all data into a URL formatted String (which would be inappropriate for binary
-data). Secondly, according to the HTTP RFC , the default HTTP response is a
-status line (e.g. ``200 OK''), followed by a message body. This suits the needs
-for the implementation of our server.
-
+For the functions described above, it would be useful to have an HTTP method that
+would allow us to send some (binary) data (i.e. POST or GET), after which we do
+not only get a success return value; but also data as a return value. This would
+be especially useful for the \texttt{find()} function. The HTTP POST function
+serves our needs best, since the GET function translates all data into a URL
+formatted String (which would be inappropriate for binary data). Secondly,
+according to the HTTP \emph{RFC 2616}, the default HTTP response is a status line
+(e.g. ``200 OK''), followed by a message body \cite{rfc-2616}. This suits the
+needs for the implementation of our server.
 \subsubsection{Object Encoding} 
 \label{serverdesign-encoding}
 Since we are sending multiple data items over a single HTTP connection we will
@@ -238,25 +236,24 @@ in a single HTTP request, as is shown below.
 
 \paragraph{Multipart/Form-Data}
 HTTP natively supports a standard for sending a combination of both URL encoded
-Strings and binary data. This is specified in \emph{RFC1867} as
-\emph{multipart/form-data}. Although this would seem perfect for our purposes, we
-decided not to use this standard for sending a combination of URL encoded Strings
-and binary data. RFC1867 specifies that every part of the message should be
-seperated by a boundary, chosen by the client. The downside is that this boundary
-cannot appear in the content of the payload. Since our payload can be virtually
-anything, we decided to go in a different direction, because otherwise we would
-have to perform a linear search on all our data to see if a boundary token would
-accidentally appear in our payload.
-
+Strings and binary data. This is specified in \emph{RFC 1867} as
+\emph{multipart/form-data} \cite{rfc-1867}. Although this would seem perfect for
+our purposes, we decided not to use this standard for sending a combination of
+URL encoded Strings and binary data. RFC 1867 specifies that every part of the
+message should be seperated by a boundary, chosen by the client. The downside is
+that this boundary cannot appear in the content of the payload. Since our payload
+can be virtually anything, we decided to go in a different direction, because
+otherwise we would have to perform a linear search on all our data to see if a
+boundary token would accidentally appear in our payload.
 \paragraph{Custom Scheme}
 Instead of using boundaries to define the start/end of our payload, we could make
 use of special bytes which define the length of our payload. The layout of this
-scheme is shown in Figure \ref{serverdesign-custom}. To begin with we start by
+scheme is shown in Figure \ref{serverdesign-custom}. To begin with, we start by
 sending the length of the path, which is our first four bytes. Now the server
-knows how many bytes the path will be (which is variable n), after which it knows
-the meta data will follow. The meta data also starts with four bytes, indicating
-the length (variable m). Finally, the object is sent, again, by sending the
-object length as the first four bytes and the object (variable size p) right
+knows how many bytes the path will be (which is variable $n$), after which it
+knows the meta data will follow. The meta data also starts with four bytes, indicating
+the length (variable $m$). Finally, the object is sent, again, by sending the
+object length as the first four bytes and the object (variable size $p$) right
 after that.
 
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
@@ -287,22 +284,22 @@ in one request.
 
 To give the reader a small idea of how JSON works, we will try to encode te
 payload above into a serial JSON String. The message consists out of three parts:
-a path, meta data, and a binary object. So we will make a JSON array, with each
-entry containing a part. The first part is just a String, which is a value for
-the first entry. The second part is something more complicated, which we will
+a path, meta data, and a binary object. We will make a JSON array, with each
+entry containing a part of the message. The first part is just a String, which
+is a value for the first entry. The second part is something more complicated, which we will
 encode as a JSON obect, storing key-value pairs. The third entry again is a bit
 more difficult, since we can only store Strings, numbers, booleans, and null.
 That is why we formatted the binary object into a \emph{Base64} encoded
 String\footnote{Base64 refers to a specific MIME content transfer encoding. It
 encodes binary data by treating it numerically and translating it into a base 64
 representation.}. The only downside is that Base64 encoding has a overhead of
-about 1.35 of the original data length. For more information about the JSON
+about 1.35 times the original data length. For more information about the JSON
 format, we refer to \cite{json-www}.
 
 Once encoded, we can serialize the JSON array to a String (see Figure
 \ref{serverdesign-json-string}), after which it will be sent to the server. We
-can decode this String using simplejson at the server side, retrieving our JSON
-array back (see Section \ref{serverimpl-simplejson}).
+can decode this String using the Python version of JSON at the server side,
+retrieving our JSON array back (see Section \ref{serverimpl-simplejson}).
 \begin{figure*}[ht] %[placement] where placement is h,t,b,p
 \begin{center}
 \begin{code}
@@ -331,7 +328,7 @@ array back (see Section \ref{serverimpl-simplejson}).
  
 \subsection{Authentication and Privacy}
 \label{serverdesign-auth}
-Google provides two forms of authentication with its App Engine.
+Google provides two forms of authentication with its App Engine:
 
 \begin{itemize}
 \item By means of a \emph{Google Accounts} (also used for Gmail, iGoogle, etc)
@@ -349,7 +346,7 @@ For our purposes it would be most attractive to make use of the authentication
 through Google Accounts. An application can redirect a user to a Google Accounts
 page to sign in or register for an account, or sign out; using simple functions
 like \texttt{create\_login\_url()}. After a successful login session the
-application can retrieve a User object to authenticate a user.
+application can retrieve a \texttt{User} object to authenticate a user.
 
 % If one is to log in manually (\texttt{create\_login\_url()} was called), one
 % would see a login page, similar to that of other Google services, like Gmail for
@@ -384,8 +381,8 @@ Both authentication schemes give us two options for server setups.
   \item \textbf{Everyone Runs Its Own Service}; This way one could only
   authenticate himself by using a Google Account (i.e. one Google Account per
   organization), or restrict the application for only the domain of the
-  organization using this service, or even to oneself. This way one would run out
-  of resources less quickly than if one would use a (global) public service.
+  organization using this service, or even to oneself. By doing so, one would
+  run out of resources less quickly than if one would use a (global) public service.
   Also, it is more reliable than using a public service; there is less chance of
   people reading and/or editing data stored by the service.
   \item \textbf{One Public Service for Everyone}; This way we would run an open
@@ -400,7 +397,7 @@ We decided to implement two different servers; one without any form of
 authentication (i.e. a public server), and one with authentication (i.e. only the
 owner is able to use it, and additional users can be added after the server is
 deployed). The user itself can choose which version of the server to install,
-according to his personal needs.
+according to his needs.
 \subsubsection{(In)Secure Connections}
 Google provides the means of having both insecure connections (HTTP, port 80), as
 having secure connections (HTTPS, port 443). Naturally some data we would rather
