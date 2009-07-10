@@ -181,14 +181,20 @@ public class AdvertTests {
 		String path     = null;
 		String filename = null;
 		
-		if (argv.length != 3) {
-			logger.error("***Usage: AdvertTests <passwd> <pathname> <filename>");
+		if (argv.length < 2) {
+			logger.error("***Usage: AdvertTests (passwd) <pathname> <filename>");
+			logger.error("\tIf password is present, authenticated server will be used");
 		}
 		else {
 			/* Create a new Advert object. */
 			try {
 				URI advertUri = new URI(SERVER);
-				advert = new Advert(advertUri, USER, argv[0]);
+				if (argv.length == 2) {
+					advert = new Advert(advertUri); /* Public server */
+				}
+				else {
+					advert = new Advert(advertUri, USER, argv[0]); /* Private */
+				}
 				logger.info("Advert object created.");
 			}
 			catch (Exception e) {
